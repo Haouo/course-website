@@ -1,0 +1,99 @@
+site_name: Computer Organization Fall 2024 @NCKUEE
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - toc.integrate
+    - toc.follow
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.relevance
+    - content.tabs
+    - content.code.annotation
+    - content.code.copy
+    - content.footnotes
+    - content.images
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline 
+        name: Switch to dark mode
+      primary: deep purple
+      accent: blue
+    - scheme: slate 
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode    
+      primary: deep purple
+      accent: blue
+
+extra_css:
+  - css/custom.css
+extra_javascript:
+  - js/custom.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
+plugins:
+  - social
+  - search
+  - markdownextradata
+#  - mkdocs-material-admonition
+extra:
+  social:
+    - icon: fontawesome/brands/instagram
+      link: https://www.instagram.com/eemomolleyball?igsh=MnI5cnM0YnljcnEy
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - codehilite
+  - def_list
+  - footnotes
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.mark
+  - pymdownx.highlight
+  - pymdownx.tabbed
+  - toc:
+      permalink: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+copyright: |
+  &copy; Create by <a href=""  target="_blank" rel="noopener">Jieum.C</a> in 2024 ♥ 
+nav:
+  - 首頁: index.md
+  - Announcement: 
+      - updates: announce/update.md
+      - a0x000: announce/a0x000.md
+  - Lab material:
+      - Overview: labs/lab_overview.md
+      - Lab1: labs/lab1.md
+      - Lab2: labs/lab2.md
+      - Lab3: labs/lab3.md
+      - Lab4: labs/lab4.md
+      - Lab5: labs/lab5.md
+      - Lab6: labs/lab6.md
+      - Lab7: labs/lab7.md
+      - Lab8: labs/lab8.md
+  - Tools Guide:
+      - Docker Tutorial: tools/docker.md
+      - Gitlab & Mattermost: tools/gitlab_ov.md
+      - Basic Linux Command: tools/linux_cmd.md
+      - Git Tutorial: tools/git_cmd.md
+  - SystemVerilog: sv.md
+  - 參考資料: references.md
+  - About MkDocs: mkdocs.md
+  

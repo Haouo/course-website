@@ -1,0 +1,1 @@
+docker run --rm -it -v /home/aislab/co2024/material-mkdocs:/docs squidfunk/mkdocs-material new .
