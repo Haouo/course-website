@@ -1,0 +1,14 @@
+pages:
+  stage: deploy
+  image: python:latest
+  script:
+    - pip install mkdocs-material
+    - pip install mkdocs-markdownextradata-plugin
+    - pip install pillow cairosvg
+    - pip install pymdown-extensions
+    - mkdocs build --site-dir public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
