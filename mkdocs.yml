@@ -68,12 +68,8 @@ markdown_extensions:
   - toc:
       permalink: true
   - pymdownx.emoji:
-      options:
-        # 使用默認的 Twemoji 設置
-        use: twemoji
-
-
-
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
 
 copyright: |
