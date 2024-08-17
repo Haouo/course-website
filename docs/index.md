@@ -30,12 +30,11 @@
 ## **Course Grade**
 - Exams 40% : 1 midterm + 1 final 
 - Assignments 60% 
-- Bonus: Early submission for each assignment accounts for ? %
 
 ---
 
 ## **Related links**
 
-- [CO 2024 Gitlab](https://aislabcourse.ee.ncku.edu.tw:3006/)
-- [CO 2024 Mattermost](https://aislabcourse.ee.ncku.edu.tw:3002/)
-- [CO 2024 Hedgedoc](https://aislabcourse.ee.ncku.edu.tw:3004/)
+- [CO 2024 Gitlab](https://gitlab.course.aislab.ee.ncku.edu.tw)
+- [CO 2024 Mattermost](https://hedgedoc.course.aislab.ee.ncku.edu.tw)
+- [CO 2024 Hedgedoc](https://mattermost.course.aislab.ee.ncku.edu.tw )
