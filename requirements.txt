@@ -1,3 +1,0 @@
-mkdocs-markdownextradata-plugin
-pillow cairosvg
-pymdown-extensions
