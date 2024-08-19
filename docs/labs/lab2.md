@@ -1,9 +1,10 @@
 # RTL Programming Review using SystemVerilog
 
-- Video link : <a href="https://youtube.com" target="_blank">CO2024 Fall lab2 video</a>
-- Contributors : TA  
-- Deadline : ==2024/XX/XX==
-- Last updated : 2024/XX/XX
+!!! info
+    - Video link : <a href="https://youtube.com" target="_blank">CO2024 Fall lab2 video</a>
+    - Contributors : TA 
+    - Deadline : ==2024/XX/XX==
+    - Last updated : 2024/XX/XX
 
 ---
 

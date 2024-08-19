@@ -75,10 +75,11 @@ markdown_extensions:
 copyright: |
   &copy; Create by <a href=""  target="_blank" rel="noopener">Jieum.C</a> in 2024 ♥ 
 nav:
-  - 首頁: index.md
-  - Announcement: 
-      - updates: announce/update.md
-      - a0x000: announce/a0x000.md
+  - 首頁: 
+    - Index: index.md
+    - Announcement: 
+        - updates: announce/update.md
+        - a0x000: announce/a0x000.md
   - Lab material:
       - Overview: labs/lab_overview.md
       - Lab1: labs/lab1.md
