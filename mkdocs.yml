@@ -96,6 +96,6 @@ nav:
       - Basic Linux Command: tools/linux_cmd.md
       - Git Tutorial: tools/git_cmd.md
   - SystemVerilog: sv.md
-  - 參考資料: references.md
+#  - 參考資料: references.md
   - About MkDocs: mkdocs.md
   
