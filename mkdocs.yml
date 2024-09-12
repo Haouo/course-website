@@ -82,15 +82,15 @@ nav:
         # - a0x000: announce/a0x000.md
   - Lab material:
       - Overview: labs/lab_overview.md
-      - lab0: labs/lab0.md
-      - Lab1: labs/lab1.md
-      - Lab2: labs/lab2.md
-      - Lab3: labs/lab3.md
-      - Lab4: labs/lab4.md
-      - Lab5: labs/lab5.md
-      - Lab6: labs/lab6.md
-      - Lab7: labs/lab7.md
-      - Lab8: labs/lab8.md
+      - Lab 0: labs/lab0.md
+      - Lab 1: labs/lab1.md
+      - Lab 2: labs/lab2.md
+      - Lab 3: labs/lab3.md
+      - Lab 4: labs/lab4.md
+      - Lab 5: labs/lab5.md
+      - Lab 6: labs/lab6.md
+      - Lab 7: labs/lab7.md
+      - Lab 8: labs/lab8.md
   - Tools Guide:
       - Markdown Tutorial: tools/markdown.md
       - Docker Tutorial: tools/docker.md

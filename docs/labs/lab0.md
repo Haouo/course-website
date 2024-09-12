@@ -1,7 +1,6 @@
 # How To Ask Questions The Smart Way
 
 !!! info
-    <!-- - Video link : <a href="https://youtube.com/" target="_blank">CO2024 Fall lab1 video</a> -->
     - Contributors : TA 峻豪
     - Deadline : ==2024/09/20==
 

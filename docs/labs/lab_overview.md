@@ -13,6 +13,7 @@
 
 Video Playlist for Labs: :fontawesome-brands-youtube:{ style="color: #EE0F0F" }  [links]()
 
+- Lab 0 - How To Ask Questions The Smart Way
 - Lab 1 - C Programming and Compilation Flow
 - Lab 2 - RTL Programming Review using SystemVerilog
 - Lab 3 - RISC-V ISA Simulator (RV64I Only)
@@ -21,4 +22,3 @@ Video Playlist for Labs: :fontawesome-brands-youtube:{ style="color: #EE0F0F" } 
 - Lab 6 - Bus Protocol and Arbitration
 - Lab 7 - Pipeline CPU with Cache Design
 - Lab 8 - SIMD Accelerator with Memory-mapped I/O Control
-
