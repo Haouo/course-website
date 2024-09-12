@@ -5,8 +5,8 @@
     - Deadline : ==2024/09/20==
 
 ??? tip "updates information"
-    update 240911: 新增此頁面
-    update 240912: 完成此頁面內容
+    update 240911: 新增此頁面  
+    update 240912: 完成此頁面內容  
 
 ## Preamble
 
