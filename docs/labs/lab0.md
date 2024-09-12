@@ -1,14 +1,13 @@
 # How To Ask Questions The Smart Way
 
 !!! info
-    - Video link : <a href="https://youtube.com/" target="_blank">CO2024 Fall lab1 video</a>
+    <!-- - Video link : <a href="https://youtube.com/" target="_blank">CO2024 Fall lab1 video</a> -->
     - Contributors : TA 峻豪
-    - Deadline : ==2024/XX/XX==
+    - Deadline : ==2024/09/20==
 
 ??? tip "updates information"
     update 240911: 新增此頁面
-
-[toc]
+    update 240912: 完成此頁面內容
 
 ## Preamble
 
@@ -80,9 +79,9 @@ Lab 0 大部分的內容參考自文章：[How To Ask Questions The Smart Way](h
 
 如果你還是不知道怎麼提問，請參考以下模板
 
-> 我的編譯器在輸入為 XXX 的時候出現了 YYY 問題（附完整的錯誤信息或截圖）。
-> 我嘗試 AAA，發現 BBB，我認為這代表 CCC。
-> 我還嘗試 DDD，發現 EEE，我認為這代表 FFF。
+> 我的編譯器在輸入為 XXX 的時候出現了 YYY 問題（附完整的錯誤信息或截圖）。\
+> 我嘗試 AAA，發現 BBB，我認為這代表 CCC。\
+> 我還嘗試 DDD，發現 EEE，我認為這代表 FFF。\
 > 綜上所述，我覺得問題可能出在 GGG，但之後我就沒有思路了，請問我的分析是否正確？問題的具體原因是什麼呢？
 
 ## 助教不會回答 & 協助的問題
