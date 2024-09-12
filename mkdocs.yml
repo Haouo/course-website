@@ -77,11 +77,12 @@ copyright: |
 nav:
   - 首頁: 
     - Index: index.md
-    - Announcement: 
-        - updates: announce/update.md
-        - a0x000: announce/a0x000.md
+    # - Announcement: 
+        # - updates: announce/update.md
+        # - a0x000: announce/a0x000.md
   - Lab material:
       - Overview: labs/lab_overview.md
+      - lab0: labs/lab0.md
       - Lab1: labs/lab1.md
       - Lab2: labs/lab2.md
       - Lab3: labs/lab3.md
@@ -91,6 +92,7 @@ nav:
       - Lab7: labs/lab7.md
       - Lab8: labs/lab8.md
   - Tools Guide:
+      - Markdown Tutorial: tools/markdown.md
       - Docker Tutorial: tools/docker.md
       - Gitlab & Mattermost: tools/gitlab_ov.md
       - Basic Linux Command: tools/linux_cmd.md
