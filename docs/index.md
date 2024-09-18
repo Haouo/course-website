@@ -4,7 +4,7 @@
     - This is a course website for Computer Organization in Fall 2024.<br>
     - It contains information about labs and other resources.<br>
     - If you have any questions, please contact the TAs via Mattermost.<br>
-    - Last updated : 2024/08/17 by 裕禾<br>
+    - Last updated : 2024/09/18 by 裕禾<br>
 
 ---
 
@@ -23,8 +23,8 @@
     - Head TA : 張峻豪<br>
     - TA : 何明堡、葉人豪、蔡裕禾、劉耘僑、許翰翔、簡德彥<br>
     - Lab Preparation Only : 藍卉蓁、蕭汎穎、徐士櫳、謝宜蓁<br>
-- Email:  aislab.ncku.ee@gmail.com
-    • Please include [CO2024] to the beginning of the email subject
+- Email:  aislab.ncku.ee@gmail.com  
+    - Please include [CO2024] to the beginning of the email subject
 
 
 ---
