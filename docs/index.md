@@ -14,22 +14,28 @@
     - 電機系館5F 92510<br>
     - Email : cctsai@gs.ncku.edu.tw<br>
     - Office Hour : <br>
-- Course Information (Time/Location): Wed. 9:10-12:00 / 
+- Course Information (Time/Location): Wed. 9:10-12:00 / 啟端館 智慧階梯教室
 
 ---
 
 ## **Labs**
 - TA list
-    - Head TA : 峻豪<br>
-    - TA : 明堡、人豪、裕禾、耘僑<br>
-    - Lab Preparation Only : 卉蓁、汎穎、士櫳、宜蓁<br>
-- Email:  
+    - Head TA : 張峻豪<br>
+    - TA : 何明堡、葉人豪、蔡裕禾、劉耘僑、許翰翔、簡德彥<br>
+    - Lab Preparation Only : 藍卉蓁、蕭汎穎、徐士櫳、謝宜蓁<br>
+- Email:  aislab.ncku.ee@gmail.com
+    • Please include [CO2024] to the beginning of the email subject
+
 
 ---
 
 ## **Course Grade**
-- Exams 40% : 1 midterm + 1 final 
-- Assignments 60% 
+- Midterm and Final Exams 40%
+    - Each account for 20%
+- Assignments 60%
+    - Lab exercise for CPU and System Design
+    - Lab should be hand in on time
+
 
 ---
 
