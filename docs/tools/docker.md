@@ -1,10 +1,8 @@
 # :fontawesome-brands-docker:{ style="color: #1c90ed"} Docker tutorial
 
 !!! info
-    - Contributors:  
-    - Last updated: 
-
-往年修課需要使用遠端連線到實驗室伺服器才能編譯或執行程式，為了方便同學寫作業，今年改成利用Docker在自在自己的電腦端架設所需環境，此頁將介紹課程中關於Docker的使用教學。
+    - Contributors: TA 峻豪  
+    - Last updated: 2024/09/21  
 
 ---
 
@@ -36,38 +34,37 @@ Docker 是容器化技術（Containerization）的一種實作，而容器化又
 
 首先，我們必須先在電腦上安裝 Docker Engine；為了簡化安裝過程，我們可以直接在電腦上安裝 [Docker Desktop](https://www.docker.com/products/docker-desktop/)，如果是使用 Mac 的話，助教推薦安裝 [OrbStack](https://orbstack.dev/)。
 
-:::info
-### Windows Subsystem For Linux (WSL)
+!!! info
+    ### Windows Subsystem For Linux (WSL)
 
-> 參考：[如何使用 WSL 在 Windows 上安裝 Linux](https://learn.microsoft.com/zh-tw/windows/wsl/install)
+    > 參考：[如何使用 WSL 在 Windows 上安裝 Linux](https://learn.microsoft.com/zh-tw/windows/wsl/install)
 
-如果想要在 Windows 上使用 Linux 操作系統的話，以往常常需要使用諸如 VirtualBox 之類的虛擬機軟體來安裝和配置虛擬機，但現在 Windows 上有一個內建功能叫做 WSL（目前已經到 WSL2），可以讓我們不用安裝虛擬機就可以很方便地配置 Linux 開發環境。如果你是使用 Windows 作業系統的話，助教推薦你可以安裝 WSL 這個功能，不論是作為日常開發環境或是拿來取代 MobaXterm 都非常好用。配套的終端機軟體助教推薦使用 *Windows Terminal*，而 Linux Distribution 助教推薦安裝 Ubuntu 22.04 或是 Ubuntu 24.04。至於字體的部分，助教推薦 JetBrainsMono Nerd Font。
+    如果想要在 Windows 上使用 Linux 操作系統的話，以往常常需要使用諸如 VirtualBox 之類的虛擬機軟體來安裝和配置虛擬機，但現在 Windows 上有一個內建功能叫做 WSL（目前已經到 WSL2），可以讓我們不用安裝虛擬機就可以很方便地配置 Linux 開發環境。如果你是使用 Windows 作業系統的話，助教推薦你可以安裝 WSL 這個功能，不論是作為日常開發環境或是拿來取代 MobaXterm 都非常好用。配套的終端機軟體助教推薦使用 *Windows Terminal*，而 Linux Distribution 助教推薦安裝 Ubuntu 22.04 或是 Ubuntu 24.04。至於字體的部分，助教推薦 JetBrainsMono Nerd Font。
 
-#### How to install WSL2 on your Windows PC
+    #### How to install WSL2 on your Windows PC
 
-1. 請先使用**系統管理員**身份開啟 PowerShell
-2. 啟用 WSL 所需系統功能
+    1. 請先使用**系統管理員**身份開啟 PowerShell
+    2. 啟用 WSL 所需系統功能
     ```shell=
     dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
     dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
     ```
-3. 安裝並且更新 WSL，然後安裝 Linux Distribution `Ubuntu-24.04`
+    3. 安裝並且更新 WSL，然後安裝 Linux Distribution `Ubuntu-24.04`
     ```shell=
     wsl --install --web-download
     wsl --update --web-download
     wsl --set-default-version 2
     wsl --install Ubuntu-24.04 --web-download
     ```
-4. 完成 `Ubuntu-24.04` 的安裝之後，應該就會接著提示輸入你想要的 Username 和 Password，請輸入你自己想要的使用者名稱和密碼之後，就完成設定，即可開始使用 Windows Subsystem for Linux (WSL)
-:::
+    4. 完成 `Ubuntu-24.04` 的安裝之後，應該就會接著提示輸入你想要的 Username 和 Password，請輸入你自己想要的使用者名稱和密碼之後，就完成設定，即可開始使用 Windows Subsystem for Linux (WSL)
+
 
 ### Install Docker Desktop on Windows
 
 #### Installation Method
 
-:::danger
-請同學務必先安裝 WSL 之後再安裝 Docker Desktop，否則 Docker 會無法正常運作。
-:::
+!!! danger
+    請同學務必先安裝 WSL 之後再安裝 Docker Desktop，否則 Docker 會無法正常運作。
 
 > 參考：[在 WSL 2 上開始使用 Docker 遠端容器](https://learn.microsoft.com/zh-tw/windows/wsl/tutorials/wsl-containers)
 
