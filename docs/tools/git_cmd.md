@@ -1,12 +1,17 @@
 # Git 指令教學
 
 !!! info
-    - Contributors:  
-    - Last updated: 
+    - Contributors: TA 峻豪 
+    - Last updated: 2024/09/22
 
-:::success
-推薦閱讀高見龍撰寫的關於 GIt 的系列文章：[為你自己學 Git](https://gitbook.tw/)
-:::
+!!! success
+    推薦閱讀高見龍撰寫的關於 GIt 的系列文章：[為你自己學 Git](https://gitbook.tw/)
+
+---
+
+
+!!! danger
+    告誡各位同學，學會 Git 基本上是大家以後作為工程師的基本能力，使用 Git 也是多人專案合作最常見的管理方案。現在不學，就是等著以後進公司被電到起飛。
 
 ## Introduction to Version Control System: Git
 
@@ -23,7 +28,8 @@
 ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/aa038345-166d-4288-9d91-3caa3145bc6b.png)
 
 > 你可以想像你有一個倉庫，在倉庫門口有個小廣場，這個廣場的概念就像暫存區一樣，你把要存放到倉庫的貨物先放到這邊（`git add`，staging area），然後等收集的差不多了就可以打開倉庫門，把在廣場上的貨物送進倉庫裡（`git commit`，local repo），並且記錄下來這批貨是什麼用途的、誰送來的。
-> [name=高見龍 - 為你自己學 Git]
+>
+> --- 高見龍 - 為你自己學 Git
 
 ### When to commit?
 
@@ -33,7 +39,7 @@
 > 2. 下班的時候：雖然可能還沒完全搞定任務，但至少先 Commit 今天的進度，除了備份之外，也讓公司知道你今天有在努力工作。（然後帶回家繼續苦命的做？）
 > 3. 你想要 Commit 的時候就可以 Commit。
 > 
-> [name=高見龍 - 為你自己學 Git]
+> --- 高見龍 - 為你自己學 Git
 
 ### Local Repo? Remote Repo?
 

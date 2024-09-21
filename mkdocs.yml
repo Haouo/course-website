@@ -39,7 +39,7 @@ extra_javascript:
 plugins:
   - social
   - search
-  - markdownextradata
+  # - markdownextradata
 #  - mkdocs-material-admonition
 extra:
   social:
@@ -56,6 +56,8 @@ markdown_extensions:
   - md_in_html
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: true
+      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.arithmatex:

@@ -1,8 +1,8 @@
 # :fontawesome-brands-docker:{ style="color: #1c90ed"} Docker tutorial
 
 !!! info
-    - Contributors: TA 峻豪  
-    - Last updated: 2024/09/21  
+    - Contributors: TA 峻豪
+    - Last updated: 2024/09/21
 
 ---
 
@@ -28,7 +28,12 @@ Docker 是容器化技術（Containerization）的一種實作，而容器化又
 
 ### Docker Image vs. Docker Container
 
-助教覺得 Docker Image 和 Docker Container 的關係有點類似物件導向程式設計中，Class 之於 Object (Instance) 的關係。
+助教覺得 Docker Image 和 Docker Container 的關係有點類似物件導向程式設計中，Class 之於 Object (Instance) 的關係。我們所建構的 Docker Image 只是一個類似藍圖的東西，我們真正要使用的東西是 Docker Container，而建立 Container 則必須要有一個藍圖可以依循，這就是 Docker Image 的功用。所以請同學物必要搞清楚 Image 和 Container 是兩個不同的東西，我們實際上在使用的是 Container，Image 只是我們建立 Container 所需的參照而已。
+
+或者，我們也可以用**食譜**和**菜餚**來比喻 Docker Image 和 Docker Container。Docker Image 就像是一道菜的食譜一樣，Docker Engine 會根據 Docker Image 建立對應的 Docker Container，而 Docker Container 就像是用這個食譜做出來的菜餚一樣。
+
+!!! info
+    有些容器化技術的實作不一定要先建立 Image 才能建立 Container，例如 Apptainer 是另一個非常有名的容器化技術的實作，它就是直接建立 Container 而不用先建立 Image。
 
 ## How to install Docker
 
@@ -44,22 +49,24 @@ Docker 是容器化技術（Containerization）的一種實作，而容器化又
     #### How to install WSL2 on your Windows PC
 
     1. 請先使用**系統管理員**身份開啟 PowerShell
-    2. 啟用 WSL 所需系統功能
-    ```shell=
-    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-    ```
+    2. 啟用 WSL 所需系統功能  
+      ```shell linenums="1"
+      $ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+      $ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+      ```
     3. 安裝並且更新 WSL，然後安裝 Linux Distribution `Ubuntu-24.04`
-    ```shell=
-    wsl --install --web-download
-    wsl --update --web-download
-    wsl --set-default-version 2
-    wsl --install Ubuntu-24.04 --web-download
-    ```
+        ```shell linenums="1"
+        $ wsl --install --web-download
+        $ wsl --update --web-download
+        $ wsl --set-default-version 2
+        $ wsl --install Ubuntu-24.04 --web-download
+        ```
     4. 完成 `Ubuntu-24.04` 的安裝之後，應該就會接著提示輸入你想要的 Username 和 Password，請輸入你自己想要的使用者名稱和密碼之後，就完成設定，即可開始使用 Windows Subsystem for Linux (WSL)
 
 
 ### Install Docker Desktop on Windows
+
+我們主要要完成兩件事情，第一是 WSL2 的安裝，再來是測試 X11 Forwarding 是否可以正常運作，因為這關乎到我們是否可以正常使用視窗程式（GUI Apps）。
 
 #### Installation Method
 
@@ -79,12 +86,12 @@ Docker 是容器化技術（Containerization）的一種實作，而容器化又
 因為在後面的 Lab 我們會用到 GTKWave 這個 Waveform Viewer 來觀察電路的波形，而這個程式是一個 GUI App，所以我們必須確認我們的 WSL 可以正常執行 X11 Forwarding 的功能。
 
 1. 首先，先安裝必要的 packages（==此步驟是在 Host 端操作，也就是 WSL，並非進入 Container 內操作==）
-    ```shell=
+    ```shell linenums="1"
     $ sudo apt update
     $ sudo apt install -y x11-utils x11-xserver-utils x11-apps
     ```
 2. 接著輸入以下指令
-    ```shell=
+    ```shell linenums="1"
     $ xhost +local:docker
     $ xclock
     ```
@@ -98,31 +105,33 @@ Docker 是容器化技術（Containerization）的一種實作，而容器化又
 
 MacOS 要使用 X11 Forwarding 的功能的話，請下載並安裝 [XQuartz](https://www.xquartz.org/)。欲使用 X11 Forwarding 時，請保持 XQuartz App 為開啟狀態，否則會導致視窗開啟失敗。
 
+!!! warning
+    這邊有問題的話可以詢問大助教，因為大助也是使用 Mac。
+
 ## How to use the course Docker Image
 
 我們採用直接下載 Docker Image 的方式，而非使用 Dockerfile 來建構 Docker Image，原因是因為我們會用到 RISC-V GNU Toolchain，在建構 Image 的過程中會去下載該 Toolchain 的 repository，如果大家所在的環境的網路速度不理想的話，建構 image 的過程可能會耗費數小時以上，甚至會 build fail。為了下載助教提供的 image，我們需要使用 `docker pull` 指令。
 
 詳細來說，因為我們還會使用到助教額外撰寫的 Shell Script，所以整個過程總共需要兩個步驟，分別是下載助教指令的 Reposiroty 和下載助教提供的 Docker Image。下載完之後，就可以執行腳本（`run.sh`）來啟動並且進入 container 中，以使用我們為課程設計的程式開發環境。接下來我們說明詳細的操作步驟：
 
-1. 請先 Clone 這個 [Repository](https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/docker-env)
-    ```bash=
+1. 請先下載這個 Repository：[docker-env](https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/docker-env)
+    ```bash
     $ git clone https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/docker-env
     ```
 2. 進入 docker-env 資料夾，接著登入我們的 Container Registry 之後，再 Pull 助教提供的 Docker Image
-    ```bash=
+    ```bash
     $ sudo docker login registry.course.aislab.ee.ncku.edu.tw # 請輸入你登入 Gitlab 所使用的帳號、密碼
     $ sudo docker pull registry.course.aislab.ee.ncku.edu.tw/113-1/docker-env/co2024-docker
     ```
-3. 幫我們的 Container 建立 Docker Volume
-    ```bash=
-    $ sudo docker volume create co2024_volume
-    ```
-4. 執行 `run.sh` 後即可進入 Container 內部，便可以開始使用課程所需的開發環境
-    ```bash=
+3. 執行 `run.sh` 後即可進入 Container 內部，便可以開始使用課程所需的開發環境
+    ```bash
     ./run.sh
     ```
 
-進入 Container 之後，你可以輸入 `id` 命令來查看自己的 Username、UID 和 GID，你應該會看到自己的 Username 是 `co2024`，而 UID 和 GID 都是 `1234`。除此之外，當你要使用 sudo 命令的時候，會提示需要輸入密碼，而密碼也是 `1234`。
+進入 Container 之後，你可以輸入 `id` 命令來查看自己的 Username、UID 和 GID，你應該會看到自己的 Username 是 `co2024`，而 UID 和 GID 會和你的 Local 端的 UID 和 GID 相同。除此之外，當你要使用 sudo 命令的時候，會提示需要輸入密碼，而密碼也是 `1234`。但大部分的情況下，大家應該不會需要在容器中使用到超級使用者權限。
+
+!!! info
+    會刻意把 Container 中的 UID 和 GID 設定成和 Local 端相同是有特殊的考量的。因為我們會把本地端的資料夾 `workspace` 卦載到 Container 中，藉此儲存我們的程式碼，若 Container 中的 UID 和 GID 和本地端不同的話，會有檔案權限的問題。
 
 ### Docker Volume & Workspace
 
@@ -132,4 +141,7 @@ MacOS 要使用 X11 Forwarding 的功能的話，請下載並安裝 [XQuartz](ht
 
 Docker Volume 又分成兩種模式，分別是 Bind Mount 和 Volume。Bind Mount 就像是卦載硬碟的概念，或是當你使用虛擬機如 VirtualBox 的時候，把電腦本地端的某個 Path 卦載到虛擬機上，讓虛擬機內部也可以看到本地端的資料夾，藉此在本地端和虛擬機之間儲存和傳輸檔案。Volume 的話這邊就不贅述，大家有興趣的話可以去看 Docker 官方的文件。
 
-在這堂課中，我們會使用 Bind Mount 的方式，首先先在 `docker-env` 資料夾底下建立一個新的資料夾 `workspace`，然後把他 卦載到 container 上，這樣當我們進入 container 之後，就可以把我們的程式碼放在 `workspace` 底下，即使我們離開 container 後，程式碼也不會不見，達到持久性的儲存。
+在這堂課中，我們會使用 Bind Mount 的方式，首先在 `docker-env` 資料夾底下建立一個新的資料夾 `workspace`，然後把他卦載到 container 上，這樣當我們進入 container 之後，就可以把我們的程式碼放在 `workspace` 底下，即使我們離開 container 後，程式碼也不會不見，達到持久性的儲存。
+
+!!! info
+    這邊就可以 callback 到前面說的，為什麼我們要刻意把容器中 `co2024` 這個使用者的 UID 和 GID 設定成和本地端相同。

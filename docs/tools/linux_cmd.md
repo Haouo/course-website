@@ -1,10 +1,13 @@
 # Basic Linux command
 
 !!! info
-    - Contributors:  
-    - Last updated: 
+    - Contributors：TA 裕禾、TA 峻豪  
+    - Last Updated：2024/09/22
 
-Directory : It's a file system concept, like 'folder' in Windows. In computing, a directory is a file system cataloging structure which contains references to other computer files, and possibly other directories.
+---
+
+!!! success
+    Directory : It's a file system concept, like 'folder' in Windows. In computing, a directory is a file system cataloging structure which contains references to other computer files, and possibly other directories.
 
 ## Basic Linux Commands and Concepts
 
