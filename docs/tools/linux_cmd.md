@@ -9,7 +9,7 @@
 !!! success
     Directory : It's a file system concept, like 'folder' in Windows. In computing, a directory is a file system cataloging structure which contains references to other computer files, and possibly other directories.
 
-## Basic Linux Commands and Concepts
+## Basic Linux Concepts
 
 為了流暢使用 Linux 作為你的開發環境，你至少需要知道下面幾個觀念
 
@@ -26,10 +26,11 @@
     - 基本上你在 CLI 中輸入的每個命令都應該要有他的 Return Value；但是，當你執行完某個命令的時候，他的回傳值並不會直接顯示在畫面上，所以你必須使用特定的命令來查看這個回傳值
     - `echo $?`
 - **I/O Redirection（重定向）**
+    - TBD
 - **Pipe（管線）**
     - Pipe 最早源自於 Unix 作業系統，因為 Unix 哲學的其中一點是，它希望每個工具負責的工作不要太複雜，但是每個工具應該要能夠好好地完成自己的工作，而如果我們想要達成複雜的操作，應該讓各個工具之間彼此互相合作，這也就是為什麼 Pipe 之所以會誕生。
 
-以下我們列出一些常用的命令
+## Common Linux Commands
 
 - `pwd` - 顯示當前工作目錄
 - `cd` - 使用相對路徑或絕對路徑切換目錄
