@@ -1,5 +1,11 @@
 # Markdown Tutorial
 
+!!! info
+    - Contributors：TA 裕禾
+    - Last Update：2024/09/22
+
+---
+
 **原文連結: [Markdown語法大全](https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book)**
 
 > 有些Markdown的語法沒辦法用在這裡，可以在這頁進行對照
