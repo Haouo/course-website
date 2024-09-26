@@ -341,22 +341,23 @@ int main() {
 2. `minpath <v1> <v2>`
     - 計算 $V_1$ 和 $V_2$ 之間的**最短路徑**的距離，輸出為一個自然數 $N$
     - 如果 $V_1$ 和 $V_2$ 不存在路徑的話，則輸出 $-1$
-3. `canreach <v1> <v2>`
-    - 判斷 v1 和 v2 之間是否存在路徑（Path），輸出 `true` 或 `false`
-4. `mst`
+3. `mst`
     - 輸出 Graph 的 Minimal-Spanning Tree 的所有 edge 的 weighted-sum
     - 輸出為一個自然數 $N > 0$
-5. `help [command]`
+4. `help [command]`
     - 輸出指令的詳細資訊和使用方法
     - 若使用者輸入 `help`，後面沒有跟著其他 argument 的話，則輸出所有**支援的**指令的資訊
     - 若使用者輸入 `help cmd1` 的話，則只要輸出 cmd1 的資訊即可
-6. `quit`
+5. `quit`
     - 退出程式
 
-==如果 Graph Analyzer 尚未讀取檔案的話==，則 `minpath`、`canreach` 和 `mst` 指令都應該直接輸出 `Please read the file first` 這段文字。
+==如果 Graph Analyzer 尚未讀取檔案的話==，則 `minpath` 和 `mst` 指令都應該直接輸出 `Please read the file first` 這段文字。
 
 !!! info
     `[...]` 內的東西代表是可有可無的參數，而 `<...>` 內的東西代表示必要參數。
+
+!!! danger
+    助教給的測資 Graph 一定會是 Connected Graph，即這個 Graph 只會有一個 Connected Component，所以不用考慮 MST 會變成 Minimal-Spanning Forest 的情況。
 
 ### Start to Do The Assignment
 
