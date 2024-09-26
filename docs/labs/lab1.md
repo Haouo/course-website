@@ -1,10 +1,9 @@
 # C Programming and Compilation Flow
 
 !!! info
-    - Contributors : TA 峻豪
-    - Deadline : ==2024/XX/XX==
-    - Last updated : 2024/09/22
-    <!-- - Video link : <a href="https://youtube.com/" target="_blank">CO2024 Fall lab1 video</a> -->
+    - Contributors : TA 峻豪、TA 明堡
+    - Deadline : ==2024/10/10 23:59:59==
+    - Last updated : 2024/09/26
 
 ??? tip "updates information"
     - Update 2024/08/13：新增此 block，作為更新依據
@@ -34,7 +33,8 @@
 
 你最直覺的想法可能會覺得說，為了要使用輸出輸入相關的 function，為了要使用一些 standard library 提供的 fucntion，我要 include 這些 header files，但你有沒有想過這背後到底怎麼運作的？
 
-當 Preprocessor（前置處理器）看到以 `#...` 為開頭的程式碼片段時，就會知道要對其做相對應的前置處理。基本上前置處理可以理解成單純的**文本處理和替換**，並不會設計到任何和 Compling 相關的行為，但即使只是單純的文本處理，善用 Preprocessing 依然可以讓 C 語言有非常強大的擴充能力。
+當 Pre-processor（前置處理器）看到以 `#...` 為開頭的程式碼片段時，就會知道要對其做相對應的前置處理。基本上前置處理可以理解成單純的**文本處理和替換**，並不會涉及到任何和 Compling 相關的行為。
+但即使只是單純的文本處理，善用 Preprocessing 依然可以讓 C 語言有非常強大的擴充能力。
 
 我們分析一個具體的例子，大家在大一的時候可能有聽過計概課的老師說，C 語言在宣告陣列的時候，不可以傳入變數作為初始陣列大小，例如：
 
@@ -43,7 +43,9 @@ int a = 5;
 int arr[a] = {};
 ```
 
-這種宣告程式稱為 **Variable-length Array (VLA)**，這在 C90 標準是不被允許的，一直到 C99 才正式納入 C 語言標準規範中。但是，大家如果用常見的編譯器如 GCC 去編譯這樣的程式的話，即使你指定使用 `-std=c90`，可能還是會發現 GCC 不會出現 Compilation Error，這是因為 GCC 本身有 GNU Extension，也就是編譯器本身對於語言的擴充，使其支援 VLA 這樣的宣告。所以，我們可以嘗試使用 `gcc -Werror -std=c90 -pedantic ...` 這樣的指令去編譯，使其強制遵守 C90 的規範，就會看到錯誤訊息如下：
+這種宣告程式稱為 **Variable-length Array (VLA)**，這在 C90 標準是不被允許的，一直到 C99 才正式納入 C 語言標準規範中。
+但是，大家如果用常見的編譯器如 GCC 去編譯這樣的程式的話，即使你指定使用 `-std=c90`，可能還是會發現 GCC 不會出現 Compilation Error，這是因為 GCC 本身有 GNU Extension，也就是編譯器本身對於語言的擴充，使其支援 VLA 這樣的宣告。
+所以，我們可以嘗試使用 `gcc -Werror -std=c90 -pedantic ...` 這樣的指令去編譯，使其強制遵守 C90 的規範，就會看到錯誤訊息如下：
 
 ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/938a0cab-bfb7-4124-9ccc-1bded1da3abe.png)
 
@@ -54,9 +56,16 @@ int arr[a] = {};
 int arr[a] = {};
 ```
 
-我們會發現編譯錯誤消失了，這段程式碼即使在 C90 的標準下依然可以正常編譯，為什麼？這正是因為 Pre-processor 的行為所致。當我們使用 `#define a 5` 而非 `int a = 5` 的時候，差別在於，當我們使用 `#define` 時，在編譯流程中的 Pre-processing 階段，Preprocessor 就會將程式碼片段中所有的 `a` 等價替換為 `5`，因此，最後實際進入 Compiler 的程式碼片段其實會變成 `int arr[5] = {};`，因為當中的 `a` 已經被替換成 `5` 了，也就不會變成 Variable-length Array 從而觸發編譯錯誤。所以其實在這個例子中，Pre-processor 所做的工作就是文本替換。
+我們會發現編譯錯誤消失了，這段程式碼即使在 C90 的標準下依然可以正常編譯，為什麼？
+這正是因為 Pre-processor 的行為所致。當我們使用 `#define a 5` 而非 `int a = 5` 的時候，差別在於，當我們使用 `#define` 時，在編譯流程中的 Pre-processing 階段，Pre-processor 就會將程式碼片段中所有的 `a` 等價替換為 `5`，因此，最後實際進入 Compiler 的程式碼片段其實會變成 `int arr[5] = {};`，
+因為當中的 `a` 已經被替換成 `5` 了，也就不會變成 Variable-length Array 從而觸發編譯錯誤。所以其實在這個例子中，Pre-processor 所做的工作就是文本替換。
 
-回到最一開始我們提到的 `#include <stdio.h>`，為什麼只要寫下這段 code 我們就可以使用像是 `printf()` 這類 I/O 相關的函式？TBD
+回到最一開始我們提到的 `#include <stdio.h>`，為什麼只要寫下這段 code 我們就可以使用像是 `printf()` 這類 I/O 相關的函式？
+在 Pre-processing 階段，`#include <stdio.h>` 會使 Pre-processor 將 `stdio.h` 的內容**整個複製貼上**到本來的 source code 當中，而 `stdio.h` 裡面包含了許多 I/O 相關的函數的宣告（function declaration）。
+因此，編譯器就不會報錯說 <u>function is undefined</u>，因為 Pre-processor 已經將 `stdio.h` 的內容插入源代碼中了，編譯器自然而然會看到許多 I/O functions 諸如 `printf()` 函式的宣告。
+
+但是，在 `stdio.h` 中僅僅包含 `printf()` 這類函式的**宣告（Declaration）**而已，並沒有它的**定義（Definition）**。所以真正讓你可以呼叫 `printf()` 這個函式的關鍵，除了有 Pre-proceessor 的功勞以外，也要感謝 Linker。
+因為 Linker 會在 Linking 階段時，一併將 `printf()` 的 Definition（或是你也可以理解成 `printf()` 的實作）打包進可執行檔中，並且解析正確的 Memory Address，最終才可以順利呼叫 `printf()`。 
 
 !!! info
     - 關於 `-pedantic` 的描述
@@ -68,7 +77,9 @@ int arr[a] = {};
 
 ### Compiling
 
-Compile 的這個過程，就是把 C Code 轉換成 Assembly 的過程，所以是從高階語言轉換到低階語言，這個過程基本上是整個編譯流程中最複雜的一件事情，原因有很多，加上目前同學還沒學完 Instruction-Set Architecture（ISA）的完整概念，所以我們在目前的階段比較難完整向大家說明 Compiler 的概念。但是，**因為 C 語言同時兼具高階語言和低階語言的特性**，也就是說，C 語言有相對抽象的語法，例如 For-loop Statement、if-else Statement、Structure、Function ... 等等諸如此類相對抽象的語法可以使用，卻也同時有低階語言的特性，例如 C 語言可以透過指標直接對記憶體進行存取。利用這個特性，我們可以避開對 ISA 內容的了解，卻也可以解釋 Compiler 的職責到底是什麼。
+Compile 的這個過程，就是把 C Code 轉換成 Assembly 的過程，所以是從高階語言轉換到低階語言，這個過程基本上是整個編譯流程中最複雜的一件事情，原因有很多，加上目前同學還沒學完 Instruction-Set Architecture（ISA）的完整概念，所以我們在目前的階段比較難完整向大家說明 Compiler 的概念。
+但是，**因為 C 語言同時兼具高階語言和低階語言的特性**，也就是說，C 語言有相對抽象的語法，例如 For-loop Statement、if-else Statement、Structure、Function ... 等等的語法可以使用，卻也同時有低階語言的特性，例如 C 語言可以透過指標直接對記憶體進行存取。
+利用這個特性，我們可以避開對 ISA 內容的了解，卻也可以解釋 Compiler 的職責到底是什麼。
 
 ```cpp linenums="1"
 #include <stdio.h>
@@ -106,7 +117,8 @@ end_loop:
 }
 ```
 
-大家可以看到，經過改寫後，Array 和 For-Loop 這兩個語法都不見了，取而代之的是使用 GOTO 來達成和 For-Loop Statement 一樣的功能，和使用指標對記憶體進行操作。這是相對很低階的 C 語言寫法。（這裡的 *低階* 並不是指這樣寫很爛，而是指語法相對低階，更加接近機器所能理解的形式，而非人直覺理解的形式）
+大家可以看到，經過改寫後，Array 和 For-Loop 這兩個語法都不見了，取而代之的是使用 GOTO 來達成和 For-Loop Statement 一樣的功能，和使用指標對記憶體進行操作。
+這是相對很低階的 C 語言寫法。（這裡的 *低階* 並不是指這樣寫很爛，而是指語法相對低階，更加接近機器所能理解的形式，而非人直覺理解的形式）
 
 其實 Compiler 所做的事情就**類似**於上面我們做的事情，改寫這段 Code，把它從相對抽象的表示方式轉換成更接近機器所能理解的指令。
 
@@ -148,7 +160,7 @@ Assembling（組譯）的過程相較於 Compiling 簡單很多，因為經過 C
     >
     >3. **統一接口**：GCC 提供了一個統一的命令行接口，讓使用者可以方便地管理不同的編譯流程，例如編譯、連接和預處理等。這種集中管理的特性使它更像是一個「驅動程式」。
     >
-    >4. **工具鏈整合**：GCC 還可以集成其他工具，如鏈接器（linker）、預處理器（preprocessor）等，使得整個編譯過程更加流暢和高效。
+    >4. **工具鏈整合**：GCC 還可以集成其他工具，如鏈接器（linker）、預處理器（pre-processor）等，使得整個編譯過程更加流暢和高效。
     >
     >因此，稱 GCC 為「Compiler Driver」是因為它在編譯過程中扮演了指揮和整合多個工具的角色，而不僅僅是單一的編譯器。
     >
@@ -161,13 +173,23 @@ Assembling（組譯）的過程相較於 Compiling 簡單很多，因為經過 C
 !!! success
     在 C 語言中，Array **本質上**就是 Pointer + Offset！你可以把 C 語言中 Array 的語法，如 `int arr[10] = {};` 這樣子的 statement 想像成**語法糖（Syntax Sugar）**。
 
-為了幫大家複習 Pointer 的概念，助教認為最好的方式是來做一個 Case Study，在這裡我們可以來探討 `int main(int argc, char** argv)`，或是 `int main(int argc, char* argv[])` 代表的到底是什麼意思？為什麼這樣寫就可以讓我們的程式接收外部參數？TBD
+為了幫大家複習 Pointer 的概念，助教認為最好的方式是來做一個 Case Study，在這裡我們可以來探討 `int main(int argc, char** argv)`，或是 `int main(int argc, char* argv[])` 代表的到底是什麼意思？為什麼這樣寫就可以讓我們的程式接收外部參數？
+在這裡我們先忽略有關於作業系統的細節，指專注在 `char** argv` 本身的解析。`int argc` 代表的是 count of arguments，也就是參數的數量，要特別注意的是，**program name 預設就會是第零個傳入的參數**，所以如果當你執行程式時，輸入如下：
+
+```shell linenums="1"
+$ ./test arg1 set arre
+```
+
+其對應的 `argc` 就會是 $4$，對應到執行檔本身的檔案名稱，加上三個使用者輸入的參數 `arg1`、`set` 和 `arre`。
 
 <div style="text-align:center"><img src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/d5f4cded-a088-43d1-b5f2-6e552c4d46c1.png" width=700><p><u>Visualization of char** argv</u></p></div>
 
+至於 `char** argv`，其本質上就是一個 **Pointer to (Pointer to char)**。也就是說 `argv` 這個邊數本身會指向一個 Array of (Pointer to char)，而這個 Array 本身裡面的每個 element 就是一個 Pointer to char，而它們又各自都可以指向一個 string，也就是我們傳入的參數。
+
 
 !!! warning
-    為什麼 `char** argv` 和 `char* argv[]` 這兩個寫法是等價（Equivalent）的？你有辦法用你對 Pointer 的理解來解釋為什麼嗎？
+    - 為什麼 `char** argv` 和 `char* argv[]` 這兩個寫法是等價（Equivalent）的？你有辦法用你對 Pointer 的理解來解釋為什麼嗎？
+    - 為什麼在 C 語言中宣告 string 的時候可以用 `char* str` 來宣告呢？
 
 ### Function Pointer
 

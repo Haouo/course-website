@@ -87,7 +87,7 @@ Docker 是容器化技術（Containerization）的一種實作，而容器化又
 
 1. 首先，先安裝必要的 packages（==此步驟是在 Host 端操作，也就是 WSL，並非進入 Container 內操作==）
     ```shell linenums="1"
-    $ sudo apt update
+    $ sudo apt update # important!!!
     $ sudo apt install -y x11-utils x11-xserver-utils x11-apps
     ```
 2. 接著輸入以下指令
