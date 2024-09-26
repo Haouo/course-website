@@ -16,3 +16,15 @@ TBD
 ## Migrate from Verilog to SystemVerilog
 
 TBD
+
+### Synthesiable SystemVerilog
+
+TBD
+
+## Something about Design Verification
+
+TBD
+
+### SystemVerilog Assertion (SVA)
+
+TBD
