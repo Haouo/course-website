@@ -110,6 +110,7 @@ start_loop:
     if (i >= 5) goto end_loop; // Check loop condition
 
     printf("%d\n", *(ptr + i)); // Access the array element using pointer arithmetic
+    i++; // Increment loop index
     goto start_loop; // Repeat the loop
 
 end_loop:
