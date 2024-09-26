@@ -35,6 +35,8 @@ extra_css:
 extra_javascript:
   - js/custom.js
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
+  - js/mathjax.js # mathjax
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js # mathjax
 plugins:
   - social
   - search
@@ -70,6 +72,8 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.arithmatex: # mathjax
+      generic: true
 copyright: |
   &copy; Create by <a href=""  target="_blank" rel="noopener">Jieum.C</a> in 2024 ♥ 
 nav:
