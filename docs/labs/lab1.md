@@ -340,7 +340,6 @@ int main() {
         ```
 2. `minpath <v1> <v2>`
     - 計算 $V_1$ 和 $V_2$ 之間的**最短路徑**的距離，輸出為一個自然數 $N$
-    - 如果 $V_1$ 和 $V_2$ 不存在路徑的話，則輸出 $-1$
 3. `mst`
     - 輸出 Graph 的 Minimal-Spanning Tree 的所有 edge 的 weighted-sum
     - 輸出為一個自然數 $N > 0$
