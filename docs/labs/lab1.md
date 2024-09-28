@@ -81,56 +81,58 @@ Compile 的這個過程，就是把 C Code 轉換成 Assembly 的過程，所以
 但是，**因為 C 語言同時兼具高階語言和低階語言的特性**，也就是說，C 語言有相對抽象的語法，例如 For-loop Statement、if-else Statement、Structure、Function ... 等等的語法可以使用，卻也同時有低階語言的特性，例如 C 語言可以透過指標直接對記憶體進行存取。
 利用這個特性，我們可以避開對 ISA 內容的了解，卻也可以解釋 Compiler 的職責到底是什麼。
 
-```cpp linenums="1"
-#include <stdio.h>
-int main() {
-    int array[5] = {10, 20, 30, 40, 50};
-
-    // Using a for-loop to access and print array elements
-    for (int i = 0; i < 5; i++) {
-        printf("%d\n", array[i]);
+=== "High-Level C"
+    ```cpp linenums="1"
+    #include <stdio.h>
+    int main() {
+        int array[5] = {10, 20, 30, 40, 50};
+    
+        // Using a for-loop to access and print array elements
+        for (int i = 0; i < 5; i++) {
+            printf("%d\n", array[i]);
+        }
+        return 0;
     }
-    return 0;
-}
-```
+    ```        
+=== "Low-Level C"
+    ```cpp linenums="1"
+    #include <stdio.h>
+        int *ptr = alloca(sizeof(int) * 5); // allocate a memory space for integer array
+        *(ptr) = 10;
+        *(ptr + 1) = 20;
+        *(ptr + 2) = 30;
+        *(ptr + 3) = 40;
+        *(ptr + 4) = 50;
+        int i = 0; // loop index
+    
+    start_loop:
+        if (i >= 5) goto end_loop; // Check loop condition
+        i++; // increase loop index  
+        printf("%d\n", *(ptr + i)); // Access the array element using pointer arithmetic
+        goto start_loop; // Repeat the loop
+    
+    end_loop:
+        return 0;
+    }
+    ```
 
-以上面這段程式碼為例，我們主要使用到 Array 和 For-Loop 這兩個語法，這是相對高階（也就是相對抽象）的語法。但是，同樣是使用 C 語言，我們也可以換個方式撰寫，但同時達到一樣的效果。
+在 High-Level C 中，我們主要使用到 Array 和 For-Loop 這兩個語法，這是相對高階（也就是相對抽象）的語法。
+但是，同樣是使用 C 語言，我們也可以換個方式撰寫，但同時達到一樣的效果。
 
-```cpp linenums="1"
-#include <stdio.h>
-    int *ptr = alloca(sizeof(int) * 5); // allocate a memory space for integer array
-    *(ptr) = 10;
-    *(ptr + 1) = 20;
-    *(ptr + 2) = 30;
-    *(ptr + 3) = 40;
-    *(ptr + 4) = 50;
-    int i = 0; // loop index
-
-start_loop:
-    if (i >= 5) goto end_loop; // Check loop condition
-
-    printf("%d\n", *(ptr + i)); // Access the array element using pointer arithmetic
-    i++; // Increment loop index
-    goto start_loop; // Repeat the loop
-
-end_loop:
-    return 0;
-}
-```
-
-大家可以看到，經過改寫後，Array 和 For-Loop 這兩個語法都不見了，取而代之的是使用 GOTO 來達成和 For-Loop Statement 一樣的功能，和使用指標對記憶體進行操作。
+在 Low-Level C 中大家可以看到，經過改寫後，Array 和 For-Loop 這兩個語法都不見了，取而代之的是使用 GOTO 來達成和 For-Loop Statement 一樣的功能，和使用指標對記憶體進行操作。
 這是相對很低階的 C 語言寫法。（這裡的 *低階* 並不是指這樣寫很爛，而是指語法相對低階，更加接近機器所能理解的形式，而非人直覺理解的形式）
 
 其實 Compiler 所做的事情就**類似**於上面我們做的事情，改寫這段 Code，把它從相對抽象的表示方式轉換成更接近機器所能理解的指令。
 
 !!! info
-    <div style="text-align:center">
-        <img src="https://miro.medium.com/v2/resize:fit:1116/1*KmC_EtMxS5ttRKGi8VYwgg.png"><p><u>Framework of LLVM</u></p>
-    </div>
+    <figure markdown="span">
+        ![](https://miro.medium.com/v2/resize:fit:1116/1*KmC_EtMxS5ttRKGi8VYwgg.png){ width=650, align=center }
+        <gitcaption>Framework of LLVM</figcaption>
+    </figure>
 
     上面我們將高階的 C 語言寫法轉換成低階的 C 語言寫法，其實就很像是在把原語言轉換成 IR 的這個過程，Compiler 通常會基於 IR 做一系列的最佳化，讓程式碼的 Performance 更好，如圖片中的 LLVM Optimizer，然後再將經過優化的 IR 經過編譯器後端（Backend）轉換成目標語言，如 x86、ARM 或 RISC-V 的指令。至於這樣做的優點是什麼，就留給大家自行 STFW。
 
-!!! warning
+!!! question
     - 為什麼是使用 `alloca()` 而不是更常見的 `malloc()` 來動態配置記憶體呢？你知道這兩者的差異嗎？
         - Hint: 可以利用 man 指令去查，`man alloca` and `man malloc`
     - 單純使用 GOTO 可以達成和 While-Loop 或 For-Loop 上的邏輯等價（Logically Equivalent）嗎？
@@ -171,7 +173,7 @@ Assembling（組譯）的過程相較於 Compiling 簡單很多，因為經過 C
 
 ### Pointer and Multidimensional Dynamic Array
 
-!!! success
+!!! Note
     在 C 語言中，Array **本質上**就是 Pointer + Offset！你可以把 C 語言中 Array 的語法，如 `int arr[10] = {};` 這樣子的 statement 想像成**語法糖（Syntax Sugar）**。
 
 為了幫大家複習 Pointer 的概念，助教認為最好的方式是來做一個 Case Study，在這裡我們可以來探討 `int main(int argc, char** argv)`，或是 `int main(int argc, char* argv[])` 代表的到底是什麼意思？為什麼這樣寫就可以讓我們的程式接收外部參數？
@@ -188,7 +190,7 @@ $ ./test arg1 set arre
 至於 `char** argv`，其本質上就是一個 **Pointer to (Pointer to char)**。也就是說 `argv` 這個邊數本身會指向一個 Array of (Pointer to char)，而這個 Array 本身裡面的每個 element 就是一個 Pointer to char，而它們又各自都可以指向一個 string，也就是我們傳入的參數。
 
 
-!!! warning
+!!! question
     - 為什麼 `char** argv` 和 `char* argv[]` 這兩個寫法是等價（Equivalent）的？你有辦法用你對 Pointer 的理解來解釋為什麼嗎？
     - 為什麼在 C 語言中宣告 string 的時候可以用 `char* str` 來宣告呢？
 
@@ -275,7 +277,7 @@ int main() {
 
 ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/e93816db-fa75-45fe-abab-4294f80a265c.png)
 
-!!! success
+!!! Note
     請善用 `man` 指令，可以讓你即時查到很多東西，也可以練習並且養成讀英文文件的習慣。
 
 在這個 Lab 中，我們可能會用到下面這幾個 function：
@@ -353,7 +355,7 @@ int main() {
 
 ==如果 Graph Analyzer 尚未讀取檔案的話==，則 `minpath` 和 `mst` 指令都應該直接輸出 `Please read the file first` 這段文字。
 
-!!! info
+!!! note
     `[...]` 內的東西代表是可有可無的參數，而 `<...>` 內的東西代表示必要參數。
 
 !!! danger

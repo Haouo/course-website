@@ -40,8 +40,6 @@ extra_javascript:
 plugins:
   - social
   - search
-  # - markdownextradata
-  # - mkdocs-material-admonition
 extra:
   social:
     - icon: fontawesome/brands/instagram
@@ -54,9 +52,10 @@ markdown_extensions:
   - def_list
   - footnotes
   - md_in_html
+  - tables
   - pymdownx.highlight:
       anchor_linenums: true
-      line_spans: true
+      line_spans: __span 
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
@@ -66,12 +65,13 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.mark
   - pymdownx.highlight
-  - pymdownx.tabbed
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       permalink: true
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.arithmatex: # mathjax
       generic: true
 copyright: |
@@ -103,6 +103,6 @@ nav:
     - Verilog: verilog.md
     - SystemVerilog: sv.md
     - Chisel HDL: chisel.md
+    - _Verilog: _verilog.md
   - 補充資料: references.md
   # - About MkDocs: mkdocs.md
-  
