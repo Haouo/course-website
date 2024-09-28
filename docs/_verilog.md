@@ -11,10 +11,11 @@
     ![](/uploads/06aa8f3ad28bd1c1cbb134925.png)
 
 ## Gate Level
+
 - Constructing a module (by primitive gate)
     範例: Half Adder
 
-    ```verilog
+    ```verilog linenums="1"
     module HA /*module name*/ (
       input A,B,
       output S,C
