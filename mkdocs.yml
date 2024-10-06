@@ -99,9 +99,11 @@ nav:
       - Docker Tutorial: tools/docker.md
       - Markdown Tutorial: tools/markdown.md
       - Gitla& Mattermost: tools/gitlab_ov.md
+      - Useful CLI Tools: tools/cli_tools.md
   - RTL Programming:
     - Verilog: verilog.md
     - SystemVerilog: sv.md
+    - SystemVerilog Assertion (SVA): sva.md
     - Chisel HDL: chisel.md
     # - _Verilog: _verilog.md
   - 補充資料: references.md

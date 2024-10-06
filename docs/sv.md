@@ -15,4 +15,37 @@ TBD
 
 ## Migrate from Verilog to SystemVerilog
 
+### New Data-Type in SV
+
+### `typedef` and `enum`
+
+### Structures
+
+### Unions
+
+### Packages
+
+### The Change of `always` Block
+
+### `case...inside`
+
+### Unique and Priority Keywords
+
+### Interface and Modport
+
+### Others
+
+#### Ending Name
+
+#### Vector Fill Token
+
+#### Constant Variable
+
+#### Expression Size Function
+
+#### for-loop and foreach
+
+## Something about Design Verification
+
 TBD
+

@@ -1,20 +1,41 @@
 # Introduction to Verilog
 
 !!! info
-    - Contributor：TA 汎穎、TA 宜蓁
-    - Last Update：2024/09/22
+    - Contributor：TA 汎穎、TA 宜蓁、TA 峻豪
+    - Last Update：2024/10/03
+
+??? info "Update Information"
+    - 2024/09/22 初版完成
+    - 2024/10/03 大助接手修訂
 
 ---
 
+
 ## 簡介
-- 硬體描述語言(HDL), 用來描述電路的行為及架構
-    ![](/uploads/06aa8f3ad28bd1c1cbb134925.png)
+
+> Verilog HDL is a formal notation intended for use in all phases of the creation of electronic systems.
+> Because it is both machine-readable and human-readable, it supports the development,
+>  verification, synthesis, and testing of hardware designs; the communication of hardware design data; and the maintenance, modification, and procurement of hardware.
+> The primary audiences for this standard are the implementors of tools supporting the language and advanced users of the language.<br>
+> ----- [IEEE Standard for Verilog® Hardware Description Language](https://www.eg.bucknell.edu/~csci320/2016-fall/wp-content/uploads/2015/08/verilog-std-1364-2005.pdf)
+
+Verilog 最初的開發目的是提供一個語言，讓設計者可以描述和模擬硬體行為，從而加速數位電路設計的過程。
+這種語言的發展背景是基於數位電路的複雜性不斷增加，設計者需要一種高階的工具來取代手工設計與模擬。
+
+Verilog 在 1995 年成為 IEEE 1364 標準的一部分，並在 2001 年和 2005 年經過了兩次主要更新，進一步增強了語言功能。
+IEEE 1364-2005 是 Verilog 最重要的版本之一，包含了對語言的擴充，以支援更強大的建模功能、合成和驗證工具。
+
+Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是在 1980 年代由 Gateway Design Automation 公司開發，作為一種用來進行數位電路行為模擬的語言。
+當時，設計者面臨著越來越複雜的數位電路，並需要一種高階工具來進行設計的驗證和模擬。
+隨著設計工具和合成技術的進步，Verilog 開始從模擬語言逐漸演變為一個能夠描述硬體設計的語言。
+設計者不僅可以用 Verilog 進行模擬，還可以用它來描述硬體的結構和行為，並進行合成，即從 Verilog 程式碼生成實際的硬體電路。
 
 ## Gate Level
+
 - Constructing a module (by primitive gate)
     範例: Half Adder
 
-    ```verilog
+    ```verilog linenums="1"
     module HA /*module name*/ (
       input A,B,
       output S,C

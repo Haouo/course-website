@@ -3,11 +3,16 @@ window.MathJax = {
     inlineMath: [["\\(", "\\)"]],
     displayMath: [["\\[", "\\]"]],
     processEscapes: true,
-    processEnvironments: true
+    processEnvironments: true,
+    tags: 'ams',
+    packages: {'[+]': ['color']}
   },
   options: {
     ignoreHtmlClass: ".*|",
     processHtmlClass: "arithmatex"
+  },
+  loader: {
+    load: ['[tex]/color']
   }
 };
 
