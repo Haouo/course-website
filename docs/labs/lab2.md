@@ -10,7 +10,11 @@
 ## Chapter 1. Combinational Circuit - Radix-4 Booth Multiplier with Wallace Tree
 
 !!! success
-    關於 Two's Complement 的原理，**強烈**推薦閱讀：[解讀計算機編碼](https://hackmd.io/@sysprog/binary-representation#)、[模算術](https://hackmd.io/@YuRen-tw/modular-arithmetic)
+    關於 Two's Complement 的原理，**強烈**推薦閱讀這些資料
+
+    1. [解讀計算機編碼](https://hackmd.io/@sysprog/binary-representation#)
+    2. [模算術](https://hackmd.io/@YuRen-tw/modular-arithmetic)
+    3. CS:APP3e Chapter 2. Representing and Manipulating Information
 
 
 ### Two's Complement Binary to Decimal Number
@@ -289,15 +293,18 @@ Wallace Tree 的核心精神就是利用 Carry-Save Adder 的 **3-to-2 Compressi
 
 ### UART Hardware Architecture
 
-UART 是一種傳輸介面，他的特色就是只要透過一跟導線，即把 Transmitter 的 **TX** 和 Receiver 的 **RX** 連接，即可完成資料的傳輸，成本極低，並且不需要 Clock 的同步訊號。並且，在傳輸方式上，還可以分為**單工（Simplex）**、**半雙工（Half-Duplex）** 和**全雙工（Full-Duplex）**。
+UART 是一種傳輸介面，他的特色就是只要透過一跟導線，即把 Transmitter 的 **TX** 和 Receiver 的 **RX** 連接，即可完成資料的傳輸，成本極低，並且不需要 Clock 的同步訊號。
+並且，在傳輸方式上，還可以分為**單工（Simplex）**、**半雙工（Half-Duplex）** 和**全雙工（Full-Duplex）**。
 
-由於 Transmitter 和 Receiver 之間沒有 Clock 訊號來進行同步，因此，收發雙方之間必須約定好以一個固定的頻率（**Buad Rate**）來進行傳輸。如果雙方的 Buad Rate 不同，則 Receiver 在採樣（Sampling）上就會出現問題，而無法接收到正確的資料。
+由於 Transmitter 和 Receiver 之間沒有 Clock 訊號來進行同步，因此，收發雙方之間必須約定好以一個固定的頻率（**Buad Rate**）來進行傳輸。
+如果雙方的 Buad Rate 不同，則 Receiver 在採樣（Sampling）上就會出現問題，而無法接收到正確的資料。
 
 <figure markdown="span">
     ![](https://vanhunteradams.com/Protocols/UART/uart_hardware.png){ align="center" }
 </figure>
 
-如上圖所示，兩個 UART 模組的 TX-RX 交錯相接，可以實現半雙工的傳輸方式，即在單一時間內，Device 1 可以向 Device 2 傳送資料，或是 Device 2 向 Device 1 傳送資料。但是在這次 Lab 的實作中，我們只實作單一的 Transmitter 和單一的 Receiver，所以在 Transmitter Module 上只會有一個 TX Output Port，而在 Receiver Module 上只會有一個 RX Input Port。
+如上圖所示，兩個 UART 模組的 TX-RX 交錯相接，可以實現半雙工的傳輸方式，即在單一時間內，Device 1 可以向 Device 2 傳送資料，或是 Device 2 向 Device 1 傳送資料。
+但是在這次 Lab 的實作中，我們只實作單一的 Transmitter 和單一的 Receiver，所以在 Transmitter Module 上只會有一個 TX Output Port 和 Receiver 連接，而在 Receiver Module 上只會有一個 RX Input Port 和 Transmitter 連接，其他的 Input/Output 都是提供給 test-bench 使用。
 
 上面我們只介紹的 UART 的硬體傳輸**介面**，但是傳輸資料不但需要收發器硬體本身，也需要規範所謂的**傳輸協議**。
 
@@ -309,9 +316,8 @@ UART 是一種傳輸介面，他的特色就是只要透過一跟導線，即把
 
 UART 在 Idel 狀態的時候，Transmitter 會把 TX 訊號保持在 1（Logical High），當 Transmitter 決定開始傳輸資料的時候，就會把 TX 往下拉變成 0（Logic-Low），稱為 **Start Bit**。Start Bit 後面會緊接著一個 Data Packet，由 8-bits 組成（也就是一個 byte），Data Packet 由 LSB 開始傳送，一直到把 MSB 傳送完畢之後，最後再接著 Stop Bit。
 
-:::danger
-請特別注意，Start Bit 為 Logic-Low，而 Stop Bit 為 Logic High。
-:::
+!!! danger
+    請特別注意，Start Bit 為 Logic-Low，而 Stop Bit 為 Logic High。
 
 <!-- ### ASCII Encoding
 
