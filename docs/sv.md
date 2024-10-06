@@ -49,6 +49,3 @@ TBD
 
 TBD
 
-### SystemVerilog Assertion (SVA)
-
-TBD

@@ -4,11 +4,15 @@ window.MathJax = {
     displayMath: [["\\[", "\\]"]],
     processEscapes: true,
     processEnvironments: true,
-    tags: 'ams'
+    tags: 'ams',
+    packages: {'[+]': ['color']}
   },
   options: {
     ignoreHtmlClass: ".*|",
     processHtmlClass: "arithmatex"
+  },
+  loader: {
+    load: ['[tex]/color']
   }
 };
 

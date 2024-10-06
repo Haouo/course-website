@@ -14,4 +14,6 @@ Mattermost 是搭配 Gitlab 使用的通訊軟體，本學期 Lab 討論區使�
 
 ## 如何繳交作業 & 作業批改方式
 
-TBD
+這學期批改作業的方式採用 Gitlab CI/CD Pipeline，助教會提供一個 YAML 檔案叫做 `.gitlab-ci.yml`（注意因為檔案名稱開頭的 `.` 所以會變成隱藏檔案）。
+基本上大家可以把 CI/CD Pipeline 想像承自動化的腳本，只不過其執行結果會即時顯示在 Gitlab 上的你的 Repository 中。
+**為了觸發 Pipeline，大家務必把這個 YAML 檔案放進自己的 Private Repo. 中。**
