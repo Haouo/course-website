@@ -1,516 +1,439 @@
-# RTL Programming Review using SystemVerilog
+# Lab 2 - Simple RISC-V ISA Simulator with RV64I
 
 !!! info
-    - Contributors：TA 汎穎、TA 宜蓁、TA 卉蓁、TA 峻豪
-    - Deadline : ==2024/XX/XX==
-    - Last updated : 2024/XX/XX
-
----
-
-## Chapter 1. Combinational Circuit - Radix-4 Booth Multiplier with Wallace Tree
+    - Contributors：TA 峻豪
+    - Last Update：2024/10/09
 
 !!! success
-    關於 Two's Complement 的原理，**強烈**推薦閱讀這些資料
+    如果你想要讀到關於 RISC-V 最原始的資訊和定義的話，請閱讀 RISC-V ISA 規格書（Specifications）
 
-    1. [解讀計算機編碼](https://hackmd.io/@sysprog/binary-representation#)
-    2. [模算術](https://hackmd.io/@YuRen-tw/modular-arithmetic)
-    3. CS:APP3e Chapter 2. Representing and Manipulating Information
+    1. [RISC-V ISA Specifications Volume 1, Unprivileged Specification version 20240411](https://drive.google.com/file/d/1uviu1nH-tScFfgrovvFCrj7Omv8tFtkp/view?usp=drive_link)
+    2. [RISC-V ISA Specifications Volume 2, Privileged Specification version 20240411](https://drive.google.com/file/d/17GeetSnT5wW3xNuAHI95-SI1gPGd5sJ_/view?usp=drive_link)
 
+    但**這門課並不會涉及到 Privileged Architecture（特權架構）的內容**
 
-### Two's Complement Binary to Decimal Number
+## What is Computer？
 
-通常在數位電路上實作有號數整數運算的時候，我們會使用 Two's Complement 來表示一個有號數，但你有沒有想過一個 n-bits 的有號數如何被系統性地轉換成十進位（Decimal）？
-
-假設我們有一個 n-bits 的二進位數 $X_{\text{two}} = a_{n-1}a_{n-2}...a_0$，並且 $X_{\text{two}}$ 以二補數表示，則我們可以將其透過下面的公式轉換成十進位。
-
-$$
-\begin{equation}
-X_{\text{ten}} = -a_{n-1} \times 2^{n-1} + \sum_{i=0}^{n-2}a_{i} \times 2^i
-\end{equation}
-$$
-
-接下來，我們將基於這個公式來推導有號數乘法（Signed Multiplication）。
-
-### Signed Multiplication with Baugh-Wooley Algorithm and Array Multiplier
-
-!!! note
-    在 Binary Operation 中，乘以 $2^{n}$ 代表左移 n bits（LSB補零）。至於右移操作，則必須要先區分是 Arithmetic Right-Shift 或是 Logical Right-Shift 來決定 MSB 要補 Sign-Bit 還是無條件補 0。
-    如果是對一個 Signed Number 除以 $2^n$ 的話，則需要進行 Arithmetically Right-Shift，也就是必須要在 MSB 的部分補上 Sign-Bit。
-    如果是對 Unsigned Number 除以 $2^n$ 的話，則要在 MSB 補零，也就是 Logically Right-Shfit。
-
-
-!!! info
-    提出 Baugh-Wooley Algorithm 的論文：[C. R. Baugh and B. A. Wooley, "A Two's Complement Parallel Array Multiplication Algorithm," in IEEE Transactions on Computers, vol. C-22, no. 12, pp. 1045-1047, Dec. 1973](https://ieeexplore.ieee.org/document/1672241)
-
-假設我們有兩個 n-bits 的有號數（Signed NUmber）$X[n-1 : 0]$ 和 $Y[n-1:0]$，如果我們想要將他們相乘，則可以表示為以下形式：
-
-$$
-\begin{equation}
-X \times \{\textcolor{red}{-}(Y_{n-1} \times 2^{n-1}) + (Y_{n-2} \times 2^{n-2}) + (Y_{n-3} \times 2^{n-3}) + ... + (Y_1 \times 2^1) + (Y_0 \times 2^0)\}
-\end{equation}
-$$
-
-將 $X$ 乘入之後，再將 n 個**部分積**（**Partial Product**）加起來，就可以得到最終的結果。
-
-==注意到，在有號數乘法當中，我們本來應該要對 Partial Product 進行 Sign-Extension 之後才能加總，否則會出錯==。
-但是，處理 Sign-Extension 的部分會增加電路複雜度。因此，我們可以利用 **Baugh-Wooley Algorithm** 來簡化運算過程，透過特殊的技巧使我們可以不用處理 Sign-Extension 的部分。
-假設我們有兩個數 $X[n-1:0]$ 和 $Y[m-1:0]$ 要相乘，則應表示為：
-
-$$
-\begin{equation}
-X \times Y = (-x_{n-1} \times 2^{n-1} + \sum_{i=0}^{n-2} x_i \times 2^i) \times (-y_{m-1} \times 2^{m-1} + \sum_{i=0}^{m-2} y_i \times 2^i) = (x_{n-1}y_{m-1} \times 2^{n+m-2} + \sum_{i=0}^{n-2} \sum_{j=0}^{m-2} x_i y_j \times 2^{i+j}) - (2^{n-1} \times \sum_{i=0}^{m-2} x_{n-1}y_i \times 2^{i} + 2^{m-1} \times \sum_{i=0}^{n-2} y_{m-1}x_i \times 2^{i})
-\end{equation}
-$$
-
-我們可以把上面的算式對應到下面的直式運算，特別注意到最後兩個 row 是減法運算，而非加法運算。
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/cffad08d-6e51-4f45-baae-9d021e74c169.png)
-
-有沒有什麼方式可以將算式變形？利用二補數的原理，比起減去一個數，**我們可以加上這個數的二補數**，對於一個數 $Z = z_{n-1}z_{n-2}...z_0$，其二補數可以表示為：
-
-$$
--Z = -\overline{z_{i-1}} \times 2^{n} + \sum_{i=0}^{n-1} \bar{z_i} \times 2^i + 1
-$$
-
-於是對於
-
-$$
-\begin{equation}
-\textcolor{red}{-}2^{n-1} \times (-0 \times 2^m + 0 \times  2^{m-1} + \sum_{i=0}^{m-2} x_{n-1}y_i \times 2^i)
-\end{equation}
-$$
-
-可以改寫成
-
-$$
-\begin{equation}
-\textcolor{red}{+}2^{n-1} \times (-1 \times 2^m + 1 \times  2^{m-1} + \sum_{i=0}^{m-2} \overline{x_{n-1}y_i} \times 2^i + 1)
-\end{equation}
-$$
-
-於是，我們將 $X \times Y$ 改寫成
-
-$$
-\begin{equation}
-X \times Y = x_{n-1}y_{m-1} \times 2^{n+m-2} + \sum_{i=0}^{n-2} \sum_{j=0}^{m-2} x_iy_j \times 2^{i+j} + 2^{n-1} \times (-2^m + 2^{m-1} + \sum_{i=0}^{m-2}\overline{x_{n-1}y_i} \times 2^i) +\\ 2^{m-1} \times (-2^n + 2^{n-1} + \sum_{i=0}^{n-2}\overline{y_{m-1}x_i} \times 2^i)
-\end{equation}
-$$
-
-針對 $-2^m + 2^{m-1} + \sum_{i=0}^{m-2}\overline{x_{n-1}y_i} \times 2^i$，我們進一步變形
-
-> Ps：大家可以把 $x_{n-1}$ 等於 0 和 1 分別代入即可確認兩者是等價的
-
-$$
-\begin{equation}
--2^m + 2^{m-1} + \sum_{i=0}^{m-2}\overline{x_{n-1}y_i} \times 2^i = -2^m + 2^{m-1} + \overline{x_{n-1}} \times 2^{m-1} + \overline{x_{n-1}} + \sum_{i=0}^{m-2} x_{n-1}\bar{y_{i}} \times 2^i
-\end{equation}
-$$
-
-做這步驟的是因為，我們把原本的 $\overline{x_{n-1}y_i}$ 變成了 $x_{n-1}\bar{y}_{i}$，就可以把電路中本來需要的 NAND Gate 變成 NOT Gate。最終，我們再次將算式對應到下面的直式運算
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/2018dcf7-b206-43a9-a92b-eb5c924f8bcf.png)
-
-上述是最原始的 Baugh-Wooley Algorithm，好處是只要把某些 term 做 NOT 運算之後，即可把所有的 Partial Products 都視為 Posotive，不用特別的減法電路來進行運算。但我們目前採用的通常都是 ==Modified Baugh-Wooley Algorithm==，以 4-bits 乘法為例：
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/34e03dcb-1fa4-4cf4-8059-6b2fe2d31ebc.png)
-
-我們將上圖的運算過程對應（Mapping）到電路，得到如下圖的電路，稱為**陣列乘法器（Array Multiplier）**：
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/ae3edcd1-9eed-42c6-9faa-7a82416a0452.png)
-
-> 圖片來源：[link](https://www.researchgate.net/profile/Kailiang-Chen/publication/42437163/figure/fig21/AS:669375262650375@1536602907079/4-The-block-diagram-of-a-4-bit-signed-multiplier.ppm)
-
-此外，有幾個重點我們要注意
-
-1. 每一列都是 Ripple-Carry Adder（RCA）的架構，同一列中第 n+1 個 bit 的加法需等待第 n 個 bit 的進位（carry）算完才能進行
-2. 第一個部分積與第二個部分積相加求得和後，再與第三個部分積相加，每一列的加法都要等上一列加法**部分完成後**才能進行
-3. Critical Path 共需要經過 9 個 Adder（2 個 Half-Adder 再加上 7 個 Full-Adder），會造成乘法器有很長的 Logic Delay，尤其當 Operand 的 bit 數增加時，Critical path 與 Delay 也會隨之快速增長，這對效能會有很大的影響
-4. 和課堂上教的乘法器有一個本質的不同是，==這個 Array Multiplier 只需要一個 Clock Cycle 即可完成運算==，而課堂上所述的是 Multi-Cycle Binary Multiplier。通常在 CPU 內部，乘法器會由 Single-Cycle 的設計加上適當的 Pipeline 來使其 Critical Path 不會太長，同時又可以在數個 cycle 內即可完成整數乘法運算
-
-!!! warning
-    請特別注意圖片上某些 AND Gate 的 Output 其實有一個小圓點，所以是 NAND Gate
-
-為了提升乘法器的效能，我們接下來要探討兩種優化乘法器電路的演算法，分別是 Booth Algorithm 和 Wallace Tree Adder。Booth Algorithm 的目的在於**減少部分積的數量**，而 Wallace Tree 的目的在於**將多個加法平行化**。
-
-### Radix-4 Booth Algorithm
-
-!!! info
-    當年提出 Booth Algorithm 的論文：[Booth, Andrew Donald. “A SIGNED BINARY MULTIPLICATION TECHNIQUE.” Quarterly Journal of Mechanics and Applied Mathematics 4 (1951): 236-240.](https://academic.oup.com/qjmam/article/4/2/236/1874893?login=true)
-
-!!! note
-    大家在課堂上學到的  Booth Algorithm 是 Radix-2 Booth Algorithm，這裡的 Radix-4 只是 Radix-2 的推廣而已，可以讓 Partial Product 的數量更少，但代價就是 Encoding 電路更複雜，因為 Sliding Window 會更大，並且也會有更多種 Encoding 的結果。
-
-將算式 (1) 進一步變形，我們可以得到以下形式：
-
-$$
-\begin{equation}
-X \times \{(-2 \times Y_{n-1} + Y_{n-2} + \times Y_{n-3})\times 2^{n-2} + (-2 \times Y_{n-3} + Y_{n-4} + Y_{n-5})\times 2^{n-4} +\\ (-2 \times Y_{n-5} + Y_{n-6} + Y_{n-7})\times 2^{n-6} + ... + (-2 \times Y_3 + Y_2 + Y_1) \times 2^2 + (-2 \times Y_1 + Y_0 + \times \textcolor{red}{Y_{-1}})\times 2^0 \} 
-\end{equation}
-$$
-
-特別注意的是，實際上 $Y_{-1}$ 這項並不存在，因為 $Y$ 是從 $Y_0$ 開始的，會多出 $Y_{-1}$ 這項只是因為我們想要讓每對小括號中都有三個 term 而已。**所以 $Y_{-1}$ 視為 0**，這樣就不會改變原本算式的結果。
-
-上面的算式其實**暗示**了我們一個技巧，就是我們可以以 3-bits 為一組來檢設 $Y[n-1:0]$ 中的每個 bits，所以我們會看到：
-
-$$
-\begin{equation}
--2 \times Y_{i+1} + Y_i + Y_{i-1}
-\end{equation}
-$$
-
-上面的算式總共會有五種可能，分別是 $-2$、$-1$、$0$、$1$ 和 $2$，我們可以將這種形式對應到下面的 Booth 編碼，這種編碼稱為 **Radix-4 Booth Encoding**。
-
-基於 Booth Encoding 的思想，我們就可以建構出一個 Booth Encoder 電路，這個電路會有兩個輸入，分別是 $X$ 和 $Y[i+1:i-1]$，根據 $Y[n+1:n-1]$ 的數值，配合 Radix-4 Booth Encoding 乘上 $X$ 之後得到一個 Partial Product。對於 n-bits 乘以 n-bits 的乘法器為例，我們只要建構出 $\frac{n}{2}$ 個 Booth Encoder，再配合上適當地 Left-Shift（因為還要乘以 $2^n$）即可得到所有的 Partial Products。
-
-| $Y_{i+1}$ | $Y_i$ | $Y_{i-1}$ |編碼（$X \times (-2 \times Y_{i+1} + Y_i~ + Y_{i-1})$）|
-| :-- | :-- |:--|:--|
-|0|0|0|$0$|
-|0|0|1|$X$|
-|0|1|0|$X$|
-|0|1|1|$2X$|
-|1|0|0|$-2X$|
-|1|0|1|$-X$|
-|1|1|0|$-X$|
-|1|1|1|$0$|
-
-最後，我們只要將 $\frac{n}{2}$ 個 Partial Products **加總**，就可以得到 $X[n-1:0] \times Y[n-1:0]$ 的結果。
-
-如果以 n 等於 64 為例，使用 Array Multiplier 進行 64-bits 的整數乘法，會需要加總 64 個 Partial Product。但是，當我們使用 Radix-4 Booth Algorithm 先將乘數進行適當編碼之後，只要加總 $64 \div 2 = 32$ 個 Partial Products，數量整整少了一半！
-
-但是要把 32 個數字**依序**相加依然非常耗費時間，我們可以再藉由 Wallace Tree 的技巧將多數相加的過程**平行化（Parallelize）**，藉此加速運算。
-
-### Wallace Tree
-
-!!! info
-    當年提出 Wallace Tree 的論文：[C. S. Wallace, "A Suggestion for a Fast Multiplier," in IEEE Transactions on Electronic Computers, vol. EC-13, no. 1, pp. 14-17](https://ieeexplore.ieee.org/document/4038071)
-
-如果要介紹 Wallace Tree 的話，我們必須先知道什麼是 **Carry-Save Adder**（CSA）。當我們在做**三個**數字的相加的時候，CSA 就會特別有優勢，我們用下面的電路來解釋。
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/2b0ed07d-e147-445d-9aa5-f852e90e2d90.png)
-
-這是我們只使用 RCA 來進行三個數字的相加時，所使用的電路架構，如果分析其 Critical Path 的話，我們可以計算出其為五個 FA Delay 加上一個 HA Delay。但是當我們改成使用一級 CSA 加上一級 RCA 的時候，其 Critical Path 就會變成五個 FA Delay。可以看到使用 CSA + RCA 的混合加法器架構對於**三個以上**的整數相加的時候，會更有速度上的優勢。雖然以三個數相加來看，好像只進步一點點，不過在多個數相加的時候，CSA + RCA 的優勢就會越來越明顯，而這正是我們接下來要介紹的 **Wallace Tree**。
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/78fe0707-0b21-4486-a1d4-e5a6b91fec9a.png)
-
-Wallace Tree 的核心精神就是利用 Carry-Save Adder 的 **3-to-2 Compression** 特性，逐步將 summands 減少，一直到剩下兩個 summands 的時候，就可以使用 Ripple-Carry Adder，或甚至使用 Carry-Lookahead Adder 將兩個 summands 相加，得到最終乘法的結果。Wallace Tree 之所以可以加速多個數字的加法運算在於其將多個 summands 的**加法平行化**。
-
-大家在上面的 Adder Tree 架構中，看到的每個小長方形的 Adder 就是 Carry-Save Adder。單一一個 CSA 的架構是將多個 Full-Adder 平行排列，**並且不將 FA 之間的 Carry-in、Carry-Out 連接起來**，取而代之的是 FA 的 Sum 和 Carry-Out 都會變成獨立的輸出。
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/6cb9a3da-c42c-4aa8-8125-cb48611d47d2.png)
-
-上圖是經典的 Ripple-Carry Adder 結構，每個 FA 之間的 Cin 和 Cout 會互相連接。但是下圖則使用了兩級的 CSA 和一級的 RCA 來進行求和運算，大家可以看到在上面兩級的 CSA 中，每個 FA 的 Cout 反而是接到下一級 CSA 中的 FA 的輸入，而非接到同一級的 FA 的 Cin。（Ps：同一個水平上的 FA 視為同一級，same stage）
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/d05930a5-699c-4cfb-afab-74fa4b8e656a.png)
-
-### Assignment Part 1 - Fast Single-Cycle Multiplier Design
-
-在 Assignment Part 1 的部分，大家需要實作一個**單週期、支援兩個 64-bits 有號數相乘的乘法器**，並且使用 Radix-4 Booth Algorithm 加上 Wallace Tree。
-大家可以參考以下架構去實作：
-
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/d6ba0ef6-8ef7-4d6c-858b-11cb7d65eb35.png)
-
-1. Booth
-    ```verilog linenums="1"
-    module Booth(
-        input [127:0] x,                //multiplicand
-        input [2:0] y_3,        //multiplier
-
-        output reg [127:0] p        //partial product
-    );
-    //your code here
-    
-    endmodule
-    ```
-    做Radix-4 Booth Encoding, 產生Partial Product
-2. Partial_prod
-    ```verilog linenums="1"
-    module Partial_prod(
-        input [127:0] x, y,
-        output reg [127:0] p_out[31:0]
-    );
-    //your code here
-        
-    endmodule
-    ```
-    將32個Booth封裝成一個module。
-    hint：要注意各Partial product的位數, 也就是（*式2*） 中各項的2^次方^
-3. Switch
-    ```verilog linenums="1"
-    module Switch(
-        input [127:0] p_in [31:0],
-        output reg [31:0] p_out [127:0]//p0~ p127
-    );
-    //your code here
-        
-    endmodule
-    ```
-    純接線, 將32個128bits的Partial product轉成128個32bits的輸出
-4. Wallace32
-    ```verilog linenums="1"
-    module Wallace32(
-        input [31:0] in,
-        input [28:0] cin,
-        output s,cout,
-        output [28:0] cout_group
-    );
-    //your code here
-        
-    endmodule
-    ```
-    Wallace tree, 將同一乘積位的32bits、上一個乘積位傳入的cin相加, 以下是參考架構
-
-    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/c7e44883-a642-4d4d-b63f-f33f2f435d7a.png)
-5. Wtree
-    ```verilog
-    module Wtree(
-        input [31:0] in [127:0],
-        output [127:0] s, c
-    );
-        //your code here
-        
-    endmodule
-    ```
-    封裝128個不同乘積位的Wallace Tree
-6. Adder<br>
-   將Wtree的c、s相加（直接用加號即可, 不用自己撰寫128'的加法器） 
-7. Top
-    ```verilog linenums="1"
-    module Top(
-        input [63:0]x, y,
-        output [127:0] out
-    );
-        //your code here
-        
-    endmodule
-    ```
-    連接每個module<br>
-    ==top module請務必遵守以下規範(注意大小寫)：==<br>
-    - 檔名：Top.sv
-    - module 名稱： Top
-    - I/O ports名稱及位寬皆不能更動
-
-## Chapter 2. Universal Asynchronous Receiver/Transmitter (UART)
-
-### UART Hardware Architecture
-
-UART 是一種傳輸介面，他的特色就是只要透過一跟導線，即把 Transmitter 的 **TX** 和 Receiver 的 **RX** 連接，即可完成資料的傳輸，成本極低，並且不需要 Clock 的同步訊號。
-並且，在傳輸方式上，還可以分為**單工（Simplex）**、**半雙工（Half-Duplex）** 和**全雙工（Full-Duplex）**。
-
-由於 Transmitter 和 Receiver 之間沒有 Clock 訊號來進行同步，因此，收發雙方之間必須約定好以一個固定的頻率（**Buad Rate**）來進行傳輸。
-如果雙方的 Buad Rate 不同，則 Receiver 在採樣（Sampling）上就會出現問題，而無法接收到正確的資料。
+讓我們來看看電腦最基本的抽象結構（Abstraction Layers）：
 
 <figure markdown="span">
-    ![](https://vanhunteradams.com/Protocols/UART/uart_hardware.png){ align="center" }
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/ebbb6441-034a-436d-bdcb-767b511648a1.png){ width=500 }
 </figure>
 
-如上圖所示，兩個 UART 模組的 TX-RX 交錯相接，可以實現半雙工的傳輸方式，即在單一時間內，Device 1 可以向 Device 2 傳送資料，或是 Device 2 向 Device 1 傳送資料。
-但是在這次 Lab 的實作中，我們只實作單一的 Transmitter 和單一的 Receiver，所以在 Transmitter Module 上只會有一個 TX Output Port 和 Receiver 連接，而在 Receiver Module 上只會有一個 RX Input Port 和 Transmitter 連接，其他的 Input/Output 都是提供給 test-bench 使用。
+大家應該有注意到我們上課使用的課本 *Computer Organization and Design RISC-V Edition: The Hardware Software Interface, 2/e*（也就是我們常說的算盤書），書名上的副標題是『==The Hardware Software Interface==』，想必這句話作為書本的副標題，一定有著舉足輕重的地位。那麼，這句話到底代表著什麼？
 
-上面我們只介紹的 UART 的硬體傳輸**介面**，但是傳輸資料不但需要收發器硬體本身，也需要規範所謂的**傳輸協議**。
+我們在目前的階段先忽略作業系統（Operating System）的部分，基本上 Program 也就是我們所說的 **Software**，而 Processor，又或是說 Central Processing Unit（CPU）就是我們所說的 **Hardware**。
+而介於 Software 和 Hardware 之間，特別的部分，就是 Instruction-Set Architecture（ISA）。
 
-### Serial Communication Protocol
+我們所撰寫的程式（e.g. C 語言），是相對高階並且抽象的語言，接近人類所能理解的**自然語言**，這些東西如果直接丟給 CPU 去看的話，CPU 是看不懂你寫的 C 程式的，也因此上一個 Lab 我們介紹了 Compiler 的 Compilation Flow 和 GCC 的基本概念，只不過 Compiler 並不是計算機組織這堂課要討論的重點。
+而在這個 Lab，我們將進入這堂課的重點之一，也就是 ISA 的部分。
+
+ISA（Instruction-Set Architecture），基本上定義了一系列 CPU 應該要支援的指令以及對應的具體行為，確保軟體和硬體之間有一個可以相互配合的介面（Interface）。
+所有在計算機系統中的軟體，最終都必須要被轉換成該系統中 CPU 所實作的 ISA 的指令，才能夠順利地運作在系統之中。
+
+基本上，在計算機科學中，**抽象（Abstraction）**是一個非常重要的概念和技巧，ISA 其實就是一種抽象層的設計和應用。有了 ISA 的制定，如 RISC-V，程式設計師（e.g., 系統軟體）可以不用理解底層硬體的細節，只需要掌握 ISA 內所定義的指令，便可以撰寫程式。
+而設計 CPU 架構的硬體架構師也不必過於關注在 ISA 之上，更高層次的 Software Stack 是如何被制定，只需要專注在 ISA-Level 的實作即可。
+
+有了 Abstraction Layer 的概念，我們可以使計算機系統中每個重要的部分**解耦合（Decoupling）**，讓我們可以專注在個別的部分，例如 CPU 設計，又或者是作業系統等等系統軟體的設計本身，而不是全部都混雜在一起。
+但是藉由 ISA 這種 Abstraction Layer 的連結，程式設計師和硬體架構師之間依然有**合適的溝通橋樑**。
+
+### From the Perspective of Finite-Satte-Machine (FSM)
+
+我們也可以從有限狀態機的觀點來看整個計算機系統的運作。基本上，Program 可以被視為式一個巨大的狀態機 $S = <\mathbf{V}, \text{PC}>$，其中 $\mathbf{V} = \{v_1, v_2, v_3, ..., v_n\}$，為整個程式中所擁有的所有變數（Variable）。
+至於你在 Source Code 中的每個 statements，t額可以被稱為是 **Activation Event**，它會導致 Program 的狀態改變，有可能是 $\mathbf{V}$ 改變，可能是 $\text{PC}$ 改變，或是兩者都改變。
+至於這些 C 語言程式原始碼中的 Statement 是根據什麼樣的規則來改變 $S$，這就是由 C 語言標準（C Standard Revision, e.g., ISO C90）來制定。
 
 <figure markdown="span">
-    ![](https://www.amebaiot.com/wp-content/uploads/2017/05/u1.png)
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a3eb3a74-1333-48db-a207-092b957543ef.png){ width=900 }
 </figure>
 
-UART 在 Idel 狀態的時候，Transmitter 會把 TX 訊號保持在 1（Logical High），當 Transmitter 決定開始傳輸資料的時候，就會把 TX 往下拉變成 0（Logic-Low），稱為 **Start Bit**。Start Bit 後面會緊接著一個 Data Packet，由 8-bits 組成（也就是一個 byte），Data Packet 由 LSB 開始傳送，一直到把 MSB 傳送完畢之後，最後再接著 Stop Bit。
+除了我們可以將 Software（Program）視為是一個 FSM，Processor（CPU）本質上也是一個巨大的 FSM。Processor 的狀態 $S$ 可以被定義為一個集合 $S = \{\text{Values in memory elements}\}$。
 
-!!! danger
-    請特別注意，Start Bit 為 Logic-Low，而 Stop Bit 為 Logic High。
+<figure markdown="span">
+    ![](https://media.geeksforgeeks.org/wp-content/uploads/1111-1.png){ width=500 }
+</figure>
 
-<!-- ### ASCII Encoding
+而 ISA 中定義的每條指令，其實就是 CPU 的狀態 $S$ 的 Activation Event，也就是**指令會導致 CPU 的狀態發生改變**。
 
-具體來說，有了 UART 的硬體和傳輸協議之後，那我們到底要傳輸什麼呢？如果我們不去定義資料的編碼格式（Encoding），那麼我們接收的資料只不過就是一堆 0 和 1 而已，並沒有任何意義。因此，我們必須要先講清楚我們到底**如何解讀資料**。
+## Introduction to RISC-V Instruction-Set Architecture (ISA)
 
-因為我們剛好使用 8-bits 作為一個 Data Packet，因此我們可以使用 **ASCII** 作為資料的編碼格式。在 ASCII 中分為**控制字元**和**可顯示字元**，在 Lab 2 當中，我們不會使用到控制字元，因此我們只需要關注可顯示字元即可。
+RISC-V 被歸類為 RISC（Reduced Instruction Set Computer）指令集架構，與之相對的是 CISC（Complex Instruction Set Computer）。
+CISC 的代表人物便是在桌上型電腦、伺服器上常見的 x86 架構，而 RISC 架構除了 RISC-V 以外，最常見的便是 ARM，ARM 在手機、嵌入式應用市場中有重要的地位。
 
-![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/236d1bb1-0f25-46da-9d79-0dbba5bf5f1d.png)
+必須要強調的是，RISC 和 CISC 並沒有明確的定義，不過相較於 CISC 架構，RISC 架構的指令集**通常**有以下的特色：
 
-除此之外，ASCII 只使用 7-bits 來傳輸，因此在 UART 傳輸的 8-bits Data Packet 當中，MSB 可以忽略，當作 Don't Care。-->
+1. 指令的長度**固定**且編碼格式較單純
+2. 每條指令所需要完成的任務較為單一（也可以想像成指令的功能比較簡單）<br>
+  > 在 CISC 架構如 x86 中，單一一條 CISC 指令通常都會被轉換成多條 µOp（micro-operation）指令，而其中 µOp 其實就比較接近 RISC 指令
+3. **指令通常不會直接操作 Main Memory**，而是藉由 Memory Accessing Instruction 如 Load/Store 指令來存取記憶體
 
-### Assignment Part 2 - UART Module Design
+RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 
-這個部分的實作會由三個部分組成，分別是 `transmitter.sv`、`receiver.sv` 還有 tset-bench。需要完成的是前兩個 SystemVerilog Code，而 test-bench 會將兩份 Transmitter 和 Receiver 拿來接線使用，給予 & 檢查回傳 message。
+1. 如果要要使用 ARM 進行商業行為需要取得授權（就是要付錢），但 RISC-V 是開源（Open-Source）的，就是免費的意思
+2. RISC-V 是模組化的設計，最小可以只包含 Base Integer Instruction Set
+3. RISC-V 的指令相較於 ARM 依然更為簡單<br>
+  > 許多 ARM 的 CPU 設計依然會把 ARM 的指令轉換成多個 µOp 才去執行
 
->抱歉程式可能寫的不是非常漂亮，歡迎各位多多指教!當然，這只是一個參考模板，用其他架構去寫出UART也可以的!
->另外code中會盡量把每個brench都填滿，但在這堂課的驗證中不填滿應該也不會出問題(?
+## What is ISA Simulator（ISS）？
 
-1. `transmitter.sv`
-    <figure markdown="span">
-        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/8db43560-4856-4b34-95b4-4f41cbe7289c.png){ width=500 }
-    </figure>
-    在程式碼中給了兩個always block。其中一個是控制tx(輸出訊號)，另一個是控制state&bit_counter(FSM的state跳轉)與shift_reg(儲存了tx要輸出的內容)。<br>
-    <font color="#A8AAAC">start_tx是testbench給的，tx_done則是給testbench的小小外部訊號</font>
+基本上，我們可以設計一個程式，這個程式的任務很單純，就是**解讀 RISC-V 指令並且執行指令對應的功能**。
 
-    ```verilog linenums="1"
-    always @(posedge clk or posedge reset) begin
-        if(reset) begin
-            ...
-            tx_done <= 1'b0;
-        end else begin
-            case (state)
-                IDLE: begin
-                    ...
-                    tx_done <= 1'b0;
-                end
-                START: begin
-                    ...
-                    tx_done <= 1'b0;
-                end
-                DATA: begin //bit_counter 0~5
-                    ...
-                    tx_done <= 1'b0;
-                end
-                STOP: begin
-                    ...
-                    tx_done <= 1'b1;
-                end
-            endcase
-        end
-    end
-    ```
+### General Purpose Register (GPR)
+
+<figure markdown="span">
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/4f59eb46-4bd4-4522-b5b9-19292f7f5677.png)
+</figure>
+
+根據 RISC-V 規格輸的定義，在 RV64I 中擁有 32 個 64-bits 的**整數通用暫存器**，可以拿來存放資料，但是 **`$x0` 這個暫存器的數值應該永遠保持是 0**。
+
+但是，基於種種原因，我們通常會去規範所謂的 **Application Binary Interface（ABI）**，像是 RISC-V 就有自己的 RISC-V ABI（在後面的 Lab 會介紹）。ABI 會包含許多規範，其中一個就是 **ABI Mnemonic**，也就是說雖然規格書上沒有規定 x0 ~ x31 這三十二個暫存器應該被用作什麼用途，但是 ABI 其實會去規範這些暫存器**通常**會被作為何種用途使用，並且同時給它們一個方便記憶的名子，讓我們在寫 Assembly Programming 的時候可以更方便。
+
+不過在 Lab 2 我們只專注於 Processor State 的模擬，所以其實不用去關注 ABI 的細節。在實作上，我們只要確實提供 32 個暫存器讓程式可以操作即可。
+
+### How to Distinguish Instructions From Binary
+
+基本上指令被儲存在記憶體中的形式不過就是一對 0 和 1 而已，因此，我們必須要透過一些特定的方法來辨認這些 0 和 1 究竟代表著什麼意義。
+
+![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/7d7ea0d5-fc99-4143-b747-c83e3cfaf8cf.png)
+
+根據 RISC-V 規格書的描述，RISC-V Base Instruction Set 總共有四種 **Base Instruction Format**（R-Type、I-Type、S-Type、U-Type），還有兩種**根據 Immediate Format 變形**而延伸的 Format（B-Type、J-Type）。
+
+1. B-Type 由 S-Type 變形而來
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a6f5781c-6b0a-4591-9213-1d55d74056c3.png)
+2. J-Type 由 U-Type 變形而來
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/2926e916-4d42-4a0e-b581-f189f6edf245.png)
     
-    ```verilog linenums="1"
-    always @(posedge clk or posedge reset) begin
-        if(reset) begin
-            ...
-        end else begin
-            case (state)
-                IDLE: begin
-                    if(start_tx) begin
-                        ...
-                    end else begin
-                        state <= state;
-                        shift_reg <= 6'b0;
-                    end
-                    bit_counter <= 3'b000;
-                end
-                START: begin
-                    ...
-                end
-                DATA: begin //bit_counter 0~5
-                    ...
-                    if(bit_counter == 3'b101) begin
-                        ...
-                    end else begin
-                        state <= state;
-                        bit_counter <= bit_counter + 1'b1;
-                    end
-                end
-                STOP: begin
-                    ...
-                end
-            endcase
-        end
-    end
-    ```
-2. `receiver.sv`
-    <figure markdown="span">
-        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/138bee48-ad24-412f-9cec-b32de69b19e1.png){ width=500 }
-    </figure>
+基本上，最核心的部分是 OPCODE，根據 OPCODE 我們就可以先把指令**大致**分群，當我們把指令分成各個 sub-group 之後，就可以再根據 Function Code（e.g., func3、func7）來進一步區分指令到底是哪一個。下圖是 RISC-V 規格書中的 OPCODE Table：
 
-    在程式碼中給了兩個always block。其中一個是控制rx_done(輸出message)與shift_reg(接收並儲存從transmitter來的0/1訊號)，另一個是控制state&bit_counter(FSM的state跳轉)。<br>
-    <font color="#A8AAAC">rx_done是給testbench的小小外部訊號</font>
+![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/41d8ec10-13c2-433e-a7c5-20c8e24c55d6.png)
 
-    ```verilog linenums="1"
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            ...
-            rx_done <= 1'b0;
-        end else begin
-            case (state)
-                IDLE: begin
-                    ...
-                    rx_done <= 1'b0;
-                end
-                DATA: begin
-                    ...
-                    rx_done <= 1'b0;
-                end
-                STOP: begin
-                    if (rx == 1'b1) begin//stop bit
-                        ...
-                        rx_done <= 1'b1;
-                    end else begin
-                        data_out <= 6'b0;
-                        rx_done <= 1'b0;
-                        shift_reg <= 6'b0;
-                    end
-                end
-            endcase
-        end
-    end
-    ```
+我們進一步探討在 **==RV32I== Base Integer Instruction** 中到底有哪些指令需要實作，並且以 OPCODE 來分類。
+
+1. **OP Type**
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/86342e61-6431-4788-90a3-48bc03f35173.png)
+2. **OP-IMM Type**
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/7dd8da8e-f23c-4e98-b88c-07d1a6f1882e.png)
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/1801191e-b122-4c4c-b225-9ceddb1e0bae.png)
+3. **JAL**
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/5fac5b80-bec6-477b-9b99-6b722d9aca34.png)
+4. **JALR**
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/62749148-10b8-4b44-8e16-4b55bde7b964.png)
+5. **BRANCH**
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/b0739d10-177f-4e6a-9860-d6a3884266e5.png)
+6. **LOAD/STORE**
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/943f582e-59e6-46d9-95a4-3801532eb93c.png)
+7. **LUI/AUIPC**
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/33ce4327-2213-40af-876a-838c0dbbd9e0.png)
+8. **SYSTEM**
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/bc8dc66e-5134-489e-a1f6-c8ad76ffa1fb.png)
     
-    ```verilog linenums="1"
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            ...
-        end else begin
-            case (state)
-                IDLE: begin
-                    if(rx==1'b0) begin
-                        ...
-                    end else begin
-                        ...
-                    end
-                    bit_counter <= 3'b000;
-                end
-                DATA: begin
-                    if(bit_counter == 3'b101) begin
-                        ...
-                    end else begin
-                        state <= state;
-                        bit_counter <= bit_counter + 1'b1;
-                    end
-                end
-                STOP: begin
-                    ...
-                end
-            endcase
-        end
-    end
-    ```
-    
-    最難的部分應該剩下shift_reg的寫法。可以想像一下transmitter發出訊號和receiver接收訊號的順序，會像是...沒錯!FIFO(先進先出)的queue。可以滾動調整shift_reg中的資料，每次固定取最低位的資料出來到tx/rx就行了。
+但是，由於我們這次要實作的是 ==**RV64I**==，所以還會有幾個額外的指令要區分。如果我們要實作的指令是 RV32I 的話，那麼上述的這些指令，就大部分都是操作在 32-bits 的 Operands 上。但是，如果今天是 RV64I 的話，上述的指令就會變成操作在 64-bits 的 Operands 之上。除此之外，為了讓 RV64I 依然可以執行 32-bits 的運算，因此也會特別有幾條指令是操作在 32-bits 的 Operands。
 
-## Chapter 3. How to run simulation and test-benches
+> Most integer computational instructions operate on XLEN-bit（XLEN 指的就是 RV32 的 32 或是 RV64 的 64） values. Additional instruction variants are provided to manipulate 32-bit values in RV64I, indicated by a 'W' suffix to the opcode. These "*W" instructions ignore the upper 32 bits of their inputs and always produce 32-bit signed values, sign-extending them to 64 bits, i.e. bits XLEN-1 through 31 are equal.
+> ----- RISC-V Specification Volume 1, Chapter 4.2
 
-在這次作業中，助教一樣提供了 Makefile 讓大家使用。這次的作業主要分成兩題，兩題各自會有自己的 test-bench。
+1. OP 和 OP-32
+  > TBD
+2. OP-IMM 和 OP-IMM-32
+  > TBD
+3. LUI/AUIPC 的變化
+  > TBD
+4. LOAD/STORE 的變化
+  > TBD
 
-```shell
-.
-├── Makefile
-├── Top.sv
-├── common.mk
-├── mul
-│   ├── Top.sv
-│   ├── other .sv files
-│   ├── mul.mk
-│   └── sim_main.cpp
-└── uart
-    ├── Top.sv
-    ├── other .sv files
-    ├── sim_main.cpp
-    └── uart.mk
+### Architecture of A Simple ISS
+
+基本上，我們可以簡單地用 C 語言的 struct 來建立一個類似於 CPU 的資料結構：
+
+```cpp linenums="1"
+#include <stdint.h>
+#include <bool.h>
+
+#define MEM_SIZE 0x10000 (64-KiB)
+
+typedef struct {
+    uint64_t pc; // Program Counter
+    uint64_t regs[32]; // General Purpose Registers
+    uint8_t  mem[MEM_SIZE]; // Main Memory
+    uint8_t reg_for_getchar; // special 1-byte register for getchar()
+    bool  halt; // Halt signal
+} cpu_state_t;
+
+extern cpu_state_t* processor_ptr; // declare pointer of the processor (main body of ISS)
 ```
 
-這次助教提供的 Sample code 的檔案結構如上所示，如同 Lab 1，同學如果要編譯你已經完成的 Code，只要在 `lab-2` 資料夾底下，輸入 `make`（同時編譯 Multiplier 和 UART）、`make mul`（只編譯 Multiplier）或是 `make uart`（只編譯 UART），不需要進入到子資料夾當中。
+要表示 Processor 的狀態，我們需要 PC、32 個暫存器還有 Main Memory。PC 會指向目前正在執行的指令**在記憶體中的地址**，而暫存器則是 Processor 最基本用來暫存運算結果的單位。至於一個程式的指令和資料本身，則都會被儲存在 Main Memory 中，Processor 會透過 LOAD/STORE 指令來存取 Main Memory，包含讀取指令、還有存取 data。
 
-而如果要執行 simulation 的話，一樣停留在 `lab-2` 資料夾底下，輸入 `./mul/obj_dir/VTop` 即可執行 Multiplier 的 test-bench。而輸入 `./uart/obj_dir/VTop` 即可執行 UART 的 test-bench。
+接下來，我們利用特殊的技巧（**Union + Bit-Field**）來定義指令的格式：
 
-## Start to do the assignment
+!!! danger
+    注意，雖然我們實作的是 RV64I，但是每條指令**本身**都是 32-bits（4-bytes）。
+
+```cpp linenums="1"
+#include <stdint.h>
+typedef union {
+    struct {
+        uint32_t opcode : 7;
+        uint32_t rd : 5;
+        uint32_t func3 : 3;
+        uint32_t rs1 : 5;
+        uint32_t rs2 : 5;
+        uint32_t func7 : 7;
+    } R_TYPE;
+    struct {
+        uint32_t opcode : 7;
+        uint32_t rd : 5;
+        uint32_t func3 : 3;
+        uint32_t rs1 : 5;
+        uint32_t imm_11_0 : 12;
+    } I_TYPE;
+    struct {
+        uint32_t opcode : 7;
+        uint32_t imm_4_0 : 5;
+        uint32_t func3 : 3;
+        uint32_t rs1 : 5;
+        uint32_t rs2 : 5;
+        uint32_t imm_11_5 : 7;
+    } S_TYPE;
+    struct {
+        uint32_t opcode : 7;
+        uint32_t rd : 5;
+        uint32_t imm_31_12 : 20;
+    } U_TYPE;
+    struct {
+        uint32_t opcode : 7;
+        uint32_t imm_11 : 1;
+        uint32_t imm_4_1 : 4;
+        uint32_t func3 : 3;
+        uint32_t rs1 : 5;
+        uint32_t rs2 : 5;
+        uint32_t imm_10_5 : 6;
+        uint32_t imm_12 : 1;
+    } B_TYPE;
+    struct {
+        uint32_t opcode : 7;
+        uint32_t rd : 5;
+        uint32_t imm_19_12 : 8;
+        uint32_t imm_11 : 1;
+        uint32_t imm_10_1 : 10;
+        uint32_t imm_20 : 1;
+    } J_TYPE;
+    uint32_t raw;
+} riscv_inst_t;
+```
+
+接下來，利用 C 語言中的 `enum` 來定義 OPCODE 和 function code，方便我們用來辨認不同的指令。
+
+```cpp linenums="1"
+/*
+ * The name without any suffix (e.g., _FUNC3) represents the OPCODE type
+ */
+typedef enum {
+    /* 12 types in total */
+    OP = 0b0110011,
+    OP_32 = 0b0111011,
+    OP_IMM = 0b0010011,
+    OP_IMM_32 = 0b0011011,
+    LOAD = 0b0000011,
+    STORE = 0b0100011,
+    BRANCH = 0b1100011,
+    JAL = 0b1101111,
+    JALR = 0b1100111,
+    AUIPC = 0b0010111,
+    LUI = 0b0110111,
+    SYSTEM = 0b1110011,
+} OPCODE;
+
+typedef enum {
+    ADD_SUB_FUNC3 = 0b000,
+    SLL_FUNC3 = 0b001,
+    SLT_FUNC3 = 0b010,
+    SLTU_FUNC3 = 0b011,
+    XOR_FUNC3 = 0b100,
+    SRL_SRA_FUNC3 = 0b101,
+    OR_FUNC3 = 0b110,
+    AND_FUNC3 = 0b111,
+} ARITHMETIC_FUNC3;
+
+typedef enum {
+    BEQ_FUNC3 = 0b000,
+    BNE_FUNC3 = 0b001,
+    BLT_FUNC3 = 0b100,
+    BGE_FUNC3 = 0b101,
+    BLTU_FUNC3 = 0b110,
+    BGEU_FUNC3 = 0b111,
+} BRANCH_FUNC3;
+
+typedef enum {
+    SB_FUNC3 = 0b000,
+    SH_FUNC3 = 0b001,
+    SW_FUNC3 = 0b010,
+    SD_FUNC3 = 0b011,
+} STORE_FUNC3;
+
+typedef enum {
+    LB_FUNC3 = 0b000,
+    LH_FUNC3 = 0b001,
+    LW_FUNC3 = 0b010,
+    LD_FUNC3 = 0b011,
+    LBU_FUNC3 = 0b100,
+    LHU_FUNC3 = 0b101,
+    LWU_FUNC3 = 0b110,
+} LOAD_FUNC3;
+
+/*
+ * Note that the SYSTEM type instructions use the I-Type format
+ */
+typedef enum {
+    ECALL_FUNC12 = 0b000000000000,
+    EBREAK_FUNC12 = 0b000000000001,
+} SYSTEM_FUNC12;
+```
+
+!!! question
+    你有注意到**至少目前**看到的所有 OPCODE 種類的 least significant 2-bits 都是 `0b11` 嗎，你知道原因是什麼嗎？（Hint：RISC-V C-Extension）
+
+有了對於 Processor 本身狀太定義的資料結構之後，我們就可以開始思考要如何模擬 Processor 的運作。
+基本上，Processor 的任務很簡單，就是**週而復始地讀取並執行指令**。
+我們可以定義一個函式，作為執行指令的最小單位，也就是**==每次呼叫這個函式只會執行一條指令==**。
+
+```cpp linenums="1"
+void execute_one_inst(cpu_state_t* processor_ptr) {
+    const rsicv_inst_t *inst_ptr = (riscv_inst_t*)(&processor_ptr->mem[processor_ptr->pc]);
+    OPCODE opcode = *inst_ptr & 0b1111111; // bitwise-AND
+    switch (opcode) {
+        case OP: {
+            handle_OP(proc_ptr, inst_ptr);
+            break;
+        }
+        case OP_32: {
+            handle_OP_32(proc_ptr, inst_ptr);
+            break;
+        }
+        case OP_IMM: {
+            handle_OP_IMM(proc_ptr, inst_ptr);
+            break;
+        }
+        case OP_IMM_32: {
+            handle_OP_IMM_32(proc_ptr, inst_ptr);
+            break;
+        }
+        case LOAD: {
+            handle_LOAD(proc_ptr, inst_ptr);
+            break;
+        }
+        case STORE: {
+            handle_STORE(proc_ptr, inst_ptr);
+            break;
+        }
+        case BRANCH: {
+            handle_BRANCH(proc_ptr, inst_ptr);
+            break;
+        }
+        case JAL: {
+            handle_JAL(proc_ptr, inst_ptr);
+            break;
+        }
+        case JALR: {
+            handle_JALR(proc_ptr, inst_ptr);
+            break;
+        }
+        case LUI: {
+            handle_LUI(proc_ptr, inst_ptr);
+            break;
+        }
+        case AUIPC: {
+            handle_AUIPC(proc_ptr, inst_ptr);
+            break;
+        }
+        case SYSTEM: {
+            handle_SYSTEM(proc_ptr, inst_ptr);
+            break;
+        }
+        default: {
+            Panic("Unsupported instruction: %x\n", inst_ptr->raw);
+        }
+    }
+}
+```
+
+至於怎麼實作這些 Handler Function，大家就參考助教提供的 Sample Code 吧！
+助教在範例中只實作了 `addi` 和部分 `ecall` 指令的功能，並且用這兩條指令 Demo 了和經典的程式 `printf("Hello, World!\n")` 相同的效果，剩下的指令就需要靠大家自行完成。
+
+當我們實作好對**執行一條指令**這個行為的函式封裝之後，我們就可以基於 `execute_one_inst()` 來控制整個 ISS。譬如，我可以再這之上建構一個函式 `void execute_insts(unsigned inst_count)`：
+
+```cpp linenums="1"
+void execute_insts(unsigned inst_count) {
+    for (unsigned i = 0; (i < inst_count) && (!processor_ptr->halt); i++){
+        execute_one_inst();
+    }
+}
+```
+
+### ISS with Debugging Interactive Interface
+
+延續在 Lab 1 當中我們利用 *readline* library 實作的 interactive interface，我們在實作 ISS 的時候，可以校訪類似 GDB 的 C language debugger，提供一系列我們定義好的指令，讓 ISS 的使用者可以藉由這些指令直接操作 ISS，方便使用者 debug。
+
+!!! note
+    請特別注意，這裡所說的方便 Debug 並不是只方便我們 Debug ISS 本身，而是方便我們之後用 ISS 跑我們自己寫的 RISC-V Program 的時候，可以方便 Debug RISC-V Program 本身
+
+具體來說，我們應該要讓我們的 ISS 支援以下總共**九條**指令：
+
+| Command | Format                    | Example                         |
+|:-------:|:--------------------------|:--------------------------------|
+| help    | help [command]            | help <br> help quit             |
+| quit    | quit                      | quit                            |
+| c       | c                         | c                               |
+| si      | si [N]                    | si <br> si 5                    |
+| break   | b [Inst. Address]         | break <br> break 0x10           |
+| watch   | watch <expression>        | watch <br> watch reg (a0 == 10) |
+| disable | disable <b or w> <number> | disable b <br> 1 disable w 0    |
+| reg     | reg <pc or gpr>           | reg pc <br> reg gpr             |
+| mem     | mem <N> \<Address in Hex\>| mem 4 0x10                      |
+
+每條指令的功能敘述如下：
+    
+1. **help**<br>
+  > 印出支援的指令和對應的訊息
+2. **quit**
+  > 離開 Simulator
+3. **c**
+  > 持續執行指令直到遇到 breakpoint、watchpoint 或是程式退出
+4. **si**
+  > 執行 $N$ 條指令，其中 $N$ 是大於零的正整數
+5. **break**
+  > 列出目前所有 breakpoint，或是設置新的 breakpoint
+6. **watch**
+  > 列出目前所有 watchpoint，或是設置新的 watchpoint
+7. **disable**
+  > 刪除現有的 breakpoint 或是 watchpoint
+8. **reg**
+  > 查看 PC 或是 GPR 的值
+8. **mem**
+  > 查看 Main Memory 的內容，以 Hex 的格式印出
+
+## How to Run Test Cases
+
+TBD
+
+> 待助教完成測資後會更新這部分的內容。
+
+## Start to Do Assignment
 
 1. Clone the sample code
     - 先確定自己已經打開課程開發環境（Container），並且在環境中的 `workspace` 底下
-    - 下載助教提供的 Sample Code <br> `git clone https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/lab-2.git`
-    - 進入資料夾 <br> `cd lab-2`
+    - 下載助教提供的 Sample Code
+      > `git clone https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/lab-2.git`
+    - 進入資料夾
+      > `cd lab-2`
 2. Create a private repo
     - 如同 Lab 1 所述，在 Gitlab 上面創建個人 Repo，並且命名為 `Lab 2`，請不要勾選 *Initialize the repository with READNE*
-    - 確認 branch 的名稱為 main 而非 master <br> `git branch -M main`
-    - 新增自己的 Private Gitlab Repo 為 Remote Source <br> `git remote add private <HTTPS URL of your private repo>`
-3. Push codes to your private repo
-    - `git push -u private main`
+    - 確認 branch 的名稱為 main 而非 master
+      > `git branch -M main`
+    - 新增自己的 Private Gitlab Repo 為 Remote Source
+      > `git remote add private <HTTPS URL of your private repo>`
+3. 將程式碼 Push 你的 Private Repository
+    - 請記得是推到 `private` 而非 `origin`
+      > `git push -u private main`
 4. Notes
     - 因為在**預設**情況之下，只要 Gitlab Repo 中包含 `.gitlab-ci.yml` 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開
