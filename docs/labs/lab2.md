@@ -133,9 +133,13 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 > ----- RISC-V Specification Volume 1, Chapter 4.2
 
 1. OP 和 OP-32
+  > TBD
 2. OP-IMM 和 OP-IMM-32
+  > TBD
 3. LUI/AUIPC 的變化
+  > TBD
 4. LOAD/STORE 的變化
+  > TBD
 
 ### Architecture of A Simple ISS
 
@@ -218,9 +222,12 @@ typedef union {
 } riscv_inst_t;
 ```
 
-接下來，利用 Enumeration 來定義 OPCODE、Func3 和 Func7，方便我們用來辨認不同的指令。
+接下來，利用 C 語言中的 `enum` 來定義 OPCODE 和 function code，方便我們用來辨認不同的指令。
 
 ```cpp linenums="1"
+/*
+ * The name without any suffix (e.g., _FUNC3) represents the OPCODE type
+ */
 typedef enum {
     /* 12 types in total */
     OP = 0b0110011,
@@ -238,47 +245,57 @@ typedef enum {
 } OPCODE;
 
 typedef enum {
-    ADD_SUB = 0b000,
-    SLL = 0b001,
-    SLT = 0b010,
-    SLTU = 0b011,
-    XOR = 0b100,
-    SRL_SRA = 0b101,
-    OR = 0b110,
-    AND = 0b111,
+    ADD_SUB_FUNC3 = 0b000,
+    SLL_FUNC3 = 0b001,
+    SLT_FUNC3 = 0b010,
+    SLTU_FUNC3 = 0b011,
+    XOR_FUNC3 = 0b100,
+    SRL_SRA_FUNC3 = 0b101,
+    OR_FUNC3 = 0b110,
+    AND_FUNC3 = 0b111,
 } ARITHMETIC_FUNC3;
 
 typedef enum {
-    BEQ = 0b000,
-    BNE = 0b001,
-    BLT = 0b100,
-    BGE = 0b101,
-    BLTU = 0b110,
-    BGEU = 0b111,
+    BEQ_FUNC3 = 0b000,
+    BNE_FUNC3 = 0b001,
+    BLT_FUNC3 = 0b100,
+    BGE_FUNC3 = 0b101,
+    BLTU_FUNC3 = 0b110,
+    BGEU_FUNC3 = 0b111,
 } BRANCH_FUNC3;
 
 typedef enum {
-    SB = 0b000,
-    SH = 0b001,
-    SW = 0b010,
-    SD = 0b011,
+    SB_FUNC3 = 0b000,
+    SH_FUNC3 = 0b001,
+    SW_FUNC3 = 0b010,
+    SD_FUNC3 = 0b011,
 } STORE_FUNC3;
 
 typedef enum {
-    LB = 0b000,
-    LH = 0b001,
-    LW = 0b010,
-    LD = 0b011,
-    LBU = 0b100,
-    LHU = 0b101,
-    LWU = 0b110.
+    LB_FUNC3 = 0b000,
+    LH_FUNC3 = 0b001,
+    LW_FUNC3 = 0b010,
+    LD_FUNC3 = 0b011,
+    LBU_FUNC3 = 0b100,
+    LHU_FUNC3 = 0b101,
+    LWU_FUNC3 = 0b110,
 } LOAD_FUNC3;
+
+/*
+ * Note that the SYSTEM type instructions use the I-Type format
+ */
+typedef enum {
+    ECALL_FUNC12 = 0b000000000000,
+    EBREAK_FUNC12 = 0b000000000001,
+} SYSTEM_FUNC12;
 ```
 
-!!! warning
+!!! question
     你有注意到**至少目前**看到的所有 OPCODE 種類的 least significant 2-bits 都是 `0b11` 嗎，你知道原因是什麼嗎？（Hint：RISC-V C-Extension）
 
-有了對於 Processor 本身狀太定義的資料結構之後，我們就可以開始思考要如何模擬 Processor 的運作。基本上，Processor 的任務很簡單，就是**週而復始地讀取並執行指令**。我們可以定義一個函式，作為執行指令的最小單位，也就是**每次呼叫這個函式只會執行==一條==指令**。
+有了對於 Processor 本身狀太定義的資料結構之後，我們就可以開始思考要如何模擬 Processor 的運作。
+基本上，Processor 的任務很簡單，就是**週而復始地讀取並執行指令**。
+我們可以定義一個函式，作為執行指令的最小單位，也就是**==每次呼叫這個函式只會執行一條指令==**。
 
 ```cpp linenums="1"
 void execute_one_inst(cpu_state_t* processor_ptr) {
@@ -286,65 +303,68 @@ void execute_one_inst(cpu_state_t* processor_ptr) {
     OPCODE opcode = *inst_ptr & 0b1111111; // bitwise-AND
     switch (opcode) {
         case OP: {
-            // ...
+            handle_OP(proc_ptr, inst_ptr);
             break;
         }
         case OP_32: {
-            // ...
+            handle_OP_32(proc_ptr, inst_ptr);
             break;
         }
         case OP_IMM: {
-            // ...
+            handle_OP_IMM(proc_ptr, inst_ptr);
             break;
         }
         case OP_IMM_32: {
-            // ...
+            handle_OP_IMM_32(proc_ptr, inst_ptr);
             break;
         }
         case LOAD: {
-            // ...
+            handle_LOAD(proc_ptr, inst_ptr);
             break;
         }
         case STORE: {
-            // ...
+            handle_STORE(proc_ptr, inst_ptr);
             break;
         }
         case BRANCH: {
-            // ...
+            handle_BRANCH(proc_ptr, inst_ptr);
             break;
         }
         case JAL: {
-            // ...
+            handle_JAL(proc_ptr, inst_ptr);
             break;
         }
         case JALR: {
-            // ...
+            handle_JALR(proc_ptr, inst_ptr);
             break;
         }
         case LUI: {
-            // ...
+            handle_LUI(proc_ptr, inst_ptr);
             break;
         }
         case AUIPC: {
-            // ...
+            handle_AUIPC(proc_ptr, inst_ptr);
             break;
         }
         case SYSTEM: {
-            // ...
+            handle_SYSTEM(proc_ptr, inst_ptr);
             break;
         }
         default: {
-            // ...
+            Panic("Unsupported instruction: %x\n", inst_ptr->raw);
         }
     }
 }
 ```
 
+至於怎麼實作這些 Handler Function，大家就參考助教提供的 Sample Code 吧！
+助教在範例中只實作了 `addi` 和部分 `ecall` 指令的功能，並且用這兩條指令 Demo 了和經典的程式 `printf("Hello, World!\n")` 相同的效果，剩下的指令就需要靠大家自行完成。
+
 當我們實作好對**執行一條指令**這個行為的函式封裝之後，我們就可以基於 `execute_one_inst()` 來控制整個 ISS。譬如，我可以再這之上建構一個函式 `void execute_insts(unsigned inst_count)`：
 
 ```cpp linenums="1"
 void execute_insts(unsigned inst_count) {
-    for (unsigned i = 0; i < inst_count; i++){
+    for (unsigned i = 0; (i < inst_count) && (!processor_ptr->halt); i++){
         execute_one_inst();
     }
 }
@@ -353,6 +373,9 @@ void execute_insts(unsigned inst_count) {
 ### ISS with Debugging Interactive Interface
 
 延續在 Lab 1 當中我們利用 *readline* library 實作的 interactive interface，我們在實作 ISS 的時候，可以校訪類似 GDB 的 C language debugger，提供一系列我們定義好的指令，讓 ISS 的使用者可以藉由這些指令直接操作 ISS，方便使用者 debug。
+
+!!! note
+    請特別注意，這裡所說的方便 Debug 並不是只方便我們 Debug ISS 本身，而是方便我們之後用 ISS 跑我們自己寫的 RISC-V Program 的時候，可以方便 Debug RISC-V Program 本身
 
 具體來說，我們應該要讓我們的 ISS 支援以下總共**九條**指令：
 
@@ -370,20 +393,47 @@ void execute_insts(unsigned inst_count) {
 
 每條指令的功能敘述如下：
     
-1. **help**
+1. **help**<br>
+  > 印出支援的指令和對應的訊息
 2. **quit**
+  > 離開 Simulator
 3. **c**
+  > 持續執行指令直到遇到 breakpoint、watchpoint 或是程式退出
 4. **si**
+  > 執行 $N$ 條指令，其中 $N$ 是大於零的正整數
 5. **break**
+  > 列出目前所有 breakpoint，或是設置新的 breakpoint
 6. **watch**
+  > 列出目前所有 watchpoint，或是設置新的 watchpoint
 7. **disable**
+  > 刪除現有的 breakpoint 或是 watchpoint
 8. **reg**
+  > 查看 PC 或是 GPR 的值
 8. **mem**
+  > 查看 Main Memory 的內容，以 Hex 的格式印出
 
 ## How to Run Test Cases
 
 TBD
 
-## Start to do assignment
+> 待助教完成測資後會更新這部分的內容。
 
-TBD
+## Start to Do Assignment
+
+1. Clone the sample code
+    - 先確定自己已經打開課程開發環境（Container），並且在環境中的 `workspace` 底下
+    - 下載助教提供的 Sample Code
+      > `git clone https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/lab-2.git`
+    - 進入資料夾
+      > `cd lab-2`
+2. Create a private repo
+    - 如同 Lab 1 所述，在 Gitlab 上面創建個人 Repo，並且命名為 `Lab 2`，請不要勾選 *Initialize the repository with READNE*
+    - 確認 branch 的名稱為 main 而非 master
+      > `git branch -M main`
+    - 新增自己的 Private Gitlab Repo 為 Remote Source
+      > `git remote add private <HTTPS URL of your private repo>`
+3. 將程式碼 Push 你的 Private Repository
+    - 請記得是推到 `private` 而非 `origin`
+      > `git push -u private main`
+4. Notes
+    - 因為在**預設**情況之下，只要 Gitlab Repo 中包含 `.gitlab-ci.yml` 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開
