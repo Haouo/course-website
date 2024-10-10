@@ -427,7 +427,7 @@ TBD
     - 進入資料夾
       > `cd lab-2`
 2. Create a private repo
-    - 如同 Lab 1 所述，在 Gitlab 上面創建個人 Repo，並且命名為 `Lab 2`，請不要勾選 *Initialize the repository with READNE*
+    - 如同 Lab 1 所述，在 Gitlab 上面創建個人 Repo，並且命名為 `Lab 2`，請不要勾選 *Initialize the repository with README*
     - 確認 branch 的名稱為 main 而非 master
       > `git branch -M main`
     - 新增自己的 Private Gitlab Repo 為 Remote Source
