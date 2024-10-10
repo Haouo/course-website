@@ -370,6 +370,35 @@ void execute_insts(unsigned inst_count) {
 }
 ```
 
+### Why Do We Need SYSTEM Instructions?
+
+大家一定要有下面這張圖的觀念：
+
+<figure markdown="span">
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/c0e133d1-756c-4243-bc8f-4ee472bf039c.png){ width=500 }
+</figure>
+
+我們所使用的測試程式，是經由 RISC-V GNU Toolchain 編譯器編譯，最終變成使用 RISC-V 指令的可執行檔案，而我們在 Lab 2 所設計的 RISC-V ISA Simulator，則是一支**不折不扣的 x86 程式**。
+也就是說，我們的 ISS 是直接跑在我們自己的電腦之上（這邊先忽略作業系統），但是測試程式的 RISC-V Program 則不是。因為 RISC-V Program 使用的是 RISC-V 指令，我們的 x86 電腦不認得這些指令，所以必須經由我們設計的 ISS 做轉換，才有辦法**看起來**可以直接在我們的電腦上執行。
+
+!!! note
+    其實我們所設計的 ISA Simulator，就有點類似編譯器領域當中所謂的直譯器（Interpreter），它可以動態地解析 RISC-V 指令並且執行指令所被定義的行爲。
+
+我們首先有一件非常重要的事情需要探討，那麼就是當我們的 RISC-V Program 需要有 I/O 的功能的時候（e.g., `printf` and `scanf`），我們該怎麼d實作？
+會需要探討這個問題是因為，以我們最常用的輸出輸入裝置，鍵盤（輸入）和螢幕（輸出）來說，這些裝置是接在我們的電腦上，但是 RISC-V Program 並不是**直接**運行在我們的電腦上，而是中間還隔了一個 ISS。
+如果我們的 RISC-V Program 需要輸出輸入的功能的話，必須向自己所處的執行環境（Eexcution Environment）發起服務請求（**Service Request**），以目前的情境來看，對 RISC-V Program 來說 Execution Encironment 就是我們的 ISS。
+根據 RISC-V 規格書上的描述，SYSTEM 這類的指令的功能是：
+
+> SYSTEM instructions are used to access system functionality that might require privileged access and
+are encoded using the I-type instruction format. The ECALL instruction is used to make a service request to the execution environment.<br>
+> ----- RISC-V Specification Volume 1
+
+也因此我們可以藉由實作 ECALL 指令，讓 RISC-V Program 有能力向 ISS 發出請求，委託其幫忙處理關於 I/O 的任務。
+
+所以我們必須去定義 **Execition Environment Interface（EEI）**，當 ECALL 指令被執行的時候，我們該如何辨別目前 RISC-V Program 到底發出了什麼類型的請求？
+
+最常見的做法是，我們可以規定當執行到 ECALL 指令的時候，必須觀察暫存器 `$a0` 中的值，來決定 RISC-V Program 發出的 service request type。
+
 ### ISS with Debugging Interactive Interface
 
 延續在 Lab 1 當中我們利用 *readline* library 實作的 interactive interface，我們在實作 ISS 的時候，可以校訪類似 GDB 的 C language debugger，提供一系列我們定義好的指令，讓 ISS 的使用者可以藉由這些指令直接操作 ISS，方便使用者 debug。
