@@ -76,7 +76,15 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 
 ## What is ISA Simulator（ISS）？
 
-基本上，我們可以設計一個程式，這個程式的任務很單純，就是**解讀 RISC-V 指令並且執行指令對應的功能**。
+因為我們所使用的電腦幾乎都是使用 x86 架構指令集，所以不認得 RISC-V 指令，因此當我們使用 RISC-V GNU Toolchain 去把 C 程式編譯成使用 RISC-V 指令的執行檔的時候，如果我們直接執行，會出現錯誤，因為 program 本身和 Host Machine 所使用的 ISA 不同。
+
+要隨手買來一個使用 RISC-V CPU 的機器，至少在現在看來確實不太容易，但是寫程式這件事情讓一切變得可能。
+所以，我們可以設計一個程式，這個程式的任務很單純，就是**解讀 RISC-V 指令並且執行指令對應的功能**，概念上就有點類似於我們設計一個程式去模擬 RISC-V Machine，這樣我們就可以藉由這個**假的** RISC-V Machine 來執行 RISC-V Program。
+
+!!! info
+    本文中所說的 RISC-V Program 泛指被編譯成使用 RSIC-V 指令的程式。
+
+除此之外，這個我們設計的 RISC-V ISS 甚至可以在後面我們以 RTL-Level 語言設計 CPU 的時候，在 CPU 驗證的階段派上用場！讓我們可以做 **Co-Simulation**。
 
 ### General Purpose Register (GPR)
 
@@ -126,20 +134,52 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
     ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/33ce4327-2213-40af-876a-838c0dbbd9e0.png)
 8. **SYSTEM**
     ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/bc8dc66e-5134-489e-a1f6-c8ad76ffa1fb.png)
+，
+
+最後我們把**==截至目前為止==**應該要實作的指令列出來，總共應該有 38 條指令。
+
+<figure markdown="span">
+  ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/6c769daf-e31a-456c-8484-4e4f98d2c1e0.png)
+  ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a81f37f7-28ef-4420-9370-2cbd81bb1113.png)
+  ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/7e9b406b-c7b5-4f1d-a63e-7786bdb35429.png)
+</figure>
+
+#### From RV32I to RV64I
     
 但是，由於我們這次要實作的是 ==**RV64I**==，所以還會有幾個額外的指令要區分。如果我們要實作的指令是 RV32I 的話，那麼上述的這些指令，就大部分都是操作在 32-bits 的 Operands 上。但是，如果今天是 RV64I 的話，上述的指令就會變成操作在 64-bits 的 Operands 之上。除此之外，為了讓 RV64I 依然可以執行 32-bits 的運算，因此也會特別有幾條指令是操作在 32-bits 的 Operands。
 
 > Most integer computational instructions operate on XLEN-bit（XLEN 指的就是 RV32 的 32 或是 RV64 的 64） values. Additional instruction variants are provided to manipulate 32-bit values in RV64I, indicated by a 'W' suffix to the opcode. These "*W" instructions ignore the upper 32 bits of their inputs and always produce 32-bit signed values, sign-extending them to 64 bits, i.e. bits XLEN-1 through 31 are equal.
 > ----- RISC-V Specification Volume 1, Chapter 4.2
 
-1. OP 和 OP-32
-  > TBD
-2. OP-IMM 和 OP-IMM-32
-  > TBD
-3. LUI/AUIPC 的變化
-  > TBD
-4. LOAD/STORE 的變化
-  > TBD
+<figure markdown="span">
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/8aab9da2-3bab-4571-b945-74b1c4cb098d.png)
+</figure>
+
+大家可以從上圖看出，從 RV32I 轉換到 RV64I，必須多實作**十五條指令**。其中指令後綴（suffix）多了 *W* 的代表是操作在 64-bits register 的低 32-bits，忽略高 32-bits，並且將運算後的結果做 sign-extension 到 64-bits 之後再存回 `$rd` 暫存器。
+
+<figure markdown="span">
+  ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/36d4aac7-cfc6-4df2-aef6-5e2628ef0826.png)
+  ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/141f49eb-817b-40bc-85ab-f528768cabad.png)
+</figure>
+
+針對 SLLI/SRLI/SRAI 這三個指令，shamt（Shift-Amount）會從本來的 5-bits 變成 6-bits。取而代之的是 SLLIW/SRLIW/SRAIW 這三個指令的 shamt 才會是 5-bits。
+
+<figure markdown="span">
+  ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a5b98c48-267a-41e3-b22a-9374a5b148d1.png)
+</figure>
+
+而至於 OPCODE 為 OP Type 這類的指令，則多出了 ADDW、SLLW/SRLW、SUBW/SRAW 這些指令。
+
+> LUI (load upper immediate) uses the same opcode as RV32I. LUI places the 32-bit U-immediate into register rd, filling in the lowest 12 bits with zeros. The 32-bit result is sign-extended to 64 bits.
+> 
+> AUIPC (add upper immediate to pc) uses the same opcode as RV32I. AUIPC is used to build pc-relative addresses and uses the U-type format. AUIPC forms a 32-bit offset from the U-immediate, filling in the lowest 12 bits with zeros, sign-extends the result to 64 bits, adds it to the address of the AUIPC instruction, then places the result in register rd.
+>
+> ----- RISC-V Specification Volume 1, Chapter 4.2.1
+
+根據規格書的描述，LUI 這條指令一樣是將 `imm[31:12]` 後面補 12-bits 的 0 之後，再做 sign-extension 到 64-bits，然後再存回去 `$rd` 暫存器。
+而 AUIPC 則是將 `imm[31:12]` 的後面一樣補 12-bits 的 0 之後，先做 sign-extension 到 64-bits，再和當前的 PC 相加，最後將 64-bits 的運算結果存回 `$rd` 暫存器。
+
+最後則是 LOAD/STORE 指令，因為 General Purpose Register 已經被擴充到 64-bits 的寬度，所以理所當然多了 LD/LDU 和 SD 這三個指令，而其中的 D 代表的是 **Double Word（64-bits）**。
 
 ### Architecture of A Simple ISS
 
@@ -370,6 +410,55 @@ void execute_insts(unsigned inst_count) {
 }
 ```
 
+### Why Do We Need SYSTEM Instructions?
+
+大家一定要有下面這張圖的觀念：
+
+<figure markdown="span">
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/c0e133d1-756c-4243-bc8f-4ee472bf039c.png){ width=500 }
+</figure>
+
+我們所使用的測試程式，是經由 RISC-V GNU Toolchain 編譯器編譯，最終變成使用 RISC-V 指令的可執行檔案，而我們在 Lab 2 所設計的 RISC-V ISA Simulator，則是一支**不折不扣的 x86 程式**。
+也就是說，我們的 ISS 是直接跑在我們自己的電腦之上（這邊先忽略作業系統），但是測試程式的 RISC-V Program 則不是。因為 RISC-V Program 使用的是 RISC-V 指令，我們的 x86 電腦不認得這些指令，所以必須經由我們設計的 ISS 做轉換，才有辦法**看起來**可以直接在我們的電腦上執行。
+
+!!! note
+    其實我們所設計的 ISA Simulator，就有點類似編譯器領域當中所謂的直譯器（Interpreter），它可以動態地解析 RISC-V 指令並且執行指令所被定義的行爲。
+
+我們首先有一件非常重要的事情需要探討，那麼就是當我們的 RISC-V Program 需要有 I/O 的功能的時候（e.g., `printf` and `scanf`），我們該怎麼d實作？
+會需要探討這個問題是因為，以我們最常用的輸出輸入裝置，鍵盤（輸入）和螢幕（輸出）來說，這些裝置是接在我們的電腦上，但是 RISC-V Program 並不是**直接**運行在我們的電腦上，而是中間還隔了一個 ISS。
+如果我們的 RISC-V Program 需要輸出輸入的功能的話，必須向自己所處的執行環境（Eexcution Environment）發起服務請求（**Service Request**），以目前的情境來看，對 RISC-V Program 來說 Execution Encironment 就是我們的 ISS。
+根據 RISC-V 規格書上的描述，SYSTEM 這類的指令的功能是：
+
+> SYSTEM instructions are used to access system functionality that might require privileged access and
+are encoded using the I-type instruction format. The ECALL instruction is used to make a service request to the execution environment.<br>
+> ----- RISC-V Specification Volume 1
+
+也因此我們可以藉由實作 ECALL 指令，讓 RISC-V Program 有能力向 ISS 發出請求，委託其幫忙處理關於 I/O 的任務。
+
+所以我們必須去定義 **Execition Environment Interface（EEI）**，當 ECALL 指令被執行的時候，我們該如何辨別目前 RISC-V Program 到底發出了什麼類型的請求？
+
+最常見的做法是，我們可以規定當執行到 ECALL 指令的時候，必須觀察暫存器 `$a0` 中的值，來決定 RISC-V Program 發出的 service request type。
+
+- ==當執行到 ECALL 的時候，首先觀察 `$a0` 暫存器中的數值==
+    1. `$a0 == 0`<br>
+        代表程式已經執行結束，應該將 Processor State 中的 `halt` 設為 true
+    2. `$a0 == 1`<br>
+        代表程式向執行環境發出 `putchar` 的請求，其中需要被印出的 character 的值會被放在暫存器 `$a1` 當中
+    3. `$a0 == 2`<br>
+        代表 RISC-V Program 向執行環境發出 `getchar` 的請求，必須將讀取到的 character 的數值存到 Processor State 中的 `reg_for_getchar` 當中
+- ==針對 LOAD/STORE 指令，我們要做特殊的修改==
+    1. LAOD
+        - 必須判斷 64-bits 的 Target Address 當中的 MSB 是 0 還是 1
+            - MSB 如果是 0：則執行 LOAD 指令原先的功能（到 Processor State 中的 `mem` 中讀取資料）
+            - MSB 如果是 1：讀取 `reg_for_getchar` 的數值
+    2. STORE
+        - 一樣必須判斷 64-bits 的 Target Address 當中的 MSB 是 0 還是 1
+            - MSB 如果是 0：將值存回 Processor State 的 `mem` 當中
+            - MSB 如果是 1：將值存回 Processor State 的 `reg_for_getchar` 當中
+
+!!! note
+    在這裡之所以我們必須修改 LOAD/STORE 的實作，原因和 Memory-Mapped I/O Control 有關，在下一個 Lab 會詳細介紹
+
 ### ISS with Debugging Interactive Interface
 
 延續在 Lab 1 當中我們利用 *readline* library 實作的 interactive interface，我們在實作 ISS 的時候，可以校訪類似 GDB 的 C language debugger，提供一系列我們定義好的指令，讓 ISS 的使用者可以藉由這些指令直接操作 ISS，方便使用者 debug。
@@ -386,10 +475,10 @@ void execute_insts(unsigned inst_count) {
 | c       | c                         | c                               |
 | si      | si [N]                    | si <br> si 5                    |
 | break   | b [Inst. Address]         | break <br> break 0x10           |
-| watch   | watch <expression>        | watch <br> watch reg (a0 == 10) |
-| disable | disable <b or w> <number> | disable b <br> 1 disable w 0    |
-| reg     | reg <pc or gpr>           | reg pc <br> reg gpr             |
-| mem     | mem <N> \<Address in Hex\>| mem 4 0x10                      |
+| watch   | watch <expression>        | watch <br> watch ($a0 == 10) |
+| disable | disable <b or w\> <number\> | disable b <br> 1 disable w 0    |
+| reg     | reg <pc or gpr\>           | reg pc <br> reg gpr             |
+| mem     | mem <N\> <Base Address in Hex\>| mem 4 0x10                      |
 
 每條指令的功能敘述如下：
     
@@ -402,15 +491,15 @@ void execute_insts(unsigned inst_count) {
 4. **si**
   > 執行 $N$ 條指令，其中 $N$ 是大於零的正整數
 5. **break**
-  > 列出目前所有 breakpoint，或是設置新的 breakpoint
+  > 列出目前所有 breakpoint（編號從零開始），或是設置新的 breakpoint
 6. **watch**
-  > 列出目前所有 watchpoint，或是設置新的 watchpoint
+  > 列出目前所有 watchpoint（編號從零開始），或是設置新的 watchpoint（只要支援對 Register 設定 watchpoint 即可）
 7. **disable**
-  > 刪除現有的 breakpoint 或是 watchpoint
+  > **以編號**來刪除現有的 breakpoint 或是 watchpoint
 8. **reg**
-  > 查看 PC 或是 GPR 的值
+  > 查看 PC 或是 GPR 的值（Ps：GPR 應該要把 32 個暫存器全部都 show 出來）
 8. **mem**
-  > 查看 Main Memory 的內容，以 Hex 的格式印出
+  > 查看 Main Memory 的內容，以 Hex 的格式印出，可以指定要輸出 $N$ 個 word（32-bits）
 
 ## How to Run Test Cases
 
