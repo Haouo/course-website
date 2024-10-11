@@ -40,7 +40,7 @@ ISA（Instruction-Set Architecture），基本上定義了一系列 CPU 應該�
 ### From the Perspective of Finite-Satte-Machine (FSM)
 
 我們也可以從有限狀態機的觀點來看整個計算機系統的運作。基本上，Program 可以被視為式一個巨大的狀態機 $S = <\mathbf{V}, \text{PC}>$，其中 $\mathbf{V} = \{v_1, v_2, v_3, ..., v_n\}$，為整個程式中所擁有的所有變數（Variable）。
-至於你在 Source Code 中的每個 statements，t額可以被稱為是 **Activation Event**，它會導致 Program 的狀態改變，有可能是 $\mathbf{V}$ 改變，可能是 $\text{PC}$ 改變，或是兩者都改變。
+至於你在 Source Code 中的每個 statements，可以被稱為是 **Activation Event**，它會導致 Program 的狀態改變，有可能是 $\mathbf{V}$ 改變，可能是 $\text{PC}$ 改變，或是兩者都改變。
 至於這些 C 語言程式原始碼中的 Statement 是根據什麼樣的規則來改變 $S$，這就是由 C 語言標準（C Standard Revision, e.g., ISO C90）來制定。
 
 <figure markdown="span">
