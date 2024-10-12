@@ -37,7 +37,7 @@ ISA（Instruction-Set Architecture），基本上定義了一系列 CPU 應該�
 有了 Abstraction Layer 的概念，我們可以使計算機系統中每個重要的部分**解耦合（Decoupling）**，讓我們可以專注在個別的部分，例如 CPU 設計，又或者是作業系統等等系統軟體的設計本身，而不是全部都混雜在一起。
 但是藉由 ISA 這種 Abstraction Layer 的連結，程式設計師和硬體架構師之間依然有**合適的溝通橋樑**。
 
-### From the Perspective of Finite-Satte-Machine (FSM)
+### From the Perspective of Finite-State-Machine (FSM)
 
 我們也可以從有限狀態機的觀點來看整個計算機系統的運作。基本上，Program 可以被視為式一個巨大的狀態機 $S = <\mathbf{V}, \text{PC}>$，其中 $\mathbf{V} = \{v_1, v_2, v_3, ..., v_n\}$，為整個程式中所擁有的所有變數（Variable）。
 至於你在 Source Code 中的每個 statements，可以被稱為是 **Activation Event**，它會導致 Program 的狀態改變，有可能是 $\mathbf{V}$ 改變，可能是 $\text{PC}$ 改變，或是兩者都改變。
