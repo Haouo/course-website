@@ -12,7 +12,7 @@
 
     但**這門課並不會涉及到 Privileged Architecture（特權架構）的內容**
 
-## What is Computer？
+## Chapter 1. What is Computer？
 
 讓我們來看看電腦最基本的抽象結構（Abstraction Layers）：
 
@@ -54,8 +54,10 @@ ISA（Instruction-Set Architecture），基本上定義了一系列 CPU 應該�
 </figure>
 
 而 ISA 中定義的每條指令，其實就是 CPU 的狀態 $S$ 的 Activation Event，也就是**指令會導致 CPU 的狀態發生改變**。
+對於我們接下來要實作的 ISA Simulator 來說，我們可以將其的狀態定義為 $S = \{\text{GPRs},\, \text{PC},\, \text{Memory}\}$。
+對於 ISA Smulator 的狀態，視為是由 32 個 General Purpose Registers，再加上 Program Counter 和 Main Memory 所組成，而我們實作的 RV64I 指令則會去改變 ISA Simulator 的狀態 $S$。
 
-## Introduction to RISC-V Instruction-Set Architecture (ISA)
+## Chapter 2. Introduction to RISC-V Instruction-Set Architecture (ISA)
 
 RISC-V 被歸類為 RISC（Reduced Instruction Set Computer）指令集架構，與之相對的是 CISC（Complex Instruction Set Computer）。
 CISC 的代表人物便是在桌上型電腦、伺服器上常見的 x86 架構，而 RISC 架構除了 RISC-V 以外，最常見的便是 ARM，ARM 在手機、嵌入式應用市場中有重要的地位。
@@ -74,7 +76,7 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 3. RISC-V 的指令相較於 ARM 依然更為簡單<br>
   > 許多 ARM 的 CPU 設計依然會把 ARM 的指令轉換成多個 µOp 才去執行
 
-## What is ISA Simulator（ISS）？
+## Chapter 3. What is ISA Simulator（ISS）？
 
 因為我們所使用的電腦幾乎都是使用 x86 架構指令集，所以不認得 RISC-V 指令，因此當我們使用 RISC-V GNU Toolchain 去把 C 程式編譯成使用 RISC-V 指令的執行檔的時候，如果我們直接執行，會出現錯誤，因為 program 本身和 Host Machine 所使用的 ISA 不同。
 
@@ -86,19 +88,44 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 
 除此之外，這個我們設計的 RISC-V ISS 甚至可以在後面我們以 RTL-Level 語言設計 CPU 的時候，在 CPU 驗證的階段派上用場！讓我們可以做 **Co-Simulation**。
 
+為了要實作一個最基本的 ISS，我們需要模擬 Program Counter，模擬 32 個 General Purpose Register，還有 Main Memory。
+因為 Register 是運算中暫存資料的最基本單位，Program Counter 負責紀錄目前執行到**哪一條**指令，而 Memory 則負責儲存我們欲執行的 RISC-V Program（包含 Instructions 和 Data）。
+為了要執行一個 RISC-V Program，這三個東西缺一不可，如果缺少 Register，則指令的運算結果沒有地方可以放。
+如果缺少 Program Counter，則無法知道目前到底正在執行哪一條指令。
+而如果缺少 Memory 的話，我們想要執行的 RISC-V Program 所包含的指令和資料都沒有地方可以放，更不用討論要如何執行了。
+
 ### General Purpose Register (GPR)
 
 <figure markdown="span">
     ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/4f59eb46-4bd4-4522-b5b9-19292f7f5677.png)
 </figure>
 
-根據 RISC-V 規格輸的定義，在 RV64I 中擁有 32 個 64-bits 的**整數通用暫存器**，可以拿來存放資料，但是 **`$x0` 這個暫存器的數值應該永遠保持是 0**。
+根據 RISC-V 規格書的定義，在 RV64I 中擁有 32 個 64-bits 的**整數通用暫存器**，可以拿來存放資料，但是有一項規定是 **`$x0` 這個暫存器的數值應該永遠保持是 0**。
 
 但是，基於種種原因，我們通常會去規範所謂的 **Application Binary Interface（ABI）**，像是 RISC-V 就有自己的 RISC-V ABI（在後面的 Lab 會介紹）。ABI 會包含許多規範，其中一個就是 **ABI Mnemonic**，也就是說雖然規格書上沒有規定 x0 ~ x31 這三十二個暫存器應該被用作什麼用途，但是 ABI 其實會去規範這些暫存器**通常**會被作為何種用途使用，並且同時給它們一個方便記憶的名子，讓我們在寫 Assembly Programming 的時候可以更方便。
 
-不過在 Lab 2 我們只專注於 Processor State 的模擬，所以其實不用去關注 ABI 的細節。在實作上，我們只要確實提供 32 個暫存器讓程式可以操作即可。
+不過在 Lab 2 我們只專注於 Processor State 的模擬，所以其實不用去關注 ABI 的細節。**在 ISS 的實作上，我們只要確實提供 32 個暫存器讓程式可以操作即可**。
 
-### How to Distinguish Instructions From Binary
+!!! note
+    讓 `$x0` 保持永遠都是 0（代表不可以被寫入任何資料）其實可以帶來很多好處，讓我們舉幾個例子：
+
+    1. 實作 Move 指令
+        - Move 指令可以把 `$rs1` 暫存器中的值複製到 `$rs2` 中
+        - 利用 ADD 指令配合 `$x0` 即可實作出 Move 的功能
+        - `mv t1, t0` 等價於 `add t1, x0, t0`
+        - 當然，使用 ADDI 也可以：`addi t1, t0, 0`
+    2. 實作 NOP 指令（No-Operation ）
+        - NOP 指令就是**不做任何事情的指令**
+        - 可以利用 ADDI 實作 NOP：`addi x0, x0, 0`
+    3. 實作與零比較的 BRANCH 指令（Zero-Comparasion Branching）
+        - `beqz`：`beq rs1, x0, offset`
+        - `bnez`：`bne rs1, x0, offset`
+        - `bltz`：`blt rs1, x0, offset`
+        - `bgez`：`bge rs1, x0, offset`
+
+    基本上就是因為 0 這個數字很特別，我們很常用到，所以讓 `$x0` 保持永遠是 0 可以帶來很多好處，減少很多不必要的指令。
+        
+### How to Distinguish Instructions From Binary (Instruction Decoding)
 
 基本上指令被儲存在記憶體中的形式不過就是一對 0 和 1 而已，因此，我們必須要透過一些特定的方法來辨認這些 0 和 1 究竟代表著什麼意義。
 
@@ -111,7 +138,8 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 2. J-Type 由 U-Type 變形而來
     ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/2926e916-4d42-4a0e-b581-f189f6edf245.png)
     
-基本上，最核心的部分是 OPCODE，根據 OPCODE 我們就可以先把指令**大致**分群，當我們把指令分成各個 sub-group 之後，就可以再根據 Function Code（e.g., func3、func7）來進一步區分指令到底是哪一個。下圖是 RISC-V 規格書中的 OPCODE Table：
+指令分類最核心的部分是 OPCODE，根據 OPCODE 我們就可以先把指令**初步地**分群。
+當我們把指令分成各個 sub-group 之後，就可以再根據其他的資訊如 Function Code（e.g., func3、func7）來進一步區分指令到底是哪一個。下圖是 RISC-V 規格書中的 OPCODE Table：
 
 ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/41d8ec10-13c2-433e-a7c5-20c8e24c55d6.png)
 
@@ -157,6 +185,9 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 
 大家可以從上圖看出，從 RV32I 轉換到 RV64I，必須多實作**十五條指令**。其中指令後綴（suffix）多了 *W* 的代表是操作在 64-bits register 的低 32-bits，忽略高 32-bits，並且將運算後的結果做 sign-extension 到 64-bits 之後再存回 `$rd` 暫存器。
 
+!!! note
+    這裡說「多實作十五條指令」其實有點不太精確，事實上，真正**多出來**的指令應該只有十二條，因為 SLLI/SRAI/SRLI 這三條指令是 RV32I 中本來就有的，只是到 RV64I 中它們的格式會有一點點變化。
+
 <figure markdown="span">
   ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/36d4aac7-cfc6-4df2-aef6-5e2628ef0826.png)
   ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/141f49eb-817b-40bc-85ab-f528768cabad.png)
@@ -183,7 +214,7 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 
 ### Architecture of A Simple ISS
 
-基本上，我們可以簡單地用 C 語言的 struct 來建立一個類似於 CPU 的資料結構：
+在實作上，我們可以簡單地用 C 語言的 struct 來建立一個的資料結構，裡面包含了所有我們需要模擬出來的 Processor States。
 
 ```cpp linenums="1"
 #include <stdint.h>
@@ -192,14 +223,14 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 #define MEM_SIZE 0x10000 (64-KiB)
 
 typedef struct {
-    uint64_t pc; // Program Counter
-    uint64_t regs[32]; // General Purpose Registers
-    uint8_t  mem[MEM_SIZE]; // Main Memory
-    uint8_t reg_for_getchar; // special 1-byte register for getchar()
+    uint64_t current_pc, new_pc; // Program Counter
+    uint64_t regs[32];           // General Purpose Registers
+    uint8_t  mem[MEM_SIZE];      // Main Memory
+    uint8_t reg_for_getchar;     // special 1-byte register for getchar()
     bool  halt; // Halt signal
 } cpu_state_t;
 
-extern cpu_state_t* processor_ptr; // declare pointer of the processor (main body of ISS)
+cpu_state_t* processor_ptr; // define the pointer of the processor state (main part of ISS)
 ```
 
 要表示 Processor 的狀態，我們需要 PC、32 個暫存器還有 Main Memory。PC 會指向目前正在執行的指令**在記憶體中的地址**，而暫存器則是 Processor 最基本用來暫存運算結果的單位。至於一個程式的指令和資料本身，則都會被儲存在 Main Memory 中，Processor 會透過 LOAD/STORE 指令來存取 Main Memory，包含讀取指令、還有存取 data。
@@ -262,7 +293,7 @@ typedef union {
 } riscv_inst_t;
 ```
 
-接下來，利用 C 語言中的 `enum` 來定義 OPCODE 和 function code，方便我們用來辨認不同的指令。
+然後再利用 C 語言中的 `enum` 來定義 OPCODE 和 function code，方便我們用來辨認不同的指令。
 
 ```cpp linenums="1"
 /*
@@ -333,12 +364,12 @@ typedef enum {
 !!! question
     你有注意到**至少目前**看到的所有 OPCODE 種類的 least significant 2-bits 都是 `0b11` 嗎，你知道原因是什麼嗎？（Hint：RISC-V C-Extension）
 
-有了對於 Processor 本身狀太定義的資料結構之後，我們就可以開始思考要如何模擬 Processor 的運作。
-基本上，Processor 的任務很簡單，就是**週而復始地讀取並執行指令**。
-我們可以定義一個函式，作為執行指令的最小單位，也就是**==每次呼叫這個函式只會執行一條指令==**。
+有了對於 Processor States 定義的資料結構之後，我們就可以開始思考要如何模擬 Processor 的運作。
+ISA Simulator 的任務很簡單，就是**週而復始地讀取並執行指令**。
+我們可以定義一個函式，作為 ISS 執行指令的最小單位，也就是**==每次呼叫這個函式只會執行一條指令==**。
 
 ```cpp linenums="1"
-void execute_one_inst(cpu_state_t* processor_ptr) {
+void execute_one_inst(cpu_state_t* proc_ptr) {
     const rsicv_inst_t *inst_ptr = (riscv_inst_t*)(&processor_ptr->mem[processor_ptr->pc]);
     OPCODE opcode = *inst_ptr & 0b1111111; // bitwise-AND
     switch (opcode) {
@@ -394,21 +425,26 @@ void execute_one_inst(cpu_state_t* processor_ptr) {
             Panic("Unsupported instruction: %x\n", inst_ptr->raw);
         }
     }
+    /* update program counter */
+    proc_ptr->current_pc = proc_state->new_pc;
 }
 ```
 
-至於怎麼實作這些 Handler Function，大家就參考助教提供的 Sample Code 吧！
+至於怎麼實作這些 Handler Function，這就是本次作業的一大重點了，大家就參考助教提供的 Sample Code 吧！
 助教在範例中只實作了 `addi` 和部分 `ecall` 指令的功能，並且用這兩條指令 Demo 了和經典的程式 `printf("Hello, World!\n")` 相同的效果，剩下的指令就需要靠大家自行完成。
 
 當我們實作好對**執行一條指令**這個行為的函式封裝之後，我們就可以基於 `execute_one_inst()` 來控制整個 ISS。譬如，我可以再這之上建構一個函式 `void execute_insts(unsigned inst_count)`：
 
 ```cpp linenums="1"
-void execute_insts(unsigned inst_count) {
+void execute_insts(unsigned long inst_count) {
     for (unsigned i = 0; (i < inst_count) && (!processor_ptr->halt); i++){
         execute_one_inst();
     }
 }
 ```
+
+!!! question
+    大家如果觀察助教提供的 Sample Code 當中可以發現，助教對於 interactive interface 的 `c` 指令的實作方式就是呼叫 `execute_insts(-1)`，你是否可以解釋為什麼要傳入 -$1$ 呢？
 
 ### Why Do We Need SYSTEM Instructions?
 
@@ -457,7 +493,7 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
             - MSB 如果是 1：將值存回 Processor State 的 `reg_for_getchar` 當中
 
 !!! note
-    在這裡之所以我們必須修改 LOAD/STORE 的實作，原因和 Memory-Mapped I/O Control 有關，在下一個 Lab 會詳細介紹
+    在這裡之所以我們必須修改 LOAD/STORE 的實作，原因和 *Memory-Mapped I/O Control* 有關，在下一個 Lab 會詳細介紹
 
 ### ISS with Debugging Interactive Interface
 
@@ -468,16 +504,16 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
 
 具體來說，我們應該要讓我們的 ISS 支援以下總共**九條**指令：
 
-| Command | Format                    | Example                         |
-|:-------:|:--------------------------|:--------------------------------|
-| help    | help [command]            | help <br> help quit             |
-| quit    | quit                      | quit                            |
-| c       | c                         | c                               |
-| si      | si [N]                    | si <br> si 5                    |
-| break   | b [Inst. Address]         | break <br> break 0x10           |
-| watch   | watch <expression>        | watch <br> watch ($a0 == 10) |
-| disable | disable <b or w\> <number\> | disable b <br> 1 disable w 0    |
-| reg     | reg <pc or gpr\>           | reg pc <br> reg gpr             |
+| Command | Format                         | Example                         |
+|:-------:|:-------------------------------|:--------------------------------|
+| help    | help [command]                 | help <br> help quit             |
+| quit    | quit                           | quit                            |
+| c       | c                              | c                               |
+| si      | si [N]                         | si <br> si 5                    |
+| break   | b [Inst. Address]              | break <br> break 0x10           |
+| watch   | watch <expression>             | watch <br> watch ($a0 == 10)    |
+| disable | disable <b or w\> <number\>    | disable b <br> 1 disable w 0    |
+| reg     | reg <pc or gpr\>               | reg pc <br> reg gpr             |
 | mem     | mem <N\> <Base Address in Hex\>| mem 4 0x10                      |
 
 每條指令的功能敘述如下：
@@ -501,13 +537,20 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
 8. **mem**
   > 查看 Main Memory 的內容，以 Hex 的格式印出，可以指定要輸出 $N$ 個 word（32-bits）
 
-## How to Run Test Cases
+## Chapter 4. How to Compile and Run
 
-TBD
+如同 Lab 1，在 Lab 2 中助教一樣已經提供 Makefile 讓大家可以直接使用，只要在 `lab-2` 路徑底下輸入 `make` 即可編譯 ISS 本身還有在 `lab-2/src/test-prog` 底下的測試程式。
 
-> 待助教完成測資後會更新這部分的內容。
+如果你想要使用 ISS 執行測試用的 RISC-V Program 的話，以 `lab-2/src/test-prog/hello.c` 為例，你可先 `make` 之後，進入 `build` 資料夾，然後輸入 `./main.elf hello.elf`，進入 ISS 之後再輸入 `c` 讓 ISS 持續執行直到 RISC-V Program 結束為止。
+正常來說，你應該會看到如下的輸出：
 
-## Start to Do Assignment
+<figure markdown="span">
+  ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/5a5b4e6a-dbfc-47fc-9649-8914e4800a2b.png){ width=750 }
+</figure>
+
+> 更多測資，待助教完成後會**再**更新 Chapter 4 的內容。
+
+## Chapter 5. Start to Do Assignment
 
 1. Clone the sample code
     - 先確定自己已經打開課程開發環境（Container），並且在環境中的 `workspace` 底下
