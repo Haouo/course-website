@@ -1,5 +1,3 @@
-# RTL Programming Review using SystemVerilog
-
 !!! info
     - Contributors：TA 汎穎、TA 宜蓁、TA 卉蓁、TA 峻豪
     - Deadline : ==2024/XX/XX==

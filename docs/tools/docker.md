@@ -1,5 +1,3 @@
-# :fontawesome-brands-docker:{ style="color: #1c90ed"} Docker tutorial
-
 !!! info
     - Contributors: TA 峻豪
     - Last updated: 2024/09/21

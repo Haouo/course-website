@@ -1,5 +1,3 @@
-# Basic Linux command
-
 !!! info
     - Contributors：TA 裕禾、TA 峻豪  
     - Last Updated：2024/09/22

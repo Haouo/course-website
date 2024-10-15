@@ -1,5 +1,3 @@
-# Useful Command-Line Tools
-
 !!! info
     - Contributor：TA 峻豪
     - Last Update：2024/10/03

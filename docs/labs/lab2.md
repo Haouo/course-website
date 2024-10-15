@@ -1,5 +1,3 @@
-# Lab 2 - Simple RISC-V ISA Simulator with RV64I
-
 !!! info
     - Contributors：TA 峻豪
     - Last Update：2024/10/09
@@ -12,7 +10,7 @@
 
     但**這門課並不會涉及到 Privileged Architecture（特權架構）的內容**
 
-## Chapter 1. What is Computer？
+## What is Computer？
 
 讓我們來看看電腦最基本的抽象結構（Abstraction Layers）：
 
@@ -57,7 +55,7 @@ ISA（Instruction-Set Architecture），基本上定義了一系列 CPU 應該�
 對於我們接下來要實作的 ISA Simulator 來說，我們可以將其的狀態定義為 $S = \{\text{GPRs},\, \text{PC},\, \text{Memory}\}$。
 對於 ISA Smulator 的狀態，視為是由 32 個 General Purpose Registers，再加上 Program Counter 和 Main Memory 所組成，而我們實作的 RV64I 指令則會去改變 ISA Simulator 的狀態 $S$。
 
-## Chapter 2. Introduction to RISC-V Instruction-Set Architecture (ISA)
+## Introduction to RISC-V Instruction-Set Architecture (ISA)
 
 RISC-V 被歸類為 RISC（Reduced Instruction Set Computer）指令集架構，與之相對的是 CISC（Complex Instruction Set Computer）。
 CISC 的代表人物便是在桌上型電腦、伺服器上常見的 x86 架構，而 RISC 架構除了 RISC-V 以外，最常見的便是 ARM，ARM 在手機、嵌入式應用市場中有重要的地位。
@@ -76,7 +74,7 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 3. RISC-V 的指令相較於 ARM 依然更為簡單<br>
   > 許多 ARM 的 CPU 設計依然會把 ARM 的指令轉換成多個 µOp 才去執行
 
-## Chapter 3. What is ISA Simulator（ISS）？
+## What is ISA Simulator（ISS）？
 
 因為我們所使用的電腦幾乎都是使用 x86 架構指令集，所以不認得 RISC-V 指令，因此當我們使用 RISC-V GNU Toolchain 去把 C 程式編譯成使用 RISC-V 指令的執行檔的時候，如果我們直接執行，會出現錯誤，因為 program 本身和 Host Machine 所使用的 ISA 不同。
 
@@ -537,7 +535,7 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
 8. **mem**
   > 查看 Main Memory 的內容，以 Hex 的格式印出，可以指定要輸出 $N$ 個 word（32-bits）
 
-## Chapter 4. How to Compile and Run
+## How to Compile and Run
 
 如同 Lab 1，在 Lab 2 中助教一樣已經提供 Makefile 讓大家可以直接使用，只要在 `lab-2` 路徑底下輸入 `make` 即可編譯 ISS 本身還有在 `lab-2/src/test-prog` 底下的測試程式。
 
@@ -550,7 +548,7 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
 
 > 更多測資，待助教完成後會**再**更新 Chapter 4 的內容。
 
-## Chapter 5. Start to Do Assignment
+## Start to Do Assignment
 
 1. Clone the sample code
     - 先確定自己已經打開課程開發環境（Container），並且在環境中的 `workspace` 底下

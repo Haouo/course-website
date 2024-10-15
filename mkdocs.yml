@@ -2,12 +2,13 @@ site_name: Computer Organization Fall 2024 @NCKUEE
 theme:
   name: material
   features:
+    - navigation.top
     - navigation.tabs
     - navigation.sections
     - navigation.expand
+    - navigation.path
     - toc.integrate
     - toc.follow
-    - navigation.top
     - search.suggest
     - search.highlight
     - search.relevance
@@ -41,7 +42,7 @@ plugins:
   - social
   - search
   - enumerate-headings:
-    increment_across_pages: false
+      increment_across_pages: false
 extra:
   social:
     - icon: fontawesome/brands/instagram
@@ -86,21 +87,22 @@ nav:
         # - a0x000: announce/a0x000.md
   - Lab material:
       - Overview: labs/lab_overview.md
-      - Lab 0: labs/lab0.md
-      - Lab 1: labs/lab1.md
-      - Lab 2: labs/lab2.md
-      - Lab 3: labs/lab3.md
-      - Lab 4: labs/lab4.md
-      - Lab 5: labs/lab5.md
-      - Lab 6: labs/lab6.md
-      - Lab 7: labs/lab7.md
-      - Lab 8: labs/lab8.md
+      - Lab 0 - How To Ask Questions The Smart Way: labs/lab0.md
+      - Lab 1 - C Programmin and Compilation Flow: labs/lab1.md
+      - Lab 2 - Simple RISC-V ISA Simulator with RV64I: labs/lab2.md
+      - Lab 3 - Bare-metal Runtime Environment and RISC-V Assembly Programming: labs/lab3.md
+      - Lab 4 - RTL Programming Review using SystemVerilog: labs/lab4.md
+      - Lab 5 - Single-Cycle CPU Design and Differential Testing: labs/lab5.md
+      - Lab 6 - Bus Protocol and Arbitration: labs/lab6.md
+      - Lab 7 - Pipeline CPU and Simple Cache Design: labs/lab7.md
+      - Lab 8 - Deep Dive into Memory System: labs/lab8.md
+      - Lab 9 - SIMD Accelerator and GEMM Kernel Design: labs/lab9.md
   - Tools Guide:
       - Basic Linux Command: tools/linux_cmd.md
       - Git Tutorial: tools/git_cmd.md
       - Docker Tutorial: tools/docker.md
       - Markdown Tutorial: tools/markdown.md
-      - Gitla& Mattermost: tools/gitlab_ov.md
+      - Gitla & Mattermost: tools/gitlab_ov.md
       - Useful CLI Tools: tools/cli_tools.md
   - RTL Programming:
     - Verilog: verilog.md

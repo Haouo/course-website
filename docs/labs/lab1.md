@@ -1,5 +1,3 @@
-# C Programming and Compilation Flow
-
 !!! info
     - Contributors : TA 峻豪、TA 明堡
     - Deadline : ==2024/10/10 23:59:59==
@@ -11,7 +9,7 @@
     - Update 2024/09/22：撰寫部分內容
     - Update 2024/09/26：完成內容撰寫
 
-## Chapter 1. What happens when you compiling a C program?
+## What happens when you compiling a C program?
 
 或許大家在大一修計算機概論的時候，有聽過上課的老師講過 C 語言的編譯流程，但也有可能，老師要求大家安裝 Visual Studio（不是 VS Code，兩個東西不一樣），然後你在 Visual Studio 上面只要按一個按鈕就可以編譯然後執行你的程式。但是，在計算機組織這們課當中，我們不能再像以往一樣忽略 C 語言的編譯流程和原理，我們必須要整個編譯的原理有基本的掌握，大家在後面的課程才能融會貫通。
 
@@ -169,7 +167,7 @@ Assembling（組譯）的過程相較於 Compiling 簡單很多，因為經過 C
     >
     > --- ChatGPT
 
-## Chapter 2. Some Special Parts in C Programming
+## Some Special Parts in C Programming
 
 ### Pointer and Multidimensional Dynamic Array
 
@@ -291,7 +289,7 @@ int main() {
 至於這些函數怎麼使用，這是你應該去查的！（STFW、RTFM）
 
 
-## Chapter 3. Simple Interactive Program Design
+## Simple Interactive Program Design
 
 在 Lab 3 中我們會練習去實作一個 ISA Simulator（ISS），這個程式的功能是模擬指令集的行為，簡單來說同學可以理解成模擬一個 Single-Cycle CPU，更多細節我們在 Lab 3 會詳細解說。這個 ISS 使用起來會想是 GDB 一樣，有一個互動式介面（Interactive Interface），簡單來說就是這個程式會印出一個 Prompt，然後等待使用者輸入指令。當接收到特定的指令之後，就會去做對應的事情。
 
@@ -361,7 +359,7 @@ int main() {
 !!! danger
     助教給的測資 Graph 一定會是 Connected Graph，即這個 Graph 只會有一個 Connected Component，所以不用考慮 MST 會變成 Minimal-Spanning Forest 的情況。
 
-### Start to Do The Assignment
+## Start to Do The Assignment
 
 1. 請先創建一個個人的 Repository，命名為 `Lab 1`，並把權限設定為 Private，並且請**不要**勾選 <u>Initialize repository with README</u>
     ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/3a054c9a-6e1a-446c-a868-4cd396999404.png)

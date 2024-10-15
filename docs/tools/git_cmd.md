@@ -1,5 +1,3 @@
-# Git 指令教學
-
 !!! info
     - Contributors：TA 明堡、TA 峻豪 
     - Last updated：2024/09/25

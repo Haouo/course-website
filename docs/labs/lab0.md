@@ -1,5 +1,3 @@
-# How To Ask Questions The Smart Way
-
 !!! info
     - Contributors : TA 峻豪
     - Deadline : ==2024/09/20==

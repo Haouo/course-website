@@ -1,5 +1,3 @@
-# Markdown Tutorial
-
 !!! info
     - Contributors：TA 裕禾
     - Last Update：2024/09/22

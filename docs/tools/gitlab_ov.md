@@ -1,5 +1,3 @@
-# :fontawesome-brands-gitlab:{ style="color: #fc6b0e"} Gitlab & Mattermost
-
 !!! info
     - Contributors：TA 峻豪、TA 裕禾
     - Last updated：2024/09/22
