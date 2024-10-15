@@ -6,7 +6,7 @@ pages:
     - pip install mkdocs-markdownextradata-plugin
     - pip install pillow cairosvg
     - pip install pymdown-extensions
-    - pip install mkdocs-enumerate-headings-plugin
+    # - pip install mkdocs-enumerate-headings-plugin
     - mkdocs build --site-dir public
   artifacts:
     paths:

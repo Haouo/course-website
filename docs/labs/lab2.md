@@ -1,6 +1,7 @@
 !!! info
     - Contributors：TA 峻豪
     - Last Update：2024/10/09
+    - Deadline: ==2024/11/03 23:59:59==
 
 !!! success
     如果你想要讀到關於 RISC-V 最原始的資訊和定義的話，請閱讀 RISC-V ISA 規格書（Specifications）
