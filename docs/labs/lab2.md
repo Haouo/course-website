@@ -12,18 +12,18 @@
     但**這門課並不會涉及到 Privileged Architecture（特權架構）的內容**
 
 ??? info "Simple Index"
-    1. [What is computer](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-computer)
-        - [From the Perspective of Finite-State-Machine (FSM)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#from-the-perspective-of-finite-state-machine-fsm)
-    2. [Introduction to RISC-V Instruction-Set Architecture (ISA)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#introduction-to-risc-v-instruction-set-architecture-isa)
-    3. [What is ISA Simulator (ISS)？](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-isa-simulatoriss)
-        - [General Purpose Register (GPR)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#general-purpose-register-gpr)
-        - [How to Distinguish Instructions From Binary (Instruction Decoding)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#how-to-distinguish-instructions-from-binary-instruction-decoding)
-            - [From RV32I to RV64I](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#from-rv32i-to-rv64i)
-        - [Architecture of A Simple ISS](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#architecture-of-a-simple-iss)
-        - [Why Do We Need SYSTEM Instructions?](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#why-do-we-need-system-instructions)
-        - [ISS with Debugging Interactive Interface](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#iss-with-debugging-interactive-interface)
-    4. [How to Compile and Run](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#how-to-compile-and-run)
-    5. [Start to Do Assignment](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#start-to-do-assignment)
+    - Chapter 1 [What is computer](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-computer)
+        - 1.1 [From the Perspective of Finite-State-Machine (FSM)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#from-the-perspective-of-finite-state-machine-fsm)
+    - Chapter 2 [Introduction to RISC-V Instruction-Set Architecture (ISA)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#introduction-to-risc-v-instruction-set-architecture-isa)
+    - Chapter 3 [What is ISA Simulator (ISS)？](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-isa-simulatoriss)
+        - 3.1 [General Purpose Register (GPR)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#general-purpose-register-gpr)
+        - 3.2 [How to Distinguish Instructions From Binary (Instruction Decoding)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#how-to-distinguish-instructions-from-binary-instruction-decoding)
+            - 3.2.1 [From RV32I to RV64I](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#from-rv32i-to-rv64i)
+        - 3.3 [Architecture of A Simple ISS](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#architecture-of-a-simple-iss)
+        - 3.4 [Why Do We Need SYSTEM Instructions?](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#why-do-we-need-system-instructions)
+        - 3.5 [ISS with Debugging Interactive Interface](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#iss-with-debugging-interactive-interface)
+    - Chapter 4 [How to Compile and Run](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#how-to-compile-and-run)
+    - Chapter 5 [Start to Do Assignment](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#start-to-do-assignment)
 
 ## What is Computer？
 
