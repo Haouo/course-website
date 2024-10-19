@@ -15,7 +15,7 @@
     1. [What is computer](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-computer)
         - [From the Perspective of Finite-State-Machine (FSM)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#from-the-perspective-of-finite-state-machine-fsm)
     2. [Introduction to RISC-V Instruction-Set Architecture (ISA)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#introduction-to-risc-v-instruction-set-architecture-isa)
-    3. [What is ISA Simulator（ISS）？](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-isa-simulatoriss)
+    3. [What is ISA Simulator (ISS)？](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-isa-simulatoriss)
         - [General Purpose Register (GPR)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#general-purpose-register-gpr)
         - [How to Distinguish Instructions From Binary (Instruction Decoding)](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#how-to-distinguish-instructions-from-binary-instruction-decoding)
             - [From RV32I to RV64I](https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#from-rv32i-to-rv64i)
@@ -89,7 +89,7 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 3. RISC-V 的指令相較於 ARM 依然更為簡單<br>
   > 許多 ARM 的 CPU 設計依然會把 ARM 的指令轉換成多個 µOp 才去執行
 
-## What is ISA Simulator（ISS）？
+## What is ISA Simulator (ISS) ？
 
 因為我們所使用的電腦幾乎都是使用 x86 架構指令集，所以不認得 RISC-V 指令，因此當我們使用 RISC-V GNU Toolchain 去把 C 程式編譯成使用 RISC-V 指令的執行檔的時候，如果我們直接執行，會出現錯誤，因為 program 本身和 Host Machine 所使用的 ISA 不同。
 
