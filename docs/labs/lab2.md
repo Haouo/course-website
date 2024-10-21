@@ -525,7 +525,7 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
 | si      | si [N]                         | si <br> si 5                    |
 | break   | b [Inst. Address]              | break <br> break 0x10           |
 | watch   | watch <expression>             | watch <br> watch ($a0 == 10)    |
-| disable | disable <b or w\> <number\>    | disable b <br> 1 disable w 0    |
+| disable | disable <b or w\> <number\>    | disable b 1 <br> disable w 0    |
 | reg     | reg <pc or gpr\>               | reg pc <br> reg gpr             |
 | mem     | mem <N\> <Base Address in Hex\>| mem 4 0x10                      |
 
@@ -538,7 +538,7 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
 3. **c**
   > 持續執行指令直到遇到 breakpoint、watchpoint 或是程式退出
 4. **si**
-  > 執行 $N$ 條指令，其中 $N$ 是大於零的正整數
+  > 執行 $N$ 條指令，其中 $N$ 是大於零的正整數（如果沒有傳入 $N$ 則預設 $N$ 等於 $1$）
 5. **break**
   > 列出目前所有 breakpoint（編號從零開始），或是設置新的 breakpoint
 6. **watch**
@@ -582,3 +582,4 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
       > `git push -u private main`
 4. Notes
     - 因為在**預設**情況之下，只要 Gitlab Repo 中包含 `.gitlab-ci.yml` 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開
+5. ==請記得依據 [Assignment Report Template](https://hedgedoc.course.aislab.ee.ncku.edu.tw/UBTl2mSKSRSW11GQXuOKTA?view) 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上==
