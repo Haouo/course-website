@@ -239,7 +239,6 @@ typedef struct {
     uint64_t current_pc, new_pc; // Program Counter
     uint64_t regs[32];           // General Purpose Registers
     uint8_t  mem[MEM_SIZE];      // Main Memory
-    uint8_t reg_for_getchar;     // special 1-byte register for getchar()
     bool  halt; // Halt signal
 } cpu_state_t;
 
@@ -269,38 +268,38 @@ typedef union {
         uint32_t rd : 5;
         uint32_t func3 : 3;
         uint32_t rs1 : 5;
-        uint32_t imm_11_0 : 12;
+        int64_t imm_11_0 : 12;
     } I_TYPE;
     struct {
         uint32_t opcode : 7;
-        uint32_t imm_4_0 : 5;
+        uint64_t imm_4_0 : 5;
         uint32_t func3 : 3;
         uint32_t rs1 : 5;
         uint32_t rs2 : 5;
-        uint32_t imm_11_5 : 7;
+        int64_t imm_11_5 : 7;
     } S_TYPE;
     struct {
         uint32_t opcode : 7;
         uint32_t rd : 5;
-        uint32_t imm_31_12 : 20;
+        int64_t imm_31_12 : 20;
     } U_TYPE;
     struct {
         uint32_t opcode : 7;
-        uint32_t imm_11 : 1;
-        uint32_t imm_4_1 : 4;
+        uint64_t imm_11 : 1;
+        uint64_t imm_4_1 : 4;
         uint32_t func3 : 3;
         uint32_t rs1 : 5;
         uint32_t rs2 : 5;
-        uint32_t imm_10_5 : 6;
-        uint32_t imm_12 : 1;
+        uint64_t imm_10_5 : 6;
+        int64_t imm_12 : 1;
     } B_TYPE;
     struct {
         uint32_t opcode : 7;
         uint32_t rd : 5;
-        uint32_t imm_19_12 : 8;
-        uint32_t imm_11 : 1;
-        uint32_t imm_10_1 : 10;
-        uint32_t imm_20 : 1;
+        uint64_t imm_19_12 : 8;
+        uint64_t imm_11 : 1;
+        uint64_t imm_10_1 : 10;
+        int64_t imm_20 : 1;
     } J_TYPE;
     uint32_t raw;
 } riscv_inst_t;
@@ -493,24 +492,10 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
         代表程式已經執行結束，應該將 Processor State 中的 `halt` 設為 true
     2. `$a0 == 1`<br>
         代表程式向執行環境發出 `putchar` 的請求，其中需要被印出的 character 的值會被放在暫存器 `$a1` 當中
-    3. `$a0 == 2`<br>
-        代表 RISC-V Program 向執行環境發出 `getchar` 的請求，必須將讀取到的 character 的數值存到 Processor State 中的 `reg_for_getchar` 當中
-- ==針對 LOAD/STORE 指令，我們要做特殊的修改==
-    1. LAOD
-        - 必須判斷 64-bits 的 Target Address 當中的 MSB 是 0 還是 1
-            - MSB 如果是 0：則執行 LOAD 指令原先的功能（到 Processor State 中的 `mem` 中讀取資料）
-            - MSB 如果是 1：讀取 `reg_for_getchar` 的數值
-    2. STORE
-        - 一樣必須判斷 64-bits 的 Target Address 當中的 MSB 是 0 還是 1
-            - MSB 如果是 0：將值存回 Processor State 的 `mem` 當中
-            - MSB 如果是 1：將值存回 Processor State 的 `reg_for_getchar` 當中
-
-!!! note
-    在這裡之所以我們必須修改 LOAD/STORE 的實作，原因和 *Memory-Mapped I/O Control* 有關，在下一個 Lab 會詳細介紹
 
 ### ISS with Debugging Interactive Interface
 
-延續在 Lab 1 當中我們利用 *readline* library 實作的 interactive interface，我們在實作 ISS 的時候，可以校訪類似 GDB 的 C language debugger，提供一系列我們定義好的指令，讓 ISS 的使用者可以藉由這些指令直接操作 ISS，方便使用者 debug。
+延續在 Lab 1 當中我們利用 *readline* library 實作的 interactive interface，我們在實作 ISS 的時候，可以效仿類似 GDB 的 C language debugger，提供一系列我們定義好的指令，讓 ISS 的使用者可以藉由這些指令直接操作 ISS，方便使用者 debug。
 
 !!! note
     請特別注意，這裡所說的方便 Debug 並不是只方便我們 Debug ISS 本身，而是方便我們之後用 ISS 跑我們自己寫的 RISC-V Program 的時候，可以方便 Debug RISC-V Program 本身
@@ -582,4 +567,4 @@ are encoded using the I-type instruction format. The ECALL instruction is used t
       > `git push -u private main`
 4. Notes
     - 因為在**預設**情況之下，只要 Gitlab Repo 中包含 `.gitlab-ci.yml` 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開
-5. ==請記得依據 [Assignment Report Template](https://hedgedoc.course.aislab.ee.ncku.edu.tw/UBTl2mSKSRSW11GQXuOKTA?view) 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上==
+5. **請記得依據 [Assignment Report Template](https://hedgedoc.course.aislab.ee.ncku.edu.tw/UBTl2mSKSRSW11GQXuOKTA?view) 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上**
