@@ -223,7 +223,7 @@ RISC-V 相較於 ARM 有幾個比較鮮明的特色：
 根據規格書的描述，LUI 這條指令一樣是將 `imm[31:12]` 後面補 12-bits 的 0 之後，再做 sign-extension 到 64-bits，然後再存回去 `$rd` 暫存器。
 而 AUIPC 則是將 `imm[31:12]` 的後面一樣補 12-bits 的 0 之後，先做 sign-extension 到 64-bits，再和當前的 PC 相加，最後將 64-bits 的運算結果存回 `$rd` 暫存器。
 
-最後則是 LOAD/STORE 指令，因為 General Purpose Register 已經被擴充到 64-bits 的寬度，所以理所當然多了 LD/LDU 和 SD 這三個指令，而其中的 D 代表的是 **Double Word（64-bits）**。
+最後則是 LOAD/STORE 指令，因為 General Purpose Register 已經被擴充到 64-bits 的寬度，所以理所當然多了 LD/LWU 和 SD 這三個指令，而其中的 D 代表的是 **Double Word（64-bits）**。
 
 ### Architecture of A Simple ISS
 
