@@ -103,10 +103,10 @@ nav:
       - Gitla & Mattermost: tools/gitlab_ov.md
       - Useful CLI Tools: tools/cli_tools.md
   - RTL Programming:
-    - Verilog: verilog.md
-    - SystemVerilog: sv.md
-    - SystemVerilog Assertion (SVA): sva.md
-    - Chisel HDL: chisel.md
-    # - _Verilog: _verilog.md
+    - Verilog: rtl/verilog.md
+    - SystemVerilog: rtl/sv.md
+    - SystemVerilog Assertion (SVA): rtl/sva.md
+    - Chisel HDL: rtl/chisel.md
+    - _Verilog: rtl/_verilog.md
   - 補充資料: references.md
   # - About MkDocs: mkdocs.md

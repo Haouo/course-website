@@ -1,15 +1,8 @@
-# Introduction to Verilog
-
 !!! info
     - Contributor：TA 汎穎、TA 宜蓁、TA 峻豪
     - Last Update：2024/10/03
 
-??? info "Update Information"
-    - 2024/09/22 初版完成
-    - 2024/10/03 大助接手修訂
-
 ---
-
 
 ## 簡介
 
