@@ -75,7 +75,9 @@ ABI Mnemonic 的命名規定其實也是為了配合 Calling Convention，並且
 在 Assembly Programming 中，Procedure（或稱 Function）通常（但不一定）會包含三個部分，分別是 **Prologue**、**Procedure Body** 還有 **Epilogue**。如果直接撰寫 C 語言中的 Function，通常不會注意到 Prologue 還有 Epilogue，因為在編譯階段，編譯器就會自動替我們的 C Function 加上 Prologue 和 Epilogue 來進行 Stack 和 Register 的管理，讓我們可以專注在 Procedure Body 的實作即可。但是當我們使用組合語言撰寫程式的時候，我們就必須自己實作出 Prologue 和 Epilogue，這樣才得以遵守 Procedure Calling Convention，把該存的資料存進 Stack 當中，並且在必要的時候將資料還原。
 
 !!! info "參考"
-	[Wikipedia - Function prologue and epilogue](https://en.wikipedia.org/wiki/Function_prologue_and_epilogue)
+	在程式設計中，function prologue 和 epilogue 是函數進入與退出的過程。這些步驟主要與堆疊的使用和寄存器的保存有關，是編譯器在生成組合語言或機器碼時自動添加的，以便確保函數能正確地呼叫與返回，且不影響主程式的其他部分。
+
+	參考：[Wikipedia - Function prologue and epilogue](https://en.wikipedia.org/wiki/Function_prologue_and_epilogue)
 
 #### 1.2.3 Case Study - Calculation of Fibonacci Number
 
@@ -260,24 +262,24 @@ foo:
 
 	LP64, LP64F, LP64D, and LP64Q: Use the following type sizes and alignments (based on the LP64 convention):
 
-	| Type                 | Size (Bytes)  | Alignment (Bytes) | Note
+	| Type                 | Size (Bytes)  | Alignment (Bytes) | Note |
 	|:---------------------|:-------------:|:-----------------:|:-----|
-	| bool/_Bool           |  1            |  1                |
-	| char                 |  1            |  1                |
-	| short                |  2            |  2                |
-	| int                  |  4            |  4                |
-	| long                 |  8            |  8                |
-	| long long            |  8            |  8                |
-	| __int128             | 16            | 16                |
-	| void *               |  8            |  8                |
-	| __bf16               |  2            |  2                | Half precision floating point (bfloat16)
-	| _Float16             |  2            |  2                | Half precision floating point (binary16 in IEEE 754-2008)
-	| float                |  4            |  4                | Single precision floating point (binary32 in IEEE 754-2008)
-	| double               |  8            |  8                | Double precision floating point (binary64 in IEEE 754-2008)
-	| long double          | 16            | 16                | Quadruple precision floating point (binary128 in IEEE 754-2008)
-	| float _Complex       |  8            |  4                |
-	| double _Complex      | 16            |  8                |
-	| long double _Complex | 32            | 16                |
+	| bool/_Bool           |  1            |  1                ||
+	| char                 |  1            |  1                ||
+	| short                |  2            |  2                ||
+	| int                  |  4            |  4                ||
+	| long                 |  8            |  8                ||
+	| long long            |  8            |  8                ||
+	| __int128             | 16            | 16                ||
+	| void *               |  8            |  8                ||
+	| __bf16               |  2            |  2                | Half precision floating point (bfloat16)|
+	| _Float16             |  2            |  2                | Half precision floating point (binary16 in IEEE 754-2008)|
+	| float                |  4            |  4                | Single precision floating point (binary32 in IEEE 754-2008)|
+	| double               |  8            |  8                | Double precision floating point (binary64 in IEEE 754-2008)|
+	| long double          | 16            | 16                | Quadruple precision floating point (binary128 in IEEE 754-2008)|
+	| float _Complex       |  8            |  4                ||
+	| double _Complex      | 16            |  8                ||
+	| long double _Complex | 32            | 16                ||
 
 	以 RV64 來說，總共定義了 LP64、LD64F、LP64D 和 LP64Q 這四種 Named ABI，他們的 Type Details 都基於上面的表格，唯一不同的是 F、D 和 Q 代表是否使用 RISC-V 的浮點數擴展（Extension）。
 	以 LP64 為例，L 代表 Long 且 P 代表 Pointer，所以 LP64 代表 Long 和 Pointer 的長度都是 64-bit。
@@ -295,7 +297,7 @@ foo:
 不論是開發 CPU，或是開發各式各樣不同形式的計算機系統，我們終究需要在其上開發軟體，使其可以依照我們想要的方式進行運作，因此關注開發容易程度是一件重要的事情。
 
 !!! success
-	這個問題可以進一部探討到作業系統的誕生，還有各式各樣系統軟體的發展
+	這個問題可以進一部探討到作業系統的誕生，還有各式各樣系統軟體的發展。
 
 回憶一下助教在 Lab 2 提供的範例程式 `hello.c`，它可以使 ISS 輸出 `Hello, World!` 並結束，這個程式的原始碼如下：
 
@@ -434,7 +436,29 @@ TBD
 	文章中關於 Single-Precision Floating-Point 的介紹基於 IEEE 754-2008 的規範，詳細內容可以參考：[754-2008 - IEEE Standard for Floating-Point Arithmetic](https://ieeexplore.ieee.org/document/4610935)
 
 ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/6a9992b2-d1d5-40c3-8dea-28f0646e5572.png)
-TBD 
+
+根據 IEEE 754 的規範，單精度浮點數的長度為 32-bit，其中 1-bit（MSB）作為 Sign-bit，8-bit 作為 Exponent，而最低的 23-bit 作為 Fraction。
+
+!!! note "Significand vs. Fraction"
+	當我們講 Significand 的時候，指的是浮點數表示法中的 Fraction 加上 Implicit Leading 1。如果只有說 Fraction 的話就是單純只包含小數點後的部分，不包含 Leading 1。
+	在 IEEE 754 規格書中，又把 Fraction 稱為 Trailing Significand Field。
+
+根據 IEEE 754 的規範，依照 Exponent 的值的不同，可以有以下幾種情況：
+
+<div align="center" markdown>
+|     Value    |             Exponent            | Fraction (Trailing Significand) |
+|:------------:|:-------------------------------:|:-------------------------------:|
+|    $\pm 0$   |            All zeros            |            All zeros            |
+|    Normal    | Not all zeros also not all ones |            Arbitrary            |
+|   Subnormal  |            All zeros            |          Not all zeros          |
+| $\pm \infty$ |             All ones            |            All zeros            |
+|      NaN     |             All ones            |          Not all zeros          |
+</div>
+
+需要特別注意的是，依照 IEEE 754 的規定，Exponent 的表示方式是 $E = e + \text{bias}$，其中 $E$ 是加上 Bias 之後儲存在浮點數表示法中的 Exponent 數值，而 $e$ 是真實的 Exponent，而針對單精度浮點數來說，754 規定其 Bias 應為 127。
+使用 Biased Representation (Offset Binary) 來表示 Exponent 其實是一個很巧妙的設計，我們知道單精度浮點數實際上可以表示的指數 $e$ 的範圍為 $-126 \sim 127$，加上 Bias 之後我們可以發現 $E$ 一定是一個非負整數。
+先忽略 Sign-bit 並且配合 Fraction，我們其實可以將 Exponent 和 Fraction 合起來視為一個無符號數整數，然後**直接使用整數排序演算法來排序浮點數！**，針對 Sign-bit 為 1 的狀況（也就是負數）只要將排序順序顛倒即可。 
+所以使用 Offset Binary 來表示 Exponent 的好處就是我們可以不用再針對浮點數實作特殊的排序演算法，而是可以直接沿用整數排序演算法。
 
 ##### 2.2.3.3 Rouding and Calculation Error
 
@@ -537,6 +561,18 @@ Provided there are no overflow, underflow, or invalid operation exceptions, IEEE
 當我們想要使用 GRS 來輔助 Rounding 的時候，有些人的實作方式可能就是暴力地直接捨棄掉小數點第三位後面的所有數字，得到 $G = 1$、$R = 0$ 且 $S = 0$，如果依照這樣的結果去判斷的話我們應該要將結果 Round-down，得到 $1.10_{\text{two}}$。
 但是，正確的結果應該是 $G = 1$、$R = 0$ 且 $S = 1$，因為 Round Bit 的後面其實出現了一個 1（小數點後第六位），依照 Sticky Bit 的定義來說的話應該要把 S 設為 1。如果依照 GRS 等於 101 來判斷的話，我們應該要將結果 Round-up，得到 $1.11_{\text{two}}$。
 依照 IEEE 754 的規範來說，$1.11_{\text{two}}$ 才是正確的捨入結果（Correct Rounding）。
+
+!!! info "補充：Kahan Summation Algorithm"
+	Kahan Summation，或稱為 Kahan 補償加法，是一種在浮點數加法中提升精度的算法，由 William Kahan 發明。
+	此方法主要用於累加大量浮點數時，避免因浮點數誤差（如捨入誤差）而導致最終結果偏差過大的問題。
+	當對大量浮點數累加時，數值較小的浮點數在加入數值較大的累加和時，容易因為浮點數表示的精度有限而導致誤差。
+	例如，若和的大小遠大於接下來要加入的數字，則加入的數可能會因精度限制而被捨棄或產生較大誤差。
+	Kahan summation 提供了補償機制，以記錄並補償這些捨入誤差。
+
+	在某些場景當中運算的準確度是至關重要的，像是物理模擬或是經融計算的應用，只要累積一定的誤差往往就會對結果產生很大的影響。
+	但是計算用的電腦往往也都是採用浮點數進行計算，引入誤差是無可避免的事情，因此需要發展出特定的演算法來補償（Compensate）這些誤差，使計算結果更貼近真實情況。
+
+	參考：[Wikipedia - Kahan summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
 [^1]: 這裡的課本指的是：*Computer Organization and Design RISC-V Edition: The Hardware/Software Interface*
 
