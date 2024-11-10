@@ -173,10 +173,43 @@ always_ff @(posedge clk or negedge rst) begin
 end
 ```
 
-我們也可以宣告 structure 為 packed，配合 packed union 的時候很有用。
+我們也可以宣告 structure 為 packed，根據 IEEE-1800 規格書上的敘述
+
+> A packed structure is a mechanism for subdividing a vector into subfields,
+> which can be conveniently accessed as members. Consequently, a packed structure consists of bit fields,
+> which are packed together in memory without gaps. A packed structure differs from an unpacked structure in that,
+> when a packed structure appears as a primary, it shall be treated as a single vector.
+>
+> A packed structure can also be used as a whole with arithmetic and logical operators,
+> and its behavior is determined by its signedness, with unsigned being the default.
+> The first member specified is the most significant and subsequent members follow in decreasing significance.
+
+簡單來說，基本上一個 packed struct 就是一個 vector，只是因為有時候我們會希望把一個 vector 分成很多個 subfields 各自進行操作，這時候就可以利用 packed array。
+也因此 packed array 也有分成 signed 或是 unsigned，因為當我們使用運算符號的時候，具體的行為會依照變數的 signedness 而有所不同，譬如算數右移（Arithemetic Right-Shift）。
+如果沒有指定的話，預設就是 unsigned。
+
+而在 packed struct 中第一個宣告的 element 會等同於單一一個 vector 中的 most significant part，後面宣告的 elements 則依序佔據 lower part。
 
 ```systemverilog linenums='1'
 struct packed {
+    logic [1:0] parity;
+    logic [31:0] data;
+} data_word;
+struct data_word a;
+
+always_ff @(posedge) begin
+    a.parity = 2'd0;
+    a.data = 32'd1;
+    // the code above are equal to the code below
+    // a[33:32] = 2'd0;
+    // a[31:0] = 32'd1;
+end
+```
+
+如果要宣告 signed packed array，可以這樣做
+
+```systemverilog linenums='1'
+struct packed signed {
     logic [1:0] parity;
     logic [31:0] data;
 } data_word;
@@ -192,7 +225,7 @@ struct packed {
 ### Unions
 
 在 SystemVerilog 中，我們也可以像在 C 語言中一樣使用 `union`，讓我們可以對同一筆 Data 有不同的解釋方式和定義。
-但是在 SystemVerilog 中，union 分成三種，分別是普通的 union、tagged union 和 packed union。
+但是在 SystemVerilog 中，union 分成三種，分別是普通的 union、tagged union 和 packed union。但在這裡我們僅介紹 packed union。
 
 ```systemverilog linenums='1'
 union packed {
@@ -219,11 +252,29 @@ always_ff @(posedge clock or negedge rstN) begin
 end
 ```
 
-### Packages
+在 packed union 中，所有的 member 一定都要是 packed type，像是 packed struct，或是一般的 bit-vector 還有 integer types。 
+但基本上我們最常用到的就是 bit-vector 或是 packed struct，所以大家只要記住 packed union 裡面只能有 bit-vector 和 packed struct 就好。
+
+!!! note "RISC-V instruction example of using struct and union"
+    我們利用 RISC-V 指令的解碼來示範結合 `struct` 和 `union` 的強大之處
+
+### Type Definition (typedef)
+
+我們可以用 `typedef` 關鍵字來自定義新的 data type，又稱為 **Use-defined types**。
+
+### Packages and Naming Space
 
 ### The Change of `always` Block
 
-### `case...inside`
+在 Verilog 中，如果我們想要寫複雜的組合電路的話，通常會使用 `always @(*) ...` 來實現電路，而對於時序電路的話，則會使用 `always @(posedge clk) ...` 這樣的寫法。
+但是，往往有時候會因為一些不良的 Coding Style 習慣或是其他因素導致在我們本來預期會是 pure combinational logic 裡面出現 register 和 latch，或是在時序電路中出現非預期的 latch，進而導致電路的功能錯誤。
+
+因此，在 SystemVerilog 中引入了一些新的語法，對我們來說最有用的有 `always_comb` 和 `always_ff` 這兩個語法，可以讓我們更精確地描述組合電路和時序電路。
+
+### Set Membership Operator (`inside`)
+
+!!! `case` 搭配 `inside` 使用
+    TBD
 
 ### Unique and Priority Keywords
 
