@@ -361,18 +361,126 @@ int main(void) {
 
 目前對我們的 ISA Simulator 來說，直接和硬體相關的並且我們需要的操作有兩個
 
-1. 控制程式是否停止（Halt）
-2. I/O 相關（目前只有輸出）
+1. 控制 ISS 是否停止執行指令（Halt）
+    - 因為 ISS 本身會不斷地重複執行指令的這個步驟，因此必須要提供一個機制，來告訴 ISS 什麼時候應該要停下來，並且將控制權轉移回 User 手上
+2. I/O 相關功能（輸出、輸入）
+    - 目前僅實作輸出的功能，暫時不實作輸入功能
+    - 輸出相關的函數如 `putchar`、`putint` 和 `printf`
 
-TBD
+
+> Use abstraction to simplify design.<br>
+> ----- 8 Great Ideas in Computer Architecture, By David A. Patterson, PhD
+
+```cpp linenums='1' title='core.h'
+#ifndef __CORE_H__
+#define __CORE_H__
+
+#include <stdint.h>
+
+/* system call enumeration list */
+#define SYS_EXIT 0
+#define SYS_PUTC 1
+
+static inline void __internal_syscall(uint64_t arg0, uint64_t arg1) {
+    register uint64_t a0 asm("a0") = arg0;
+    register uint64_t a1 asm("a1") = arg1;
+    asm volatile("ecall" ::"r"(a0), "r"(a1) :);
+}
+
+#define SYSCALL_1(A0) __internal_syscall(A0, 0)
+#define SYSCALL_2(A0, A1) __internal_syscall(A0, A1)
+
+/* function used to exit the current running program */
+extern void terminate(void) __attribute__((noreturn));
+
+/* basic output function (single character as unit) */
+extern void platform_outb(char c);
+
+#endif
+```
+
+在 `core.h` 中我們首先定義了 `__internal_syscall` 這個函式，作為硬體相關函式呼叫的基礎，然後基於參數個數的不同，我們又分別定義了 `SYSCALL_1` 和 `SYSCALL_2`。
+接下來我們宣告（Declare）了最重要的兩個函式，分別是 `terminate` 用來作為 RISC-V Program 結束時應該要主動呼叫的函式，以讓 ISS 停下。
+而 `platform_outb` 則可以向 ISS 發出請求，請其幫忙印出一個字元（character）。
+
+> 因為 `char` 的大小為一個 byte，因此該函數的後綴 outb 代表的含義是 output byte。
+
+```cpp linenums='1' title='core.c'
+#include "core.h"
+
+void terminate(void) {
+    for (;;) {
+        SYSCALL_1(SYS_EXIT);
+    }
+}
+
+void platform_outb(char c) { SYSCALL_2(SYS_PUTC, c); }
+```
+
+在 `core.c` 中我們定義（Define）了 `terminate` 和 `platform_outb`。因為 `terminate` 只需要傳入一個參數，也就是暫存器 $a0 的值，更精確地說是將 $a0 設為 0，所以實作上我們使用 `SYSCALL_1`。
+而根據 Lab 2 對 ISS 的實作規範，我們可以得知 `platform_outb` 要在呼叫 ECALL 指令之前將 $a0 設成 1，並且將欲印出的字元的數值放進 $a1 當中，因此我們使用 `SYSCALL_2`。
 
 ### 2.2 Hareware-Independent Library
 
-當我們對硬體相關的操作進行基本的抽象化之後，我們就可以利用 Hardware-Depedent Core Library 來件夠其於和硬體無關的操作。TBD
+當我們對硬體相關的操作進行基本的抽象化之後，我們就可以利用 Hardware-Depedent Core Library 來建構其餘和硬體無關的細節部分。
+如 I/O Library 和 Floating-Point Mmulation Library。
 
 #### 2.2.1 I/O Library
 
-TBD
+正常來說，I/O Library 如 C 語言中的 `stdio.h` 應該要同時包含輸出和輸入的功能，如 `printf` 和 `scanf` 這兩個函式。
+但是，因為實作輸入功能的話，會涉及到中斷（Interrupt）這個功能的實作，已經超出這份教材的範圍。因此，在這裡我們僅實作輸出相關功能。
+
+```cpp linenums='1' title='io.h'
+#ifndef __IO_H__
+#define __IO_H__
+
+/* basic output library */
+void putchar(char c);
+void puts(char *s);
+void putint(int integer);
+void printf(char *format, ...);
+
+#endif
+```
+
+```cpp linenums='1' title='io.c'
+#include "../include/io.h"
+
+#include "../include/core.h"
+
+#include <stdarg.h>
+
+#define NOT_IMPLEMENTED                                                        \
+    do {                                                                       \
+        puts("Please implement the function by yourself!\n");                  \
+        terminate();                                                           \
+    } while (0);
+
+void putchar(char c) { platform_outb(c); }
+
+void puts(char *s) {
+    while (*s != '\0') {
+        putchar(*(s++));
+    }
+}
+
+void putint(int numb) {
+    if (numb < 0) {
+        putchar('-');
+        numb = -numb; // convert to positive number
+    }
+
+    if (numb / 10) {
+        putint(numb / 10);
+    }
+    putchar((numb % 10) + '0');
+}
+
+void printf(char *format, ...) {
+    NOT_IMPLEMENTED
+    // TODO
+}
+```
 
 #### 2.2.2 Integer Multiplication and Division Emulation
 
@@ -396,11 +504,24 @@ TBD
 	>
 	> ----- ChatGPT
 
-1. Multiplication
-2. Division
-3. Modulo Operation
+在這裡，因為我們使用的編譯器是 GCC（specially, RISC-V GNU Toolchain for RISC-V），而 GCC 正好提供了一個非常方便的功能，叫做 [The GCC low-level runtime library](https://gcc.gnu.org/onlinedocs/gccint/Libgcc.html)（又稱 Libgcc），
+我們可以借助其中的 [Routines for integer arithmetic](https://gcc.gnu.org/onlinedocs/gccint/Integer-library-routines.html) 來完成整數乘除法和取模運算的模擬。
 
-#### 2.2.3 Floating-Point Emulation
+具體來說，Libgcc 針對硬體資源受限的硬體（e.g., 沒有內建整數乘除法器或 FPU）提供了許多方便的功能，讓硬體資源受限的硬體也可以執行更多樣的功能或運算。
+
+> Most of the routines in libgcc handle arithmetic operations that the target processor cannot perform directly.
+> This includes integer multiply and divide on some machines, and all floating-point and fixed-point operations on other machines.
+> libgcc also includes routines for exception handling, and a handful of miscellaneous operations. <br>
+> ----- GNU low-level runtime library
+
+我們正好可以利用 Libgcc 當中的 **Routines for integer arithmetic** 來將乘除法運算子還有取模運算（`*`, `/` and `%`）直接轉換成對應的函式呼叫，
+讓我們實作的 ISS 即使沒有 M-extension 的支援也依然可以執行對應的運算。
+
+對於轉寫 RISC-V Program 的人來說，其實這整件事情變得很簡單！因為這些 operator 到對應 function call 的轉換是由 Compiler 自動在背後完成的，
+所以我們在撰寫程式的時候只要像往常一樣，直接使用我們想要用的 operators，最後在編譯的時候，在最後面加上 `-lgcc` 的 compilation flag 即可。
+`-lgcc` 這個 flag 的用途是指示 GCC 要 link 到 Libgcc，這樣我們才可以使用 Libgcc 提供的功能。
+
+#### 2.2.3 Floating-Point Emulation Library
 
 在 RISC-V 當中浮點數相關的運算一樣是被歸類在擴充 **F-Extension** 當中，並沒有被歸類在 RV32/64I 當中，所以我們設計的 ISS 也無法**直接以執行單一指令的方式**進行浮點數相關的運算，因為我們並沒有實作 F-Extension 中所包含的指令，還有浮點數運算所需要的暫存器。
 
@@ -459,6 +580,18 @@ TBD
 使用 Biased Representation (Offset Binary) 來表示 Exponent 其實是一個很巧妙的設計，我們知道單精度浮點數實際上可以表示的指數 $e$ 的範圍為 $-126 \sim 127$，加上 Bias 之後我們可以發現 $E$ 一定是一個非負整數。
 先忽略 Sign-bit 並且配合 Fraction，我們其實可以將 Exponent 和 Fraction 合起來視為一個無符號數整數，然後**直接使用整數排序演算法來排序浮點數！**，針對 Sign-bit 為 1 的狀況（也就是負數）只要將排序順序顛倒即可。 
 所以使用 Offset Binary 來表示 Exponent 的好處就是我們可以不用再針對浮點數實作特殊的排序演算法，而是可以直接沿用整數排序演算法。
+
+1. 1-bit sign $S$
+2. w-bit biased exponent $E = e + \text{bias}$
+3. $(t = p − 1)$-bit trailing significand field digit string $T = d_1 d_2 ... d_{p-1}$; the leading bit of the significand, $d_0$, is implicitly encoded in the biased exponent E.
+
+根據 IEEE 754 規格書的定義，單精度浮點數的長度為 32-bit（又稱為 ***binary32***），其中由 1-bit Sign-bit，8-bit Exponent 加上 23-bit Trailing Significand Field 組成。 
+
+<figure markdown="span">
+  ![](img/lab-3/754-param.png){width=850}
+</figure>
+
+對於 binary32 來說，bias 為 127，並且 $e_{\text{max}} = 127$，而規格書也規定 $e_{\text{min}} = 1 - e_{\text{max}} = -126$。
 
 ##### 2.2.3.3 Rouding and Calculation Error
 
@@ -576,23 +709,452 @@ Provided there are no overflow, underflow, or invalid operation exceptions, IEEE
 
 [^1]: 這裡的課本指的是：*Computer Organization and Design RISC-V Edition: The Hardware/Software Interface*
 
-!!! success "查閱規格書（Specification）& 第一手資料的重要性"
-	我們處於資訊爆炸的時代，加上計算機科學這個領域已經發展近百年的歷史，我們已經可以在網路上查到太多所謂的「XXX 教學」或是「XXX 懶人包」，所以我們可以以很低的門檻去接觸很多知識。但是TBD
-
 ##### 2.2.3.4 Implementation
 
-我們以 RISC-V F-Extension 為例，常見的浮點數運算包含加減乘除還有開平方根（Square-Root）運算。
+我們以 RISC-V F-Extension 為例，常見的浮點數運算包含加減乘除還有開平方根（Square-Root）運算，在這裡我只討論浮點數加減法的運算。
+雖然以演算法的觀點來說，浮點數加減法的運算不會很複雜，但是在實作上其實還是有很多細節需要注意，並且也有很多技巧可以加快運算速度。
 
-## Chapter 3. How to Compile and Run
+!!! info "Berkeley SoftFloat Release 3e"
+	[**ucb-bar/berkeley-softfloat-3**](https://github.com/ucb-bar/berkeley-softfloat-3)
 
-TBD
+	Berkeley SoftFloat is a software implementation of binary floating-point that conforms to the IEEE Standard for Floating-Point Arithmetic.
+	SoftFloat is distributed in the form of C source code.
+	Building the SoftFloat sources generates a library file (typically softfloat.a or libsoftfloat.a) containing the floating-point subroutines.
+
+	**以下的程式碼主要參考 Berkeley SoftFloat 3 的實作，並且做了必要的簡化**。
+
+針對加法和減法的運算，我們其實可以用另外一種觀點來詮釋。對於加法運算，根據兩個 Operands 的 Sign-Bit 我們可以把問題區分成 Magnitude 相加、相減兩種情況，並且在額外判斷結果的 Sign-Bit 即可。
+討論浮點數加法運算 $A + B = C$：
+
+1. 當 $A$ 和 $B$ 同號（same sign）： $\text{mag}\left(A + B\right) = \text{mag}\left(A\right) + \text{mag}\left(B\right) = \text{mag}\left(C\right)$
+	- 直接把 $A$ 或 $B$ 的 Sign-Bit 作為 $C$ 的 Sign-Bit 即可
+2. 當 $A$ 和 $B$ 異號（contrary sign）：$\text{mag}\left(A + B\right) = |\text{mag}\left(A\right) - \text{mag}\left(B\right)| = \text{mag}\left(C\right)$
+	- 如果 $\text{exp}\left(A\right) = \text{exp}\left(B\right)$
+		- 如果 $\text{mag}\left(A\right) \geq \text{mag}\left(B\right)$，則 $\text{sign}\left(C\right) = \text{sign}\left(A\right)$，反之則 $\text{sign}\left(C\right) = \text{sign}\left(B\right)$
+	- 如果 $\text{exp}\left(A\right) > \text{exp}\left(B\right)$
+		- 則 $\text{sign}\left(C\right) = \text{sign}\left(A\right)$
+	- 如果 $\text{exp}\left(A\right) < \text{exp}\left(B\right)$
+		- 則 $\text{sign}\left(C\right) = \text{sign}\left(B\right)$
+
+而針對減法運算，我們可以利用公式 $A - B = A + \left(-B\right)$ 即可將減法問題變換為加法問題。其中，要將一個浮點數變號非常簡單，只要將其 Sign-Bit 翻轉（flip）即可。
+然而，在實作上，因為要考慮各式各樣運算過程中或是運算後可能會產生的問題，其實會導致程式碼變得相對複雜很多。
+
+```cpp linenums='1' title="Header file"
+#ifndef __FP_H__
+#define __FP_H__
+
+#include <stdbool.h>
+#include "stdint.h"
+
+/*
+ * utilize bit-field to extract sign, exponent and fraction of a fp
+ * Ps: it is related to big/little-endian
+ */
+typedef struct {
+    /* the order of bit-fields is important */
+    uint32_t frac : 23;    // 23-bit fraction
+    uint16_t exponent : 8; // 8-bit exponent
+    bool sign : 1;         // a-bit sign
+} f32_field;
+
+/*
+ * union type contains uint32_t, float and f32_field,
+ * for easy bit string manipulation
+ */
+typedef union {
+    uint32_t ui32;   // raw bit-string
+    float f32;       // single-precision float
+    f32_field field; // float-type integer
+} ui32_f32;
+
+extern uint8_t exceptionFlags;
+
+extern float f32_add(float a, float b);
+extern float f32_sub(float a, float b);
+extern float f32_neg(float a);
+extern float f32_abs(float a);
+
+#endif
+```
+
+對於使用這個 library 的使用者來說，可以直接使用 `f32_` 開頭的這四個函式來做浮點數計算。目前考慮到難易度，所以我們只實作了加減、取反數和絕對值這四種運算。
+除此之外，我們也可以使用 `ui32_f32` 這個特殊的 data type 來建構浮點數。
+
+```cpp linenums='1' title="Helper Functions"
+#include <stdint.h>
+#include <stdbool.h>
+// #include <stdio.h>
+
+#include "fp.h"
+
+/* initialize exception flags */
+uint8_t exceptionFlags = 0;
+/* flag types enumeration */
+typedef enum {
+    flag_inexact = 1,
+    flag_underflow = 2,
+    flag_overflow = 4,
+    flag_infinite = 8,
+    flag_invalid = 16
+} exceptionFlag_t;
+/* function to raise flags */
+static void raiseFlags(uint8_t flags) { exceptionFlags |= flags; }
+
+/* countLeadingZero8 can be viewed as a Look-Up Table (LUT) */
+static const uint_least8_t countLeadingZeros8[256] = {
+    8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+/*
+ * countLeadingZeros32 takes the advantage of countLeadingZeros8
+ * to spped up the counting process
+ */
+static inline uint8_t countLeadingZeros32(uint32_t a) {
+    uint_fast8_t count = 0;
+    if (a < 0x10000) {
+        count = 16;
+        a <<= 16;
+    }
+    if (a < 0x1000000) {
+        count += 8;
+        a <<= 8;
+    }
+    count += countLeadingZeros8[a >> 24];
+    return count;
+}
+
+/*----------------------------------------------------------------------------
+| Shifts 'a' right by the number of bits given in 'dist', which must not
+| be zero.  If any nonzero bits are shifted off, they are "jammed" into the
+| least-significant bit of the shifted value by setting the least-significant
+| bit to 1.  This shifted-and-jammed value is returned.
+|   The value of 'dist' can be arbitrarily large.  In particular, if 'dist' is
+| greater than 32, the result will be either 0 or 1, depending on whether 'a'
+| is zero or nonzero.
+*----------------------------------------------------------------------------*/
+static inline uint32_t shiftRightJam32(uint32_t a, uint16_t dist) {
+    return (dist < 31) ? a >> dist | ((uint32_t)(a << (-dist & 31)) != 0)
+                       : (a != 0);
+}
+
+/*
+ * basically, the sig should be a 23-bit value
+ * but here is a trick that
+ * the overflow part of sig will be added to the exp
+ * which reduces the complexity of calculation
+ * by removing additional shifting and addition
+ */
+static inline uint32_t packToF32UI(bool sign, uint16_t exp, uint32_t sig) {
+    return (((uint32_t)(sign) << 31) + ((uint32_t)(exp) << 23) + (sig));
+}
+
+static float roundPackToF32(bool sign, int16_t exp, uint32_t sig) {
+    uint8_t roundIncrement = 0x40, roundBits = sig & 0x7F;
+
+    /* add 0.5 ULP and trouncate extra-bits */
+    sig = (sig + roundIncrement) >> 7;
+    if (roundBits) {
+        raiseFlags(flag_inexact);
+    }
+    /* adjust LSB if it's tie-breaking case */
+    sig &= ~(uint32_t)(!(roundBits ^ 0x40));
+    if (!sig) {
+        exp = 0;
+    }
+
+    ui32_f32 ret;
+    ret.ui32 = packToF32UI(sign, exp, sig);
+    return ret.f32;
+}
+
+static float normRoundPackToF32(bool sign, int16_t exp, uint32_t sig) {
+    int8_t shiftDist =
+        countLeadingZeros32(sig) - 1; // minus 1 because of using only 31-bit
+    ui32_f32 z;
+
+    exp -= shiftDist;
+    if ((7 <= shiftDist) && ((unsigned int)exp < 0xFD)) {
+        z.ui32 = packToF32UI(sign, sig ? exp : 0, sig << (shiftDist - 7));
+    } else {
+        return roundPackToF32(sign, exp, sig << shiftDist);
+    }
+    return z.f32;
+}
+```
+
+接下來我們定義了數個 Helper Fuction 用來作為主要計算過程中的輔助函式。
+其中有三個部分比較特別，分別是 `countLeadingZeros32`、`shiftRightJam32` 和 `roundPackTo32`，我們以下來一一探討這三個 Function 的功能和特別之處。
+
+首先是 `countLeadingZeros32`，這個函數用來計算一個 32-bit binray 的 Leading-Zeros。基本上這個函式在實作的概念上應該不會難，以下示範一種 naive 的實作方式。 
+
+!!! info "名詞：Naive Implementation"
+    參考：[SienceDirect - Naive Implementation](https://www.sciencedirect.com/topics/computer-science/naive-implementation)
+
+    ___Naive Implementation___
+   : A naive implementation, in the context of Computer Science, refers to a simple and straightforward approach to implementing a concept or algorithm, often using basic techniques and hardware. It involves performing operations one at a time, which may result in slower speeds compared to more optimized implementations.
+
+```cpp linenums="1" title="Naive Imepletation for counting leading-zeros"
+static uint8_t countLeadingZeros32(uint32_t a) {
+    uint8_t count;
+    while (!(a & 0x80000000)) {
+        count++;
+        a <<= 1;
+    }
+    return count;
+}
+```
+
+不過因為使用 software-based 的方式來模擬浮點數運算本身就已經很慢了，因此在 Berkeley Softfloat 中，利用了 Look-Up Table 的方式來對計算過程進行加速。
+大致上來說，先利用兩次的 if-statement 做初步地判斷，最後再直接以查表的方式計算，在查表時只需計算 8-bit binary 的 leading-zeros 數量。
+
+再來是 `shiftRightJam`，這個函式其實就是負責執行**邏輯**右移操作（Logical Right-Shifting），但特別之處在於它多了 Jamming 操作。
+還記得前面我們說，為了使運算後捨入的結果為正確結果，我們必須利用 GRS 這三個 extra-bit 來輔助運算，其中 Sticky Bit 必須要使用 Reduced-OR 的方式來實作，而 Jamming 操作指的就是這個部分。
+
+最後是 `roundPackToF32` 這個函式，這個函式的主要功能是將給定的 Sign、Exponent 和 Significand（注意，不是 Fraction）經過 Rounding 之後，再轉換成 FP32 的格式。
+正常來說，IEEE 754 的規範規定了對於 Normal Number 來說，我們只需要儲存 Significand 中 Fraction 的部分，將 Leading-one 省略，變成 Implicit Leading-one。
+而對於 Subnormal Number 來說，不會有 Leading-one 的存在，在數值上也僅有 Fraction 的部分。
+在 `roudPackToF32` 中，如果我們又依照傳入的 Exponent 和 Significand 來判斷該數是 Normal 還是 Subnormal 然後決定該如果轉換格式，會造成額外的開銷。
+注意到，根據 `packToF32UI` 這個函式的實作來說，其實 Significand 多出來的 Leading-one（i.e., 24-th bit）其實可以直接視為 Overflow 並且會被直接加到 Exponent 當中。
+也因此我們在實作上不用再額外判斷 Normal/Subnormal，只要直接呼叫 `packToF32UI` 即可。
+
+
+```cpp linenums='1' title="Magnitude Addition"
+static float addMag_F32(uint32_t uiA, uint32_t uiB) {
+    ui32_f32 a, b, z;
+    a.ui32 = uiA;
+    b.ui32 = uiB;
+
+    int16_t expA = a.field.exponent;
+    int16_t expB = b.field.exponent;
+    uint32_t sigA = a.field.frac;
+    uint32_t sigB = b.field.frac;
+
+    bool signZ;
+    int16_t expZ;
+    uint32_t sigZ;
+
+    int16_t expDiff = expA - expB;
+
+    if (!expDiff) {
+        /* A and B have the same exponents */
+        if (!expA) {
+            /* exponents of A and B are zero (subnormal) */
+            z.ui32 = uiA + sigB;
+            goto uiz;
+        }
+        /* A and B are normal number */
+        signZ = a.field.sign;
+        expZ = expA;
+        sigZ = 0x01000000 + sigA + sigB; // contain "two" implicit leading 1
+        if (!(sigZ & 1) && (expZ < 0xFE)) {
+            /* check whether it can be normalized */
+            z.ui32 = packToF32UI(signZ, expZ, sigZ >> 1); // without rounding
+            goto uiz;
+        }
+        sigZ <<= 6;
+    } else {
+        /* A and B have the different exponents */
+        signZ = a.field.sign;
+        /* keep 6 extra-bits befor starting calculating */
+        sigA <<= 6;
+        sigB <<= 6;
+        if (expDiff > 0) {
+            /* align to A */
+            /* A must be normal FP */
+            expZ = expA;
+            sigB += expB ? 0x20000000 : sigB;
+            sigB = shiftRightJam32(sigB, expDiff);
+        } else {
+            /* align to B */
+            /* B must be normal FP */
+            expZ = expB;
+            sigA += expA ? 0x20000000 : sigA;
+            sigA = shiftRightJam32(sigA, -expDiff);
+        }
+        sigZ =
+            0x20000000 + sigA + sigB; // contain only "one" implicit leading 1
+        /* check and normalize */
+        if (sigZ < 0x40000000) {
+            expZ--;
+            sigZ <<= 1;
+        }
+    }
+    return roundPackToF32(signZ, expZ, sigZ); // round and pack
+uiz:
+    return z.f32;
+}
+```
+
+```cpp linenums='1' title="Magnitude Substraction"
+static float subMag_F32(uint32_t uiA, uint32_t uiB) {
+    ui32_f32 a, b, z;
+    a.ui32 = uiA;
+    b.ui32 = uiB;
+
+    uint8_t signA = a.field.sign;
+    uint8_t signB = b.field.sign;
+    bool signZ;
+    int16_t expA = a.field.exponent;
+    int16_t expB = b.field.exponent;
+    int16_t expZ;
+    uint32_t sigA = a.field.frac;
+    uint32_t sigB = b.field.frac;
+    uint32_t sigX, sigY, sigZ;
+
+    int8_t shiftDist;
+    int16_t expDiff;
+    int32_t sigDiff;
+    uint32_t uiZ;
+
+    /* main part */
+    expDiff = expA - expB;
+    if (!expDiff) {
+        /* expA == expB */
+        sigDiff = sigA - sigB;
+        if (!sigDiff) {
+            /* sigA == sigB */
+            uiZ = packToF32UI(0, 0, 0);
+            goto uiZ;
+        }
+        if (expA) {
+            expA--;
+        }
+        signZ = a.field.sign;
+        if (sigDiff < 0) {
+            signZ = !signZ;
+            sigDiff = -sigDiff;
+        }
+        shiftDist = countLeadingZeros32(sigDiff) - 8;
+        expZ = expA - shiftDist;
+        if (expZ < 0) {
+            shiftDist = expA;
+            expZ = 0;
+        }
+        uiZ = packToF32UI(signZ, expZ, sigDiff << shiftDist);
+        goto uiZ;
+    } else {
+        signZ = a.field.sign;
+        sigA <<= 7; // keep 7 extra-bits
+        sigB <<= 7;
+        if (expDiff < 0) {
+            /* expA < expB */
+            signZ = !signZ;
+            expZ = expB - 1;
+            sigX = sigB | 0x40000000;
+            sigY = sigA + (expA ? 0x40000000 : sigA);
+            expDiff = -expDiff;
+        } else {
+            /* expA > expB */
+            expZ = expA - 1;
+            sigX = sigA | 0x40000000;
+            sigY = sigB + (expB ? 0x40000000 : sigB);
+        }
+        return normRoundPackToF32(signZ, expZ,
+                                  sigX - shiftRightJam32(sigY, expDiff));
+    }
+uiZ:
+    z.ui32 = uiZ;
+    return z.f32;
+}
+```
+
+最後，根據我們最一開始的討論，對於浮點數加減法這兩種運算，我們實際上都可以轉換成 Magnitude 相加或相減的問題。
+在 Berkeley SoftFloat 的實作中，採用的方式是將 Leading-one 對齊（align）到第 31 個 bit，所以會多出 7 個 extra-bit。
+
+```cpp linenums='1' title="Actual API for users (add, sub, neg and abs)"
+float f32_add(float a, float b) {
+    ui32_f32 uA, uB;
+    float (*magsFuncPtr)(uint32_t, uint32_t); // function ptr
+
+    uA.f32 = a, uB.f32 = b;
+    magsFuncPtr = (uA.field.sign ^ uB.field.sign) ? &subMag_F32 : &addMag_F32;
+    return magsFuncPtr(uA.ui32, uB.ui32);
+}
+
+float f32_sub(float a, float b) { return f32_add(a, f32_neg(b)); }
+
+float f32_neg(float a) {
+    ui32_f32 ret;
+    ret.ui32 = *(uint32_t *)(&a) ^ 0x80000000;
+    return ret.f32;
+}
+
+float f32_abs(float a) {
+    ui32_f32 ret;
+    ret.ui32 = *(uint32_t *)(&a) & 0x7fffffff;
+    return ret.f32;
+}
+```
+
+最後，我們可以看到在 `f32_add` 這個函式中，利用了一個 Function Pointer `magsFuncPtr` 配合 a 和 b 的 sign-bit 來判斷要呼叫 `addMag_F32` 還是 `subMag_F32`。
+
+!!! note "Big-Endian & Little-Endian 對 Floating-Point Negation 實作上的影響"
+	  **參考：[浮點數運算和定點數操作](https://hackmd.io/@NwaynhhKTK6joWHmoUxc7Q/H1SVhbETQ?type=view)**
+
+    從前面的程式碼可以看到，我們利用了 C 語言中的 Bit-Field 技巧來更方便地取出 Sign、Exponent 和 Fraction。但是，Bit-Field 的順序其實會受到 Endianness 的影響。
+    如果是 Big-Endian 的架構，我們目前所定義的 Bit-Field 的順序就必須顛倒過來，變成先宣告 Fraction、再宣告 Exponent 和 Sign。
+
+## Chapter 3. How to Compile and Run The Demo
+
+為了同時操是我們實作的 I/O Library 和 Floating-Point Emulation Library，我們可以利用一個非常有趣的程式來測試，這個程式的用途是利用 ASCII Code 畫出非常名的碎形 Mandelbrot Set。
+
+```cpp linenums='1' title='Draw Mandelbrot Set with ASCII'
+#include "../lib/include/io.h"
+#include "../lib/include/fp.h"
+
+int main(void) {
+    int n;
+    float r, i, R, I, b;
+    for (i = -1; i < 1; i = f32_add(i, 0.06), puts("\n"))
+        for (r = -2; I = i, (R = r) < 1; r = f32_add(r, 0.03), putchar(n + 31))
+            for (n = 0; b = I * I, 26 > n++ && f32_add(R * R, b) < 4;
+                 I = f32_add(2 * R * I, i), R = f32_add(f32_sub(R * R, b), r))
+                ;
+}
+```
+
+受限於我們只有實作浮點數的加減法運算的模擬，但是繪製 Mandelbrot Set 會需要用到浮點數的乘法運算還有比較運算，所以我們還是必須要使用 Libgcc 來彌補我們實作上的不足，才能使這個程式在我們的 ISS 上執行。
+
+執行後預期會看到以下輸出：
+
+<figure markdown="span">
+  ![](img/lab-3/mandelbrot.png){ width=850 }
+</figure>
+
+如同 Lab 2，只要輸入 `make` 就可以執行編譯，所有編譯過程中產生的檔案和最終的執行檔（ELF）都會被放在 `build/` 資料夾底下。
 
 ## Chapter 4. Start to Do The Assignment
 
 ### 4.1 Assignment Requirement
 
-TBD
+1. 完成 `printf` 的實作，並且將 Mandelbrot Set 程式中的 `puts` 和 `putchar` 替換成 printf。
+2. 完成 Assignment Report，並且回答 Report 中的提問
 
 ### 4.2 Notes
 
-TBD
+1. Clone the sample code
+    - 先確定自己已經打開課程開發環境（Container），並且在環境中的 `workspace` 底下
+    - 下載助教提供的 Sample Code
+      > `git clone https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/lab-3.git`
+    - 進入資料夾
+      > `cd lab-3`
+2. Create a private repo
+    - 如同 Lab 1 所述，在 Gitlab 上面創建個人 Repo，並且命名為 `Lab 3`，請不要勾選 *Initialize the repository with README*
+    - 確認 branch 的名稱為 main 而非 master
+      > `git branch -M main`
+    - 新增自己的 Private Gitlab Repo 為 Remote Source
+      > `git remote add private <HTTPS URL of your private repo>`
+3. 將程式碼 Push 你的 Private Repository
+    - 請記得是推到 `private` 而非 `origin`
+      > `git push -u private main`
+4. Notes
+    - 因為在**預設**情況之下，只要 Gitlab Repo 中包含 `.gitlab-ci.yml` 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開
+5. **請記得依據 [Assignment Report Template]() 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上**
