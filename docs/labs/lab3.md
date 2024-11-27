@@ -482,9 +482,6 @@ void printf(char *format, ...) {
 }
 ```
 
-!!!note "關於輸入（Input）功能的實作和限制"
-    TODO
-
 #### 2.2.2 Integer Multiplication and Division Emulation
 
 因為在 RISC-V 的架構中，整數乘除法相關的指令是被定義在 **M-Extension** 當中，並不包含在 RV32/64I 當中，所以我們目前實作的 ISS 並不能直接執行整數乘除法相關的指令。但是，乘除法還有取模運算（Modulo Operation）在程式設計之中是相當常見的操作，如果限制我們的程式不能進行乘除法還有取模運算的話，會讓我們寫程式變得非常不方便和麻煩。但我們的 ISS 又只能執行加減法運算和常見的邏輯運算，那該怎麼辦？
@@ -583,6 +580,18 @@ void printf(char *format, ...) {
 使用 Biased Representation (Offset Binary) 來表示 Exponent 其實是一個很巧妙的設計，我們知道單精度浮點數實際上可以表示的指數 $e$ 的範圍為 $-126 \sim 127$，加上 Bias 之後我們可以發現 $E$ 一定是一個非負整數。
 先忽略 Sign-bit 並且配合 Fraction，我們其實可以將 Exponent 和 Fraction 合起來視為一個無符號數整數，然後**直接使用整數排序演算法來排序浮點數！**，針對 Sign-bit 為 1 的狀況（也就是負數）只要將排序順序顛倒即可。 
 所以使用 Offset Binary 來表示 Exponent 的好處就是我們可以不用再針對浮點數實作特殊的排序演算法，而是可以直接沿用整數排序演算法。
+
+1. 1-bit sign $S$
+2. w-bit biased exponent $E = e + \text{bias}$
+3. $(t = p − 1)$-bit trailing significand field digit string $T = d_1 d_2 ... d_{p-1}$; the leading bit of the significand, $d_0$, is implicitly encoded in the biased exponent E.
+
+根據 IEEE 754 規格書的定義，單精度浮點數的長度為 32-bit（又稱為 ***binary32***），其中由 1-bit Sign-bit，8-bit Exponent 加上 23-bit Trailing Significand Field 組成。 
+
+<figure markdown="span">
+  ![](img/lab-3/754-param.png){width=850}
+</figure>
+
+對於 binary32 來說，bias 為 127，並且 $e_{\text{max}} = 127$，而規格書也規定 $e_{\text{min}} = 1 - e_{\text{max}} = -126$。
 
 ##### 2.2.3.3 Rouding and Calculation Error
 
@@ -699,9 +708,6 @@ Provided there are no overflow, underflow, or invalid operation exceptions, IEEE
 	參考：[Wikipedia - Kahan summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
 [^1]: 這裡的課本指的是：*Computer Organization and Design RISC-V Edition: The Hardware/Software Interface*
-
-!!! success "查閱規格書（Specification）& 第一手資料的重要性"
-	我們處於資訊爆炸的時代，加上計算機科學這個領域已經發展近百年的歷史，我們已經可以在網路上查到太多所謂的「XXX 教學」或是「XXX 懶人包」，所以我們可以以很低的門檻去接觸很多知識。但是TBD
 
 ##### 2.2.3.4 Implementation
 
@@ -1061,7 +1067,7 @@ uiZ:
 ```
 
 最後，根據我們最一開始的討論，對於浮點數加減法這兩種運算，我們實際上都可以轉換成 Magnitude 相加或相減的問題。
-在 Berkeley SoftFloat 的實作中，採用的方式是將 Leading-one 對齊（align）到第 31 個 bit，
+在 Berkeley SoftFloat 的實作中，採用的方式是將 Leading-one 對齊（align）到第 31 個 bit，所以會多出 7 個 extra-bit。
 
 ```cpp linenums='1' title="Actual API for users (add, sub, neg and abs)"
 float f32_add(float a, float b) {
@@ -1087,6 +1093,8 @@ float f32_abs(float a) {
     return ret.f32;
 }
 ```
+
+最後，我們可以看到在 `f32_add` 這個函式中，利用了一個 Function Pointer `magsFuncPtr` 配合 a 和 b 的 sign-bit 來判斷要呼叫 `addMag_F32` 還是 `subMag_F32`。
 
 !!! note "Big-Endian & Little-Endian 對 Floating-Point Negation 實作上的影響"
 	  **參考：[浮點數運算和定點數操作](https://hackmd.io/@NwaynhhKTK6joWHmoUxc7Q/H1SVhbETQ?type=view)**
@@ -1128,7 +1136,25 @@ int main(void) {
 ### 4.1 Assignment Requirement
 
 1. 完成 `printf` 的實作，並且將 Mandelbrot Set 程式中的 `puts` 和 `putchar` 替換成 printf。
+2. 完成 Assignment Report，並且回答 Report 中的提問
 
 ### 4.2 Notes
 
-TBD
+1. Clone the sample code
+    - 先確定自己已經打開課程開發環境（Container），並且在環境中的 `workspace` 底下
+    - 下載助教提供的 Sample Code
+      > `git clone https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/lab-3.git`
+    - 進入資料夾
+      > `cd lab-3`
+2. Create a private repo
+    - 如同 Lab 1 所述，在 Gitlab 上面創建個人 Repo，並且命名為 `Lab 3`，請不要勾選 *Initialize the repository with README*
+    - 確認 branch 的名稱為 main 而非 master
+      > `git branch -M main`
+    - 新增自己的 Private Gitlab Repo 為 Remote Source
+      > `git remote add private <HTTPS URL of your private repo>`
+3. 將程式碼 Push 你的 Private Repository
+    - 請記得是推到 `private` 而非 `origin`
+      > `git push -u private main`
+4. Notes
+    - 因為在**預設**情況之下，只要 Gitlab Repo 中包含 `.gitlab-ci.yml` 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開
+5. **請記得依據 [Assignment Report Template]() 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上**
