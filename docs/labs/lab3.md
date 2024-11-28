@@ -547,7 +547,7 @@ void printf(char *format, ...) {
 	</figcaption>
 </figure>
 
-不過，相較於定點數，浮點數有一個特性是數值的分布並不均勻。我們分成兩部分來討論，針對 Subnormal Floating-Point，因為 Exponent 固定為 $-127$，在不考慮正負號的情況下唯一會影響數值大小的只有 Fraction。
+不過，相較於定點數，浮點數有一個特性是數值的分布並不均勻。我們分成兩部分來討論，針對 Subnormal Floating-Point，因為 Exponent 固定為 $-126$，在不考慮正負號的情況下唯一會影響數值大小的只有 Fraction。
 所以，Subnormal 的數值分布其實是均勻地，均勻地分佈在實數軸上靠近零的地方。換句話說，某種程度上我們其實可以把 Subnormal 視為是定點數。
 但是，對於 Normal Floating-Point 來說，Exponent 是會變動的，這也造成了當 Exponent 越來越大的時候（也代表離實數軸上原點越來越遠），Normal 的分布會越來越不平均，分布越來越離散。
 
@@ -560,11 +560,21 @@ void printf(char *format, ...) {
 
 根據 IEEE 754 的規範，單精度浮點數的長度為 32-bit，其中 1-bit（MSB）作為 Sign-bit，8-bit 作為 Exponent，而最低的 23-bit 作為 Fraction。
 
+1. 1-bit sign $S$
+2. w-bit biased exponent $E = e + \text{bias}$
+3. $(t = p − 1)$-bit trailing significand field digit string $T = d_1 d_2 ... d_{p-1}$; the leading bit of the significand, $d_0$, is implicitly encoded in the biased exponent E.
+
+<figure markdown="span">
+  ![](img/lab-3/754-param.png){width=850}
+</figure>
+
+對於 binary32 來說，bias 為 127，並且 $e_{\text{max}} = 127$，而規格書也規定 $e_{\text{min}} = 1 - e_{\text{max}} = -126$。
+
 !!! note "Significand vs. Fraction"
 	當我們講 Significand 的時候，指的是浮點數表示法中的 Fraction 加上 Implicit Leading 1。如果只有說 Fraction 的話就是單純只包含小數點後的部分，不包含 Leading 1。
 	在 IEEE 754 規格書中，又把 Fraction 稱為 Trailing Significand Field。
 
-根據 IEEE 754 的規範，依照 Exponent 的值的不同，可以有以下幾種情況：
+根據 IEEE 754 的規範，依照 Exponent 和 Fraction 的值的不同，可以有以下幾種情況：
 
 <div align="center" markdown>
 |     Value    |             Exponent            | Fraction (Trailing Significand) |
@@ -581,17 +591,8 @@ void printf(char *format, ...) {
 先忽略 Sign-bit 並且配合 Fraction，我們其實可以將 Exponent 和 Fraction 合起來視為一個無符號數整數，然後**直接使用整數排序演算法來排序浮點數！**，針對 Sign-bit 為 1 的狀況（也就是負數）只要將排序順序顛倒即可。 
 所以使用 Offset Binary 來表示 Exponent 的好處就是我們可以不用再針對浮點數實作特殊的排序演算法，而是可以直接沿用整數排序演算法。
 
-1. 1-bit sign $S$
-2. w-bit biased exponent $E = e + \text{bias}$
-3. $(t = p − 1)$-bit trailing significand field digit string $T = d_1 d_2 ... d_{p-1}$; the leading bit of the significand, $d_0$, is implicitly encoded in the biased exponent E.
-
-根據 IEEE 754 規格書的定義，單精度浮點數的長度為 32-bit（又稱為 ***binary32***），其中由 1-bit Sign-bit，8-bit Exponent 加上 23-bit Trailing Significand Field 組成。 
-
-<figure markdown="span">
-  ![](img/lab-3/754-param.png){width=850}
-</figure>
-
-對於 binary32 來說，bias 為 127，並且 $e_{\text{max}} = 127$，而規格書也規定 $e_{\text{min}} = 1 - e_{\text{max}} = -126$。
+!!! warning
+    請特別注意，Subnormal Number 的指數部分是 $-126$ 而非 $-127$！
 
 ##### 2.2.3.3 Rouding and Calculation Error
 
@@ -899,7 +900,7 @@ static float normRoundPackToF32(bool sign, int16_t exp, uint32_t sig) {
     參考：[SienceDirect - Naive Implementation](https://www.sciencedirect.com/topics/computer-science/naive-implementation)
 
     ___Naive Implementation___
-   : A naive implementation, in the context of Computer Science, refers to a simple and straightforward approach to implementing a concept or algorithm, often using basic techniques and hardware. It involves performing operations one at a time, which may result in slower speeds compared to more optimized implementations.
+    : A naive implementation, in the context of Computer Science, refers to a simple and straightforward approach to implementing a concept or algorithm, often using basic techniques and hardware. It involves performing operations one at a time, which may result in slower speeds compared to more optimized implementations.
 
 ```cpp linenums="1" title="Naive Imepletation for counting leading-zeros"
 static uint8_t countLeadingZeros32(uint32_t a) {
@@ -1157,4 +1158,4 @@ int main(void) {
       > `git push -u private main`
 4. Notes
     - 因為在**預設**情況之下，只要 Gitlab Repo 中包含 `.gitlab-ci.yml` 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開
-5. **請記得依據 [Assignment Report Template]() 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上**
+5. **請記得依據 [Assignment Report Template](https://hedgedoc.course.aislab.ee.ncku.edu.tw/8lYdKxG9R1GsVWB7_MwsgA?view) 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上**
