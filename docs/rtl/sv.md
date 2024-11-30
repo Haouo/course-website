@@ -14,19 +14,16 @@
 SystemVerilog 是一種硬體描述和驗證語言，是 Verilog 的擴展，主要目的是增強設計和驗證的功能。
 Verilog 起初在 1980 年代被設計用來描述硬體，提供設計者能夠用高層次語法來描述數位電路的行為及結構。
 由於其簡潔的語法，Verilog 成為了硬體設計的重要工具。然而，隨著硬體設計日益複雜，Verilog 的表達能力和測試驗證功能顯得不足。
-為了滿足這些需求，SystemVerilog 在 2005 年被引入並成為 IEEE 標準（IEEE 1800）。
+為了滿足這些需求，__SystemVerilog 在 2005 年被引入並成為 IEEE 標準（IEEE 1800）__。
 
-SystemVerilog 增加了許多現代編程語言的特性，使設計者能以更高層次的方式來描述硬體結構和行為。
+SystemVerilog 增加了許多現代程式語言的特性，使設計者能以更高層次的方式來描述硬體結構和行為。
 例如，它引入了強型別的資料結構和多種控制語句，允許更靈活的流程控制和資料管理，從而更精確地描述硬體行為。
-另外，SystemVerilog 提供了面向物件的編程功能，可以使用類別（class）來建模複雜的硬體模組與其交互行為，這在驗證過程中尤為重要，特別是當設計者需要模擬數據傳輸或狀態變遷時。
+另外，SystemVerilog 提供了物件導向相關的程式語法，可以使用類別（class）來建模複雜的硬體模組與其交互行為，這在驗證過程中尤為重要，特別是當設計者需要模擬數據傳輸或狀態改變時。
 
-除了設計，SystemVerilog 也著重強化了驗證功能。
-Verilog 本身主要用於設計硬體，缺乏有效的測試與驗證工具，而 SystemVerilog 擴展了這方面的能力，提供了高階的測試建模語法如 interfaces、assertions 和 coverage 等，適合複雜的驗證場景。
-這些功能讓工程師能夠定義訊號之間的交互方式，設置斷言（assertions）來檢查系統行為的正確性，並藉由覆蓋率分析（coverage analysis）確保測試完整性。
-這些增強的驗證功能讓 SystemVerilog 成為了廣泛用於硬體驗證的語言。
+除了設計，SystemVerilog 也著重強化了驗證功能。Verilog 本身主要用於設計硬體，缺乏有效的測試與驗證工具，而 SystemVerilog 擴展了這方面的能力，提供了高階的測試建模語法如 interfaces、assertions 和 coverage 等，適合複雜的驗證場景。
+這些功能讓工程師能夠定義訊號之間的交互方式，設置斷言（assertions）來檢查系統行為的正確性，並藉由覆蓋率分析（coverage analysis）確保測試完整性。這些增強的驗證功能讓 SystemVerilog 成為了廣泛用於硬體驗證的語言。
 
-總的來說，SystemVerilog 是對 Verilog 的全面強化。
-它保留了 Verilog 作為硬體描述語言的優勢，同時提供了現代化的編程工具和驗證功能，使設計者可以應對當今數位設計中的複雜挑戰。
+基本上，SystemVerilog 是對 Verilog 的全面強化。它保留了 Verilog 作為硬體描述語言的優勢，同時提供了現代化的編程工具和驗證功能，使設計者可以應對當今數位設計中的複雜挑戰。
 今天，SystemVerilog 已被廣泛應用於芯片設計和驗證領域，尤其是在設計與測試流程高度緊密結合的情境下。
 
 ## Migrate from Verilog to SystemVerilog
@@ -382,23 +379,393 @@ __Coding Style Recommendation__
 
 !!! info "Case statement with do-not-cares"
     其實在 SystemVerilog 中，除了一般的 `case` 語法以外，還有 `casex` 和 `casez` 這兩種特殊的用法，在 IEEE 1800-2023 中被稱為 _Case statement with do-not-cares_。
-    但基本上，如果我們有 Fuzzy Pattern Matching 的需求的話，使用 _case...inside_ 就好，不要用 _casez_ 或是 _casex_。
+    但基本上，如果我們有 Wildcard Matching 的需求的話，使用 _case...inside_ 就好，不要用 _casez_ 或是 _casex_。
 
 !!! note "Wildcard equality operators"
-    參考：IEEE 1800-2023 Chapter 11.4.6
+    __參考：IEEE 1800-2023 Chapter 11.4.6__
+
+    <figure markdown="span">
+    ![](img/wildcard-op.png){width=85%}
+    </figure>
+
+    > The wildcard equality operator (`==?`) and inequality operator (`!=?`) ==__treat x and z values in a given bit position of their right operand as a wildcard. x and z values in the left operand are not treated as wildcards__==.
+    > A wildcard bit matches any bit value (0, 1, z, or x) in the corresponding bit of the left operand being compared against it.
+    > Any other bits are compared as for the logical equality and logical inequality operators.
 
     在 SystemVerilog 中，還有兩種 operator 分別是 `==?` 和 `!=?` 被稱為 _wildcard equality operator_。TBD
 
+### Parameterized Module
+
+> Port declarations can be based on parameter declarations. Parameter types can be redefined for each instance of a module,
+> providing a means of customizing the characteristics of each instance of a module.
+>
+> IEEE 1800-2023 Chapter 23.2.3
+
+```verilog linenums='1' title='Define a module with non-local parameters'
+For example:
+module generic_fifo
+    #(parameter MSB=3, parameter LSB=0, parameter DEPTH=4) // parameter port list parameters
+    (input wire [MSB:LSB] in,
+     input wire clk, read, write, reset,
+     output logic [MSB:LSB] out,
+     output logic full, empty);
+
+    parameter FIFO_MSB = DEPTH * MSB;
+    localparam FIFO_LSB = LSB;
+        // These constants are local, and cannot be overridden.
+        // They can be affected by altering the value parameters above.
+        // If a module has a parameter_port_list, then any additional parameter
+        // defined in a module_item is treated as a local parameter
+
+    logic [FIFO_MSB:FIFO_LSB] fifo;
+    logic [$clog2(DEPTH):0] depth;
+
+    always @(posedge clk or posedge reset) begin
+        case ({read,write,reset})
+            // implementation of fifo
+        endcase
+    end
+endmodule
+
+module top;
+    // module instance parameter value assignment
+    generic_fifo #(4, 0, 8) fifo_1(...); // parameter value assignment by order
+    generic_fifo #(.MSB(4), .LSB(0), .DEPTH(8)) fifo_2(...); // parameter value assignment by name
+endmodule
+```
+
+在 _praameter_declaration_list_ 裡面使用 _localparam_ 也是合法的語法之一。
+
+```verilog linenums='1' title='With localparam'
+module generic_decoder
+    #(parameter num_code_bits = 3, localparam num_out_bits = 1 << num_code_bits)
+    (input [num_code_bits-1:0] A, output reg [num_out_bits-1:0] Y);
+```
+
 ### Interface and Modport
+
+> The communication between blocks of a digital system is a critical area that can affect everything from ease of RTL coding to hardware-software partitioning to performance analysis to bus implementation choices and protocol checking.
+> The interface construct in SystemVerilog was specifically created to encapsulate the communication between blocks, allowing a smooth migration from abstract system-level design through successive refinement down to lower level register-transfer and structural views of the design.
+> By encapsulating the communication between blocks, the interface construct also facilitates design reuse.
+> The inclusion of interface capabilities is an important advantage of SystemVerilog.
+> 
+> At its lowest level, an interface is a named bundle of nets or variables. The interface is instantiated in a design and can be accessed through a port as a single item, and the component nets or variables referenced where needed.
+> A significant proportion of a design often consists of port lists and port connection lists, which are just repetitions of names.
+> The ability to replace a group of names by a single name can significantly reduce the size of a description and improve its maintainability.
+>
+> Additional power of the interface comes from its ability to encapsulate functionality as well as connectivity, making an interface, at its highest level, more like a class template.
+> An interface can have parameters, constants, variables, functions, and tasks. The types of elements in an interface can be declared, or the types can be passed in as parameters.
+> The member variables and functions are referenced relative to the instance name of the interface as instance members. Thus, modules that are connected via an interface can simply call the subroutine members of that interface to drive the communication. With the functionality thus encapsulated in the interface and isolated from the module, the abstraction level and/or granularity of the communication protocol can be easily changed by replacing the interface with a different interface containing the same members,
+> but implemented at a different level of abstraction. The modules connected via the interface do not need to change at all.
+>
+> To provide direction information for module ports and to control the use of tasks and functions within particular modules, the modport construct is provided.
+>  As the name indicates, the directions are those seen from the module.
+> 
+> ----- IEEE 1800-2023 Chapter 25.2
+
+```verilog linenums='1' title='Example without using interface'
+module memMod(
+  input  logic req,
+         logic clk,
+         logic start,
+         logic [1:0] mode,
+         logic [7:0] addr,
+  inout  wire  [7:0] data,
+  output bit   gnt,
+         bit   rdy
+);
+  logic avail;
+
+  ...
+endmodule
+
+module cpuMod(
+  input  logic clk,
+         logic gnt,
+         logic rdy,
+  inout  wire  [7:0] data,
+  output logic req,
+         logic start,
+         logic [7:0] addr,
+         logic [1:0] mode
+);
+
+  ...
+endmodule
+
+module top;
+  logic req, gnt, start, rdy;
+  logic clk = 0;
+  logic [1:0] mode;
+  logic [7:0] addr;
+  wire [7:0] data;
+
+  memMod mem(req, clk, start, mode, addr, data, gnt, rdy);
+  cpuMod cpu(clk, gnt, rdy, data, req, start, addr, mode);
+
+endmodule
+```
+
+```verilog linenums='1' title='Interface example using a named bundle'
+interface simple_bus;
+    logic req, gnt;
+    logic [7:0] addr, data;
+    logic [1:0] mode;
+    logic start, rdy;
+endinterface: simple_bus
+
+module memMod(simple_bus a, // Access the simple_bus interface
+              input logic clk);
+    logic avail;
+    // When memMod is instantiated in module top, a.req is the req
+    // signal in the sb_intf instance of the 'simple_bus' interface
+    always @(posedge clk) a.gnt <= a.req & avail;
+endmodule
+
+module cpuMod(simple_bus b, input logic clk);
+    ...
+endmodule
+
+module top;
+    logic clk;
+    simple_bus sb_intf(); // Instantiate the interface
+    memMod mem(sb_intf, clk); // Connect the interface to the module instance
+    cpuMod cpu(.b(sb_intf), .clk(clk)); // Either by position or by name
+endmodule
+```
+
+```verilog linenums='1' title='Interface example using a generic bundle'
+interface simple_bus;
+    logic req, gnt;
+    logic [7:0] addr, data;
+    logic [1:0] mode;
+    logic start, rdy;
+endinterface: simple_busmodule
+
+module memMod(interface a, input logic clk);
+    ...
+endmodule
+
+module cpuMod(interface b, input logic clk);
+    ...
+endmodule
+
+module top;
+    logic clk = 0;
+    simple_bus sb_intf();
+    // Reference the sb_intf instance of the simple_bus
+    // interface from the generic interfaces of the
+    // memMod and cpuMod modules
+    memMod mem(.a(sb_intf), .clk(clk));
+    cpuMod cpu(.b(sb_intf), .clk(clk));
+endmodule
+```
+
+#### Ports in interface
+
+> One limitation of simple interfaces is that the nets and variables declared within the interface are only used to connect to a port with the same nets and variables.
+> To share an external net or variable, one that makes a connection from outside the interface as well as forming a common connection to all module ports that instantiate the interface, an interface port declaration is required.
+> The difference between nets or variables in the interface port list and other nets or variables within the interface is that only those in the port list can be connected externally by name or position when the interface is instantiated.
+>
+> IEEE 1800-2023 Chapter 25.4
+
+```verilog linenums='1' title='Example of ports in interface'
+interface simple_bus (input logic clk); // Define the interface
+    logic req, gnt;
+    logic [7:0] addr, data;
+    logic [1:0] mode;
+    logic start, rdy;
+endinterface: simple_bus
+
+module memMod(simple_bus a); // Uses just the interface
+    logic avail;
+    always @(posedge a.clk) // the clk signal from the interface
+    a.gnt <= a.req & avail; // a.req is in the 'simple_bus' interface
+endmodule
+
+module cpuMod(simple_bus b);
+    ...
+endmodule
+
+module top;
+    logic clk = 0;
+    simple_bus sb_intf1(clk); // Instantiate the interface
+    simple_bus sb_intf2(clk); // Instantiate the interface
+    memMod mem1(.a(sb_intf1)); // Reference simple_bus 1 to memory 1
+    cpuMod cpu1(.b(sb_intf1));
+    memMod mem2(.a(sb_intf2)); // Reference simple_bus 2 to memory 2
+    cpuMod cpu2(.b(sb_intf2));
+endmodule
+```
+
+#### Modport
+
+```verilog linenums='1' title='Example of named port bundle'
+interface simple_bus (input logic clk); // Define the interface
+    logic req, gnt;
+    logic [7:0] addr, data;
+    logic [1:0] mode;
+    logic start, rdy;
+modport target (input req, addr, mode, start, clk,
+                output gnt, rdy,
+                ref data);
+modport initiator(input gnt, rdy, clk,
+                  output req, addr, mode, start,
+                  ref data);
+endinterface: simple_bus
+
+module memMod (simple_bus.target a); // interface name and modport name
+    logic avail;
+    always @(posedge a.clk) begin // the clk signal from the interface
+        a.gnt <= a.req & avail; // the gnt and req signal in the interface
+    end
+endmodule
+
+module cpuMod (simple_bus.initiator b);
+    ...
+endmodule
+
+module top;
+    logic clk = 0;
+    simple_bus sb_intf(clk); // Instantiate the interface
+    initial repeat(10) #10 clk++;
+    memMod mem(.a(sb_intf)); // Connect the interface to the module instance
+    cpuMod cpu(.b(sb_intf));
+endmodule
+```
+
+```verilog linenums='1' title='Example of connecting port bundles'
+interface simple_bus (input logic clk); // Define the interface
+    logic req, gnt;
+    logic [7:0] addr, data;
+    logic [1:0] mode;
+    logic start, rdy;
+modport target (input req, addr, mode, start, clk,
+                output gnt, rdy,
+                ref data);
+modport initiator(input gnt, rdy, clk,
+                  output req, addr, mode, start,
+                  ref data);
+endinterface: simple_bus
+
+module memMod(simple_bus a); // Uses just the interface name
+    logic avail;
+    always @(posedge a.clk) // the clk signal from the interface
+        a.gnt <= a.req & avail; // the gnt and req signal in the interface
+endmodule
+
+module cpuMod(simple_bus b);
+    ...
+endmodule
+
+module top;
+    logic clk = 0;
+    simple_bus sb_intf(clk); // Instantiate the interface
+    initial repeat(10) #10 clk++;
+    memMod mem(sb_intf.target); // Connect the modport to the module instance
+    cpuMod cpu(sb_intf.initiator);
+endmodule
+```
+
+```verilog linenums='1' title='Example of connecting port bundle to generic interface'
+interface simple_bus (input logic clk); // Define the interface
+    logic req, gnt;
+    logic [7:0] addr, data;
+    logic [1:0] mode;
+    logic start, rdy;
+modport target (input req, addr, mode, start, clk,
+                output gnt, rdy,
+                ref data);
+modport initiator(input gnt, rdy, clk,
+                  output req, addr, mode, start,
+                  ref data);
+endinterface: simple_bus
+
+module memMod(interface a); // Uses just the interface
+    logic avail;
+    always @(posedge a.clk) // the clk signal from the interface
+        a.gnt <= a.req & avail; // the gnt and req signal in the interface
+endmodule
+
+module cpuMod(interface b);
+    ...
+endmodule
+
+module top;
+    logic clk = 0;
+    simple_bus sb_intf(clk); // Instantiate the interface
+    memMod mem(sb_intf.target); // Connect the modport to the module instance
+    cpuMod cpu(sb_intf.initiator);
+endmodule
+```
+
+```verilog linenums='1' title='Parameterized interface'
+interface intf_4;
+    parameter SIZE = 16;
+    wire [SIZE-1:0] sig1, sig3;
+    var logic [SIZE-1:0] sig2, sig4;
+    ... // modport declarations
+
+    function automatic logic [7:0] ecc_f (input i);
+        ...
+    endfunction
+
+    assign sig4 = ecc_f(sig1);
+endinterface: intf_4
+
+module top;
+    intf_4 #(.SIZE(32)) intf(); // override default parameter SIZE = 16 to be 32
+endmodule
+```
+
+__SystemVerilog Advantage__
+: Interfaces, when used properly, can substantially reduce redundant declarations within a design. This leads to code that is easier to maintain and easier to reuse in other projects.
+
+__Recommendation__
+: Use interfaces to bundle related signals together. Avoid bundling non-related signals, such as clocks and resets.
 
 ### Others
 
 #### Ending Name
 
+> SystemVerilog allows a name to be specified at the end of any named group of code. The ending name must match the block name; mismatches are reported as an error.
+> Named ends help document code, significantly aiding in code debug, maintenance, and reuse.
+>
+> ----- Synthesiable SystemVerilog
+
+```verilog linenums='1'
+module FSM (...);
+    ...
+    always_ff @(posedge clock) begin: Sequencer
+        case (SquatState)
+            2'b01: begin: rx_valid_state
+                Rxready <= '1;
+                for (int j=0; j<NumRx; j++) begin: loop1
+                    for (int i=0; i<NumRx; i++) begin: loop2
+                        if (Rxvalid[i]) begin: match
+                            ... // receive data
+                        end: match
+                    end: loop2
+                end: loop1
+            end: rx_valid_state
+            ... // decode other states
+        endcase
+    end: Sequencer
+
+    task get_data(...);
+        ...
+    endtask: get_data
+endmodule: FSM
+```
+
 #### Vector Fill Token
+
+#### timeunit and timeprecision
 
 #### Constant Variable
 
-#### Expression Size Function
+#### Expression Size Function ($clog2, $bits)
 
 #### for-loop and foreach
+
+#### Generate Statements
