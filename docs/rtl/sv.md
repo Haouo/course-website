@@ -1,13 +1,13 @@
-# From Verilog to SystemVerilog
-
 !!! info
     - Contributors: TA 峻豪
-    - Last updated: 2024/09/22
+    - Last updated: 2024/11/30
 
 ---
 
-!!! success "Recommend Paper"
-    推薦閱讀論文 [Synthesiing SystemVerilog - Busting the Myth that SystemVerilog is only for Verification](https://sutherland-hdl.com/papers/2013-SNUG-SV_Synthesizable-SystemVerilog_paper.pdf)，該論文詳細地介紹了 SystemVerilog 對於電路設計的好用之處。
+!!! success "Recommend Reading List"
+    1. 推薦閱讀論文 [Synthesiing SystemVerilog - Busting the Myth that SystemVerilog is only for Verification](https://sutherland-hdl.com/papers/2013-SNUG-SV_Synthesizable-SystemVerilog_paper.pdf)，該論文詳細地介紹了 SystemVerilog 對於電路設計的好用之處。
+    2. 心有餘力的話，能夠看過 SystemVerilog 的**規格書**當然是最好的：[1800-2023 - IEEE Standard for SystemVerilog--Unified Hardware Design, Specification, and Verification Language](https://ieeexplore.ieee.org/document/10458102)
+        - Ps：透過成大校內的網路應該可以查看 PDF 檔案
 
 ## What is  SystemVerilog?
 
@@ -264,6 +264,8 @@ end
 
 ### Packages and Naming Space
 
+TBD
+
 ### The Change of `always` Block
 
 在 Verilog 中，如果我們想要寫複雜的組合電路的話，通常會使用 `always @(*) ...` 來實現電路，而對於時序電路的話，則會使用 `always @(posedge clk) ...` 這樣的寫法。
@@ -271,12 +273,121 @@ end
 
 因此，在 SystemVerilog 中引入了一些新的語法，對我們來說最有用的有 `always_comb` 和 `always_ff` 這兩個語法，可以讓我們更精確地描述組合電路和時序電路。
 
-### Set Membership Operator (`inside`)
+### Decision Statements
 
-!!! `case` 搭配 `inside` 使用
-    TBD
+用於 RTL 建模的主要語法結構是 **if...else** 和 **case**（包括其通配符變體）。這些決策語法是 RTL 建模的核心，用於建模 **組合邏輯**、**鎖存器（latches）** 和 **觸發器（flip-flops）**。
+在編寫程式碼時必須小心，確保 **if...else** 和 **case** 能夠生成預期的硬體。若未遵循適當的編碼規範，可能導致模擬結果與合成結果不一致（可參考 Mills 和 Cummings 的文獻 [11]）。
+自從這篇文章於 1999 年首次發表以來，SystemVerilog 已對 Verilog 增加了大量語言增強功能，以幫助減少或消除這些不一致。
 
-### Unique and Priority Keywords
+傳統 Verilog 中最棘手的問題之一是 **casex/casez** 的問題。許多會議論文專注於這些語法造成的問題，並建議限制其使用。
+而 **SystemVerilog** 的 **case...inside** 語法取代了 **casex** 和 **casez**。
+此外，另一個重要的 SystemVerilog 增強功能是 **unique**、**unique0** 和 **priority** 決策修飾詞。
+
+#### Set Membership Operator (`inside`)
+
+在 SystemVerilog 中，`inside` 是一個操作符，用於檢查一個值是否屬於某個範圍或集合。這個操作符常用於 assertion、constraint 或 if-else 判斷，使語法更簡潔直觀。
+
+> The inside set membership operator compares a value to a list of other values enclosed in { }.
+> The list of values can be a range of values between [ ], or can be the values stored in an array.
+> The inside set membership operator allows bits in the value list to be masked out of a comparison in the same way as the case equality operators.
+
+```verilog linenums='1' title='Examples of inside operator'
+if (data inside {[0:255]}) ... // if data is between 0 to 255, inclusive
+if (data insise {3'b1?1}) ... // if data is 3'b101, 3'b111, 3'b1x1, 3'b1z1
+```
+
+要特別注意的是，大括號 `{...}` 中的數值一定要是常數，才可以讓 `inside` 可以被 EDA 工具合成成實際的電路。
+
+#### Unique and Priority Keywords with `if-else` or `case`
+
+_unique_、_unique0_ 和 _priority_ 在 SystemVerilog 通常會搭配 Conditional if-else statement 或是 Case statement 來使用，它們的目的是作為 ___violation checkers___。
+
+當我們使用 _unique_ 或是 _priority_ 來修飾 if-else statement 或是 case statement 的時候，表示我們所撰寫的條件應該要覆蓋全部的可能性，否則在電路模擬的過程中，模擬工具應該要出現 violation report。
+
+```verilog linenums='1'
+unique if ((a == 0) || (a == 1)) ...
+else if (a == 2) ...
+else if (a == 3) ... // values 3,5,6,7 cause a violation report
+
+priority if (a == 0) ...
+else if (a == 1) ...
+else ... // covers all other possible values,
+         // so no violation report
+```
+
+但是某些時候或許是設計上刻意為之，就會希望不要出現 violation report，這時候就可以用 _unique0_。
+
+```verilog linenums='1'
+unique0 if ((a==0) || (a==1)) $display("0 or 1");
+else if (a == 2) $display("2");
+else if (a == 4) $display("4"); // values 3,5,6,7 cause no violation report
+```
+
+上面所講的是屬於 _unique_、_unique0_ 和 _priority_ 的共同性質，接下來我們要區分 _unique_ 和 _priority_ 在電路設計上的主要差異。
+
+> _Unique-if_ and _unique0-if_ assert that there is no overlap in a series of if–else–if conditions, i.e., they are mutually exclusive and hence it is safe for the conditions to be evaluated in parallel.
+> 
+> In _unique-if_ and _unique0-if_, the conditions may be evaluated and compared in any order. The implementation shall continue the evaluations and comparisons after finding a true condition.
+> A _unique-if_ or _unique0-if_ is violated if more than one condition is found true.
+>
+> A _priority-if_ indicates that a series of if–else–if conditions shall be evaluated in the order listed.
+> In the preceding example, if the variable a had a value of 0, it would satisfy both the first and second conditions, requiring priority logic.
+> <br> ----- IEEE 1800-2023
+
+簡單來說，以 _unique_ 或是 _unique0_ 修飾的 if-else-if statement，可以讓電路合成工具知道，這個電路中的每個 conditional branches 彼此之間是沒有優先順序的，可以被和成為完全平行的邏輯電路（___parallel logic___）。
+而如果是以 _priority_ 修飾的 if-else-if statement，就會被電路合成工具轉換成 ___priority logic___。
+
+#### Reverse Case Statement (i.e., Constant expression in case statement)
+
+有時候我們會用到 __One-hot Encoding__ 這種編碼方式來設計我們的電路，這時候可以利用一種特殊的技巧，叫做 __Reverse Case Statement__。
+
+```verilog linenums='1' title='Modeling a 3-bit priority encoder'
+logic [2:0] encode;
+priority case (1'b1)
+    encode[0]: ...;
+    encode[1]: ...;
+    encode[2]: ...;
+    default: ...;
+endcase
+```
+
+透過這樣的範例我們可以知道，Case Statement 中的 _case expression_ 是可以使用常數（constant）的，在這種情況下又稱為 _constant expression_。
+
+#### Set Membership Case Statement
+
+__`case` 搭配 `inside` 使用__
+
+The SystemVerilog `case...inside` decision statement allows mask bits to be used in the case items
+The don’t care bits are specified, using `X`, `Z` or `?`, as with `casex`.
+The important difference is that `case...inside` ==uses a one-way, asymmetric masking for the comparison, unlike== `casex`,
+where any `X` or `Z` bits in the case expression are also masked out from the comparison.
+With `case...inside`, any `X` or `Z` bits in the case expression are not masked.
+In the following example, any `X` or `Z` bits in instruction will not be masked, and an invalid instruction will be trapped by the default condition:
+
+```verilog linenums='1' title='Example of case...inside'
+always_comb begin
+    case (instruction) inside 
+        4'b0???: opcode = instruction[2:0]; // only test MSB
+        4'b1001: opcode = 3'b001;
+        ... // decode all other valid instructions
+    endcase
+end
+```
+
+__SystemVerilog Advantage__
+: `case...inside` can prevent subtle design problems, and ensure that simulation closely matches how the synthesized gate-level implementation will behave.
+
+__Coding Style Recommendation__
+: Synthesizable RTL code should never use `casex` or `casez`.
+
+!!! info "Case statement with do-not-cares"
+    其實在 SystemVerilog 中，除了一般的 `case` 語法以外，還有 `casex` 和 `casez` 這兩種特殊的用法，在 IEEE 1800-2023 中被稱為 _Case statement with do-not-cares_。
+    但基本上，如果我們有 Fuzzy Pattern Matching 的需求的話，使用 _case...inside_ 就好，不要用 _casez_ 或是 _casex_。
+
+!!! note "Wildcard equality operators"
+    參考：IEEE 1800-2023 Chapter 11.4.6
+
+    在 SystemVerilog 中，還有兩種 operator 分別是 `==?` 和 `!=?` 被稱為 _wildcard equality operator_。TBD
 
 ### Interface and Modport
 
