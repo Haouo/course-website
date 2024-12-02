@@ -23,8 +23,8 @@ SystemVerilog 增加了許多現代程式語言的特性，使設計者能以更
 除了設計，SystemVerilog 也著重強化了驗證功能。Verilog 本身主要用於設計硬體，缺乏有效的測試與驗證工具，而 SystemVerilog 擴展了這方面的能力，提供了高階的測試建模語法如 interfaces、assertions 和 coverage 等，適合複雜的驗證場景。
 這些功能讓工程師能夠定義訊號之間的交互方式，設置斷言（assertions）來檢查系統行為的正確性，並藉由覆蓋率分析（coverage analysis）確保測試完整性。這些增強的驗證功能讓 SystemVerilog 成為了廣泛用於硬體驗證的語言。
 
-基本上，SystemVerilog 是對 Verilog 的全面強化。它保留了 Verilog 作為硬體描述語言的優勢，同時提供了現代化的編程工具和驗證功能，使設計者可以應對當今數位設計中的複雜挑戰。
-今天，SystemVerilog 已被廣泛應用於芯片設計和驗證領域，尤其是在設計與測試流程高度緊密結合的情境下。
+基本上，SystemVerilog 是對 Verilog 的全面強化。它保留了 Verilog 作為硬體描述語言的優勢，同時提供了現代化的程式工具和驗證功能，使設計者可以應對當今數位設計中的複雜挑戰。
+今天，SystemVerilog 已被廣泛應用於數位電路設計和驗證領域，尤其是在設計與測試流程高度緊密結合的情境下。
 
 ## Migrate from Verilog to SystemVerilog
 
@@ -253,13 +253,13 @@ end
 但基本上我們最常用到的就是 bit-vector 或是 packed struct，所以大家只要記住 packed union 裡面只能有 bit-vector 和 packed struct 就好。
 
 !!! note "RISC-V instruction example of using struct and union"
-    我們利用 RISC-V 指令的解碼來示範結合 `struct` 和 `union` 的強大之處
+    我們利用 RISC-V 指令的解碼來示範結合 `struct` 和 `union` 的強大之處 TBD
 
 ### Type Definition (typedef)
 
-我們可以用 `typedef` 關鍵字來自定義新的 data type，又稱為 **Use-defined types**。
+我們可以用 `typedef` 關鍵字來自定義新的 data type，又稱為 **Use-defined types**。TBD
 
-### Packages and Naming Space
+### Packages
 
 TBD
 
@@ -269,6 +269,20 @@ TBD
 但是，往往有時候會因為一些不良的 Coding Style 習慣或是其他因素導致在我們本來預期會是 pure combinational logic 裡面出現 register 和 latch，或是在時序電路中出現非預期的 latch，進而導致電路的功能錯誤。
 
 因此，在 SystemVerilog 中引入了一些新的語法，對我們來說最有用的有 `always_comb` 和 `always_ff` 這兩個語法，可以讓我們更精確地描述組合電路和時序電路。
+
+TBD
+
+### Task and Function
+
+先說重點
+
+- Task
+    - ...
+- Function
+    - A function shall not contain any time-controlling statements. That is, any statements containing `#`, `##,` `@`, `fork-join`, `fork-join_any`, `wait`, `wait fork`, `wait_order`, or `expect`.
+    - A function shall not enable tasks regardless of whether those tasks contain time-controlling statements.
+
+TBD
 
 ### Decision Statements
 
@@ -766,6 +780,217 @@ endmodule: FSM
 
 #### Expression Size Function ($clog2, $bits)
 
-#### for-loop and foreach
+SystemVerilog 有許多內建的 Math Functions，其中某些函式對於硬體設計是非常有用的，像是 `$clog2` 和 `bits`，而他們又稱為 ___expression size functions___。
+
+```verilog linenums='1'
+package my_types;
+    localparam MAX_PAYLOAD = 64;
+    typedef struct {
+        logic [63:0] start_address;
+        logic [$clog2(MAX_PAYLOAD)-1:0] xfer_size; // vector width scales
+        logic [ 7:0] payload [0:MAX_PAYLOAD-1];
+    } packet_t;
+endpackage: my_types
+```
 
 #### Generate Statements
+
+##### For-loop generate constructs
+
+```verilog linenums='1' title='Examples of legan and illegal generate loops'
+module mod_a;
+    genvar i;
+
+    // "generate", "endgenerate" keywords are not required
+
+    for (i=0; i<5; i=i+1) begin: a
+        for (i=0; i<5; i=i+1) begin: b
+            ... // error -- using "i" as loop index for
+            ... // two nested generate loops
+        end
+    end
+endmodule
+
+module mod_b;
+    genvar i;
+    logic a;
+    for (i=1; i<0; i=i+1) begin: a
+        ... // error -- "a" conflicts with name of variable "a"
+    end
+endmodule
+
+module mod_c;
+    genvar i;
+    for (i=1; i<5; i=i+1) begin: a
+        ...
+    end
+    for (i=10; i<15; i=i+1) begin: a
+        ... // error -- "a" conflicts with name of previous
+        ... // loop even through indices are unique
+    end
+endmodule
+```
+
+```verilog linenums='1' title='A parameterized gray-code–to–binary-code converter module using a loop to generate continuous assignments'
+module gray2bin1 (bin, gray);
+    parameter SIZE = 8; // this module is parameterizable
+    output [SIZE-1:0] bin; 
+    input [SIZE-1:0] gray;
+
+    genvar i;
+    generate
+    for (i=0; i<SIZE; i=i+1) begin: bitnum
+        assign bin[i] = ^gray[SIZE-1:i];
+        // i refers to the implicitly defined localparam whose
+        // value in each instance of the generate block is
+        // the value of the genvar when it was elaborated.
+    end
+    endgenerate
+endmodule
+```
+
+```verilog linenums='1' title='Generated ripple adder with two-dimensional net declaration outside the generate loop'
+module addergen1 (co, sum, a, b, ci);
+    parameter SIZE = 4;
+    output [SIZE-1:0] sum;
+    output co;
+    input [SIZE-1:0] a, b;
+    input ci;
+    wire [SIZE :0] c;
+    wire [SIZE-1:0] t [1:3];
+    genvar i;
+    assign c[0] = ci;
+    // Hierarchical gate instance names are:
+    // xor gates: bitnum[0].g1 bitnum[1].g1 bitnum[2].g1 bitnum[3].g1
+    // bitnum[0].g2 bitnum[1].g2 bitnum[2].g2 bitnum[3].g2
+    // and gates: bitnum[0].g3 bitnum[1].g3 bitnum[2].g3 bitnum[3].g3
+    // bitnum[0].g4 bitnum[1].g4 bitnum[2].g4 bitnum[3].g4
+    // or gates: bitnum[0].g5 bitnum[1].g5 bitnum[2].g5 bitnum[3].g5
+    // Generated instances are connected with
+    // multidimensional nets t[1][3:0] t[2][3:0] t[3][3:0]
+    // (12 nets total)
+    for(i=0; i<SIZE; i=i+1) begin:bitnum
+        xor g1 ( t[1][i], a[i], b[i]);
+        xor g2 ( sum[i], t[1][i], c[i]);
+        and g3 ( t[2][i], a[i], b[i]);
+        and g4 ( t[3][i], t[1][i], c[i]);
+        or g5 ( c[i+1], t[2][i], t[3][i]);
+    end
+    assign co = c[SIZE];
+endmodule
+```
+
+```verilog linenums='1' title='Generated ripple adder with net declaration inside the generate loop'
+module addergen1 (co, sum, a, b, ci);
+parameter SIZE = 4;
+output [SIZE-1:0] sum;
+output co;
+input [SIZE-1:0] a, b;
+input ci;
+wire [SIZE :0] c;
+genvar i;
+assign c[0] = ci;
+// Hierarchical gate instance names are:
+// xor gates: bitnum[0].g1 bitnum[1].g1 bitnum[2].g1 bitnum[3].g1
+// bitnum[0].g2 bitnum[1].g2 bitnum[2].g2 bitnum[3].g2
+// and gates: bitnum[0].g3 bitnum[1].g3 bitnum[2].g3 bitnum[3].g3
+// bitnum[0].g4 bitnum[1].g4 bitnum[2].g4 bitnum[3].g4
+// or gates: bitnum[0].g5 bitnum[1].g5 bitnum[2].g5 bitnum[3].g5
+// Gate instances are connected with nets named:
+// bitnum[0].t1 bitnum[1].t1 bitnum[2].t1 bitnum[3].t1
+// bitnum[0].t2 bitnum[1].t2 bitnum[2].t2 bitnum[3].t2
+// bitnum[0].t3 bitnum[1].t3 bitnum[2].t3 bitnum[3].t3
+for(i=0; i<SIZE; i=i+1) begin:bitnum
+wire t1, t2, t3;
+xor g1 ( t1, a[i], b[i]);
+xor g2 ( sum[i], t1, c[i]);
+and g3 ( t2, a[i], b[i]);
+and g4 ( t3, t1, c[i]);
+or g5 ( c[i+1], t2, t3);
+end
+assign co = c[SIZE];
+endmodule
+```
+
+```verilog linenums='1' title='A multilevel generate loop'
+parameter SIZE = 2;
+genvar i, j, k, m;
+generate
+    for (i=0; i<SIZE; i=i+1) begin:B1 // scope B1[i]
+        M1 N1(); // instantiates B1[i].N1
+        for (j=0; j<SIZE; j=j+1) begin:B2 // scope B1[i].B2[j]
+            M2 N2(); // instantiates B1[i].B2[j].N2
+            for (k=0; k<SIZE; k=k+1) begin:B3 // scope B1[i].B2[j].B3[k]
+                M3 N3(); // instantiates
+            end // B1[i].B2[j].B3[k].N3
+        end
+        if (i>0) begin:B4 // scope B1[i].B4
+            for (m=0; m<SIZE; m=m+1) begin:B5 // scope B1[i].B4.B5[m]
+                M4 N4(); // instantiates
+            end // B1[i].B4.B5[m].N4
+        end
+    end
+endgenerate
+
+// Some examples of hierarchical names for the module instances:
+// B1[0].N1 B1[1].N1
+// B1[0].B2[0].N2 B1[0].B2[1].N2
+// B1[0].B2[0].B3[0].N3 B1[0].B2[0].B3[1].N3
+// B1[0].B2[1].B3[0].N3
+// B1[1].B4.B5[0].N4 B1[1].B4.B5[1].N4
+```
+
+##### Conditional generate constructs
+
+有時候我們在設計參數化的 Module 的時候，可能會希望可以透過 `if-else` 或是 `case` 來控制要實例化（instantiate）哪些硬體，
+但是 `if-else` 和 `case` 基本上只能放在 Procedure Block 如 `always_comb`、`always_ff` 或是 `initial begin...end` 中，這時候我們就可以使用 Generate block。
+
+```verilog linenums='1' title='Generate if'
+module mux_case(input logic a, b, sel, output logic out);
+    ...
+endmodule
+
+module mux_assign(input logic a, b, sel, output logic out);
+    ...
+endmodule
+
+// Top Level Design: Use a parameter to choose either one
+module my_design #(parameter USE_CASE = 0)
+                  (input logic a, b, sel,
+         			     output logic out);
+  // Use a "generate" block to instantiate either mux_case
+  // or mux_assign using an if else construct with generate
+  generate
+  	if (USE_CASE)
+      mux_case mc (.a(a), .b(b), .sel(sel), .out(out));
+    else
+      mux_assign ma (.a(a), .b(b), .sel(sel), .out(out));
+  endgenerate
+endmodule
+```
+
+```verilog linenums='1' title='Generate case'
+module ha(input logic a, b, output logic sum, cout);
+    ...
+endmodule
+
+module fa(input logic a, b, cin, output logic sum, cout);
+    ...
+endmodule
+
+// Top level design: Choose between half adder and full adder
+module my_adder #(parameter ADDER_TYPE = 1)
+                 (input logic a, b, cin,
+                  output logic sum, cout);
+  generate
+    case(ADDER_TYPE)
+      0 : ha u0 (.a(a), .b(b), .sum(sum), .cout(cout));
+      1 : fa u1 (.a(a), .b(b), .cin(cin), .sum(sum), .cout(cout));
+    endcase
+  endgenerate
+endmodule
+```
+
+!!! note "Hardware Generator"
+    這種可以透過傳入參數使其在 Elaboration Phase 才決定要產生的硬體的配置的方式，又稱為 ***Hardware Generator***。
+    舉例來說，當我們在設計一個 FIFO 的時候，可能會希望 FIFO 的深度和每個 element 的大小可以透過參數來決定，我們就會稱這樣的 FIFO Module 為 FIFO Generator。
