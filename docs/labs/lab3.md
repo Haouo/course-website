@@ -691,9 +691,9 @@ Provided there are no overflow, underflow, or invalid operation exceptions, IEEE
 其實重點在於 Sticky Bit 的實作；根據課本[^1]對於 Sticky Bit 的定義，Sticky Bit 是只要當 Round Bit 的右側的所有 Bit 只要出現任何一個 1 的話，那麼 Sticky Bit 就是 1，否則 Sticky Bit 就是 0。
 這種操作又稱為 **Reduction Operation**，在 Verilog 中可以直接使用 Reduction Operator，但是 C 語言的話就必須自己實作。
 在使用 Extra-bit 來輔助 Rounding 的時候，我們不可以直接使用 **Trouncate**（截斷）的方式來獲得 Sticky Bit。
-舉例來說，假設我們的浮點數運算結果是 $1.100001_{\text{two}}$，且有效位數到小數點後第二位（即 LSB 的位置為小數點後第二位）。
-當我們想要使用 GRS 來輔助 Rounding 的時候，有些人的實作方式可能就是暴力地直接捨棄掉小數點第三位後面的所有數字，得到 $G = 1$、$R = 0$ 且 $S = 0$，如果依照這樣的結果去判斷的話我們應該要將結果 Round-down，得到 $1.10_{\text{two}}$。
-但是，正確的結果應該是 $G = 1$、$R = 0$ 且 $S = 1$，因為 Round Bit 的後面其實出現了一個 1（小數點後第六位），依照 Sticky Bit 的定義來說的話應該要把 S 設為 1。如果依照 GRS 等於 101 來判斷的話，我們應該要將結果 Round-up，得到 $1.11_{\text{two}}$。
+舉例來說，假設我們的浮點數運算結果是 $1.101001_{\text{two}}$，且有效位數到小數點後第二位（即 LSB 的位置為小數點後第二位），
+當我們想要使用 GRS 來輔助 Rounding 的時候，有些人可能會做錯，直接捨棄掉 LSB 後三位之後的所有數字，得到 $G = 1$、$R = 0$ 且 $S = 0$，因此將結果 Round-down（因為 LSB 是 0），得到 $1.10_{\text{two}}$。
+但是，正確的結果應該是 $G = 1$、$R = 0$ 且 $S = 1$，因為 Round Bit 的後面其實出現了一個 1（小數點後第六位），依照 Sticky Bit 的定義（對 Sticky Bit 以後的所有 Bit 做 Unary OR）來說的話應該要把 S 設為 1。如果依照 GRS 等於 101 來判斷的話，我們應該要將結果 Round-up，得到 $1.11_{\text{two}}$。
 依照 IEEE 754 的規範來說，$1.11_{\text{two}}$ 才是正確的捨入結果（Correct Rounding）。
 
 !!! info "補充：Kahan Summation Algorithm"
