@@ -487,15 +487,18 @@ module Controller
 (
     /* inst information */
     input inst_t inst,
+    /* a0 and a1 for ECALL handle */
+    input dw reg_a0,
+    input dw reg_a1,
     /* next PC select */
-    output logic next_pc_sel,
+    output next_pc_sel_t next_pc_sel,
     /* IM write control */
     output logic [7:0] im_w_mask,
     /* Register File Control */
     output logic reg_w_en,
     /* ALU control */
-    output logic alu_op1_sel,
-    output logic alu_op2_sel,
+    output alu_op1_sel_t alu_op1_sel,
+    output alu_op2_sel_t alu_op2_sel,
     output logic is_lui,
     output alu_control_packet_t alu_control,
     /* Branch Comparator control */
@@ -508,8 +511,60 @@ module Controller
     output logic halt
 );
     // TODO: please implement Controller module
+
+    /* ECALL handling */
+    always_latch begin
+        if (inst.I_TYPE.opcode == SYSTEM && inst.I_TYPE.imm_11_0 == ECALL_FUNC12) begin
+            if (reg_a0 == 64'd0) begin : ECALL_to_halt
+                halt = 1'b1;
+            end : ECALL_to_halt
+            else if (reg_a0 == 64'd1) begin : ECALL_to_putchar
+                $display("%c", reg_a1[7:0]);
+            end : ECALL_to_putchar
+            else begin : ECALL_not_support
+                $display("Not supported ECALL service request type!\n");
+                $finish;
+            end : ECALL_not_support
+        end
+    end
 endmodule
 ```
+
+Controller 幾乎可以說是整個 Single-Cycle CPU 中最重要的部分了，因為 Controller 負責產生各個 Module 和 Mux 的控制訊號，如果 Controller 無法正確地顫聲控制訊號的話，即使 Datapath 的設計沒問題，可能也會發生錯誤。
+
+| **op\signals** | `next_pc_sel` | `im_w_mask` | `reg_w_en` | `alu_op1_sel` | `alu_op2_sel` | `is_lui` |       `bc_control`      |       `dm_w_mask`      |  `wb_sel` |
+|:-------------------:|:-------------:|:-----------:|:----------:|:-------------:|:-------------:|:--------:|:-----------------------:|:----------------------:|:---------:|
+|          OP         |      PC+4     |      0      |    True    |      rs1      |      rs2      |     0    |            X            |            0           |  alu_out  |
+|        OP_32        |      PC+4     |      0      |    True    |      rs1      |      rs2      |     0    |            X            |            0           |  alu_out  |
+|        OP_IMM       |      PC+4     |      0      |    True    |      rs1      |      rs2      |     0    |            X            |            0           |  alu_out  |
+|      OP_IMM_32      |      PC+4     |      0      |    True    |      rs1      |      rs2      |     0    |            X            |            0           |  alu_out  |
+|         LOAD        |      PC+4     |      0      |    True    |      rs1      |      imm      |     0    |            X            |            0           | Load data |
+|        STORE        |      PC+4     |      0      |    False   |      rs1      |      imm      |     0    |            X            | Depends on STORE func3 |     X     |
+|        BRANCH       | Branch Target |      0      |    False   |       PC      |      imm      |     0    | Depends on BRANCH func3 |            0           |     X     |
+|         JAL         | Branch Target |      0      |    True    |       PC      |      imm      |     0    |            X            |            0           |    PC+4   |
+|         JALR        | Branch Target |      0      |    True    |       PC      |      imm      |     0    |            X            |            0           |    PC+4   |
+|        AUIPC        |      PC+4     |      0      |    True    |       PC      |      imm      |     0    |            X            |            0           |  alu_out  |
+|         LUI         |      PC+4     |      0      |    True    |       0       |      imm      |     1    |            X            |            0           |  alu_out  |
+|        SYSTEM       |      PC+4     |      0      |    False   |       X       |       X       |     X    |            X            |            0           |     X     |
+
+至於 `clu_control` 的部分因為比較複雜，我們獨立出來分析
+
+<div align="center" markdown>
+| **op-type\signals** |   `alu_op`   | `alu_width` |
+|:-------------------:|:------------:|:-----------:|
+|          OP         |       ?      | `ALU_OP_64` |
+|        OP_32        |       ?      | `ALU_OP_32` |
+|        OP_IMM       |       ?      | `ALU_OP_64` |
+|      OP_IMM_32      |       ?      | `ALU_OP_32` |
+|         LOAD        | `ALU_OP_ADD` | `ALU_OP_64` |
+|        STORE        | `ALU_OP_ADD` | `ALU_OP_64` |
+|        BRANCH       | `ALU_OP_ADD` | `ALU_OP_64` |
+|         JAL         | `ALU_OP_ADD` | `ALU_OP_64` |
+|         JALR        | `ALU_OP_ADD` | `ALU_OP_64` |
+|        AUIPC        | `ALU_OP_ADD` | `ALU_OP_64` |
+|         LUI         | `ALU_OP_ADD` | `ALU_OP_64` |
+|        SYSTEM       |       X      |      X      |
+</div>
 
 ### Module - Memory
 
@@ -632,7 +687,7 @@ DiffTest 的概念是我們需要一個 Golden Model 作為參考答案，並且
 6. `void difftest_step(void)`
 7. `void difftest_fini(void)`
 
-再來，我們分析 `testbench.sv` 中關於 DiffTest 的部分
+再來，我們分析 `testbench.sv` 中關於 DiffTest 的部分（<font color="red">在 `testbench.sv` 中的 DPI-C function 的定義都在 `difftest.cpp` 中</font>）
 
 ```verilog linenums='1' title='Part of testbench.sv'
 // defines
@@ -680,6 +735,43 @@ module testbench;
     // ...
 endmodule
 ```
+
+如果我們嘗試將 DiffTest 的運作流程視覺化，可以畫出下面這張圖（使用 _mermaid_ 繪製）
+
+<center>
+``` mermaid
+sequenceDiagram
+    autonumber
+    participant ISS
+    participant Testbench
+    participant Single-Cycle CPU
+    Single-Cycle CPU->>Single-Cycle CPU: reset PC and GPR
+    Single-Cycle CPU->>Single-Cycle CPU: $readmemh to set MEM
+    rect
+    note right of ISS: DiffTest Initialization
+    Testbench->>ISS: Initialize ISS
+    Single-Cycle CPU->>Testbench: Sends GPR
+    Testbench->>ISS: Sets GPR
+    Single-Cycle CPU->>Testbench: Sends MEM
+    Testbench->>ISS: Sets MEM
+    end
+    rect
+        note right of Single-Cycle CPU: DiffTest main-loop
+        loop Each step
+            ISS->>ISS: difftest_step()
+            ISS->>Testbench: Sends PC and GPR
+            Single-Cycle CPU->Testbench: Step one clock cycle
+            Single-Cycle CPU->>Testbench: Sends PC and GPR
+            Testbench->>Testbench: Check architectural states
+        end
+    end
+```
+</center>
+
+可以看到一開始 CPU 本身會先進行初始化，將自身的 GPR 和 PC 都重置，並且使用 SystemVerilog 中的 `$readmemh()` 系統函式來將 Data Memopry (DM) 和 Instruction Memory (IM) 初始化。
+待 CPU 本身初始化完畢之後，就會進入 DiffTest 的 workdlow。最一開始，除了調用 `difftest_init()` 將 ISS 初始化之外，DiffTest 也要將 CPU 和 ISS 的 __Architectural States__ 進行同步 (PC and GPR)，對應到上方圖中的 DiffTest Initialization。
+接下來就會進入 Difftest main-loop，在 main-loop 中 DiffTest 會首先呼叫 `ref_difftest_step()` 使 ISS 執行一條指令，之後在 `testbench.sv` 中的 `#(CYCLE)` 會使 simulation time 往後推進一個週期的時間，因此 CPU 也會執行一條指令。
+之後就會得到 ISS 和 CPU 各自的 Architectural States 並且進行比較，檢查兩者狀態是否相同。
 
 ## Chapter 4. Start to Do The Assignment
 
