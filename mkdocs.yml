@@ -99,6 +99,11 @@ nav:
       - Lab 7 - Pipeline CPU and Simple Cache Design: labs/lab7.md
       - Lab 8 - Deep Dive into Memory System: labs/lab8.md
       - Lab 9 - SIMD Accelerator and GEMM Kernel Design: labs/lab9.md
+  - RTL Programming:
+    - Introduction to Verilog and RTL Programming: rtl/verilog.md
+    - From Verilog to SystemVerilog for Hardware Designing: rtl/sv.md
+    - SystemVerilog Assertion (SVA): rtl/sva.md
+    - Chisel HDL: rtl/chisel.md
   - Tools Guide:
       - Basic Linux Command: tools/linux_cmd.md
       - Git Tutorial: tools/git_cmd.md
@@ -106,11 +111,5 @@ nav:
       - Markdown Tutorial: tools/markdown.md
       - Gitla & Mattermost: tools/gitlab_ov.md
       - Useful CLI Tools: tools/cli_tools.md
-  - RTL Programming:
-    - Verilog: verilog.md
-    - SystemVerilog: sv.md
-    - SystemVerilog Assertion (SVA): sva.md
-    - Chisel HDL: chisel.md
-    # - _Verilog: _verilog.md
   - 補充資料: references.md
   # - About MkDocs: mkdocs.md

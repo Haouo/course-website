@@ -1,15 +1,6 @@
-# Introduction to Verilog
-
 !!! info
-    - Contributor：TA 汎穎、TA 宜蓁、TA 峻豪
-    - Last Update：2024/10/03
-
-??? info "Update Information"
-    - 2024/09/22 初版完成
-    - 2024/10/03 大助接手修訂
-
----
-
+    - Contributors: TA 汎穎、TA 宜蓁、TA 峻豪
+    - Last update: 2024/12/16
 
 ## 簡介
 
@@ -28,11 +19,33 @@ IEEE 1364-2005 是 Verilog 最重要的版本之一，包含了對語言的擴�
 Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是在 1980 年代由 Gateway Design Automation 公司開發，作為一種用來進行數位電路行為模擬的語言。
 當時，設計者面臨著越來越複雜的數位電路，並需要一種高階工具來進行設計的驗證和模擬。
 隨著設計工具和合成技術的進步，Verilog 開始從模擬語言逐漸演變為一個能夠描述硬體設計的語言。
-設計者不僅可以用 Verilog 進行模擬，還可以用它來描述硬體的結構和行為，並進行合成，即從 Verilog 程式碼生成實際的硬體電路。
+設計者不僅可以用 Verilog 進行模擬，還可以用它來描述硬體的結構和行為，並進行合成，即從 Verilog 程式碼生成實際的硬體電路，但是合成（Synthesis）實際的電路的時候需要 EDA 工具的配合。
+
+## Data Types（資料型態）
+
+在講述如何用 Verilog 描述電路之前，我們必須先搞清楚 Verilog 這個語言中到底有哪些 Data Types。總地來說，在 Verilog 中的資料型態可以分成兩大類，分別是 **Net** 和 **Variable**。
+
+Net 資料類型可以代表結構實體之間的物理連接，例如邏輯閘之間的連線。Net 不會儲存一個值。其值應由驅動器的值來決定，例如 continuous assignment 或邏輯閘。
+
+Variable 是一種資料儲存元素的抽象概念。變數會從一次賦值儲存值到下一次賦值。程式中的賦值語句會作為一個 trigger，改變儲存在資料儲存元素中的值。`reg`、`time` 和 `integer` 資料類型的初始化值應為未知值 `x`。
+
+基本上大家常用到的 `wire` 就屬於 Net Data Type，`wire` 本身不會儲存任何值，而是由 Driver 去決定 `wire` 的值，基本上概念就跟電路中的**導線**是一樣的。而另外一個常用的 Data Type `reg` 則屬於 Variable Data Type，它本身會實際地儲存一個值，並且這個值會在下一次被賦值（assign）的時候改變。
+
+## Scalar, Vector and Array
+
+> A net or reg declaration without a range specification shall be considered 1 bit wide and is known as ascalar. Multibit net and reg data types shall be declared by specifying a range, which is known as a vector.
+> ----- IEEE 1364-2005
+
+當 `wire` 和 `wire` 在宣告的時候如果沒有被指定 range 的話，則應該被當成 1-bit，其稱為 *Scalar*，反之如果有指定 range，如 `wire[31:0] a`，則被稱為 *Vector*，其寬度為 32-bit。Scalar 的概念大家應該不會有疑問，但是 Vector 和 Array 這兩個大家可能會搞混，Array 我們待會會介紹。至於 Vector，大家可以想成許多 bits 的集合就是 Vector。
+
+![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/3294ca18-165f-47cf-aed2-2f5cfabcc899.png)
+
+我們可以把許多個 Scalar 或是許多個 Vector 再集合起來，這時候就會變成 *Array*。
 
 ## Gate Level
 
 - Constructing a module (by primitive gate)
+
     範例: Half Adder
 
     ```verilog linenums="1"
@@ -47,10 +60,11 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
     endmodule
     ```
 
-    ![](/uploads/06aa8f3ad28bd1c1cbb134947.png)
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/f603ddfd-a216-4b86-a76a-191b2a7b11c4.png)
 
     1. I/O port就是HA的input及output, 沒有特別宣告的話都是wire, 如果有需要也可以宣告成output reg 。
     2. Verilog 中有"原生邏輯匣(primitive gate)"(eg: not, and, or, nand,...)可以直接使用, 第一格接的是邏輯匣的output。
+
 - Connecting Your own module
     寫好一個module之後，就可以像使用一個封裝好的元件一樣直接使用。
     範例: Full Adder
@@ -72,8 +86,9 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
     endmodule
     ```
 
-    ![](/uploads/06aa8f3ad28bd1c1cbb134927.png)
-    *圖片來源:https://tomorrow0w0.gitbooks.io/nand2tetris-homework/content/assets/FullAdder.png*
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/25c61cf8-0369-420f-b650-477648e2a215.png)
+
+    > 圖片來源 : https://tomorrow0w0.gitbooks.io/nand2tetris-homework/content/assets/FullAdder.png
     
     連接module的I/O portz方式大致可分成: 
     1. by ordered list: 依照HA中的I/O port順序, 將要接到HA的線填在對應接口; 原生邏輯匣只能用by ordered list的接法。
@@ -88,7 +103,9 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
         wire [3:0] d;
         wire [2:0] e;
         ```
-        ![](/uploads/06aa8f3ad28bd1c1cbb13492a.png)
+        
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/7853b2eb-cb09-4cc7-9e01-9db4ec3c3c92.png)
+        
         ==hint: 通常n bits會用 [n-1: 0]來編號==
         
         - reference to one of the wires/ regs in a vector
@@ -99,7 +116,9 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
 
             and and0(a[0], b[1], c[-2]);
             ```
-            ![](/uploads/06aa8f3ad28bd1c1cbb134929.png)
+            
+            ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/b24940bf-fd07-40c1-b5b0-1749c4ab2847.png)
+            
         - reference to multiple lines continuously in a vector
             ```verilog
             module Adder2bits(
@@ -121,20 +140,23 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
             Adder2bits adder0(.in0(operand0[1:0]), .in1(operand1[1:0]), .sum(sum0), .cout(cout0);
             //adding lower 2 bits of operand1 and operand2
             ```
-            ![](/uploads/06aa8f3ad28bd1c1cbb13492b.png)
+            
+            ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/3218a199-e7dc-4cf3-a6fc-0e352e56f08e.png)
     3. Array: A lot of scalars/ vectors
         ```verilog
         wire arr_scalar [0:7];
         wire [3:0] arr_vector [0:7];
         ```
-        ![](/uploads/06aa8f3ad28bd1c1cbb13492d.png)
+        
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/014e37e9-8ae6-42f6-aa08-23a4bdd1e07c.png)
         
         - reference to a single line in an array
             ```verilog
             wire arr_scalar [0:7];
             not not0(arr_vector[0][2], arr_vector[7][1]);
             ```
-            ![](/uploads/06aa8f3ad28bd1c1cbb13492e.png)
+
+            ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/8fea8ac4-8c78-4ae2-850c-209abcb732f6.png)
 
             First index: selecting the corresponding vector.
             Second index: selecting the line in the vector.
@@ -153,7 +175,8 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
     assign a = b & c;
     assign highzee =1'bz;
     ```
-    ![](/uploads/06aa8f3ad28bd1c1cbb13492f.png)
+    
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/04771113-c2d2-4009-aaef-3f6c38d25d07.png)
     
 - 右值為常數, x, z
     1. Data can have different bit length. (Default: 32 bits).
@@ -214,7 +237,8 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
         assign g=op1^op2; //xor, 4'b1001
         ```
         Bitwise會對每一個bit分別運算(eg: 下圖的Bitwise negation)
-        ![](/uploads/06aa8f3ad28bd1c1cbb134930.png)
+        
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/1615c777-6762-4f64-8c78-f4a2e2828ec8.png)
     3. Reduction
         ```verilog
         wire [3:0] op1;
@@ -226,7 +250,8 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
         assign h=^op1; //=1
         ```
         Reduction將input vector中的所有bits一起運算，運算結果只有0或1兩種(eg: 下圖的xor)
-        ![](/uploads/06aa8f3ad28bd1c1cbb134931.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/8b65c1e6-a7a1-4964-8765-7b0f32d681fc.png)
     4. Conditional(Ternary)
         ```verilog
         wire sel;
@@ -234,7 +259,8 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
         assign out=sel? in1: in0; //condition? if true: if false
         ```
         跟Cpp中的Ternary operator差不多，對應到數位電路上基本上就是MUX
-        ![](/uploads/06aa8f3ad28bd1c1cbb134933.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/db512cc4-6d7e-43f1-84c2-448cfad7a4d8.png)
     5. Replication and concatenation
         ```verilog
         wire [7:0] byte;
@@ -243,7 +269,8 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
         ```
         - Replication: {op1{op2}}即將op2複製op1次
         - Concatenation: 並排多個input
-        ![](/uploads/06aa8f3ad28bd1c1cbb134934.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/738afcc2-1296-40a5-8c90-cdaed57e5e7d.png)
 - 範例: Full adder (Continuous assignmaet)
     ```verilog
     module FA(
@@ -255,8 +282,10 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
         assign S=Cin^A^B;
     endmodule
     ```
-    ![](/uploads/06aa8f3ad28bd1c1cbb134935.png)
-    *圖片來源:https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Full-adder.svg/825px-Full-adder.svg.png*
+
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/fbee2eb9-db7d-4d6d-b100-ff1843353233.png)
+    
+    > 圖片來源 : https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Full-adder.svg/825px-Full-adder.svg.png
 ## Procedural Block
 - 分成always block和initial block, 後者通常用在Testbench中。以下都先以always block為主。
 - 更"program-like", 但還是要記得自己是在寫"電路"。
@@ -346,7 +375,8 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
         
     endmodule
     ```
-    ![](/uploads/06aa8f3ad28bd1c1cbb134940.png)
+
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/10a0ce35-b9b9-4c35-89da-8113023a94be.png)
 - if/else
     - 跟cpp等的if/else很像
     - 建議最後都要寫else, 也是為了避免遺漏跟合成出多餘的Latch
@@ -386,8 +416,8 @@ Verilog 最初的創造目的是為了電路驗證，而非設計。它最早是
         end
     end
     ```
-    ![](/uploads/06aa8f3ad28bd1c1cbb134955.png)
 
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/372736e5-b0d8-41c9-af2f-4154780c48fc.png)
         
     範例2: 此例會生成10個乘法器，而不是用同一個乘法器依序執行10次乘法。
     ```verilog
@@ -439,13 +469,14 @@ generate
 endgenerate
 endmodule
 ```
-![](/uploads/06aa8f3ad28bd1c1cbb134956.png)
+
+![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/dffad851-0099-4662-a132-b9d26495f386.png)
 
 ## Sequential Circuit
 - Latch, Flip-Flop(FF), Register
     1. Clock: 
     
-        ![](/uploads/06aa8f3ad28bd1c1cbb134942.png)
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/cb037322-ec90-40f7-8725-39a658235a91.png)
         
         - Clock period (i.e. Cycle time): 兩個Rising edge的時間間隔。(second/cycle)
         - Clock frequency: 每秒有幾個Cycle, Clock period的倒數。(cycle/second)
@@ -457,10 +488,12 @@ endmodule
         Latch和FF都是電路中的儲存裝置，電路的狀態會隨control signal(常為clock)改變。
         - Latch:
             Level triggered, 在Control input為high(Active high)或low(Active low)時，電路狀態可改變。
-            ![](/uploads/06aa8f3ad28bd1c1cbb134945.png)
+
+            ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a7dd97e2-6669-4e39-b140-b9fa4631ebad.png)
 
             eg: D-Latch
-            ![](/uploads/06aa8f3ad28bd1c1cbb134943.png)
+            
+            ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/255031ea-e394-48db-a369-e0415b486261.png)
             
             | clk | Q         | Q bar     |
             |:--- |:--------- |:--------- |
@@ -470,11 +503,13 @@ endmodule
             電路狀態在Clock level為high時可改變。
         - FF:
             Edge triggered, 在Control input的Rising edge(Active high)或Falling edge (Active low)時，電路狀態可改變。
-            ![](/uploads/06aa8f3ad28bd1c1cbb134946.png)
+
+            ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/ec033ae7-9796-4170-a794-1fb018775f40.png)
 
             eg: D-FF
-            ![](/uploads/06aa8f3ad28bd1c1cbb134944.png)
-            
+
+            ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/26785bbf-f298-4540-ba65-1e0cc16cdb77.png)
+
             | clk         | Q         | Q bar     |
             |:----------- |:--------- |:--------- |
             | Rising edge | D         | ~D        |
@@ -534,10 +569,13 @@ endmodule
 - Combinational v.s. Sequential
     1. Combinational Circuit
         電路狀態由只由當下的input決定。
-    ![](/uploads/06aa8f3ad28bd1c1cbb134948.png)
+
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/afd1548e-5788-419f-ac0f-af8b251ed065.png)
+    
     2. Sequential Circuit
         有Memory element,會記住上個時刻的電路狀態。電路狀態由當下的input及上個時刻的電路狀態決定。
-    ![](/uploads/06aa8f3ad28bd1c1cbb134949.png)
+
+    ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/1fceff8e-b964-4ddb-878f-cba47b5f5e33.png)
     
     *常見的Memory element: 
         Register, Counter(計數器), Register file, Memory, Queue, Stack...* 
@@ -570,10 +608,12 @@ endmodule
         - current state和input共同決定next state。
         
         Moore machine的電路架構:
-        ![](/uploads/06aa8f3ad28bd1c1cbb13494a.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/34f891d7-bb92-4a27-b56d-46105bf0d493.png)
         
         範例:
-        ![](/uploads/06aa8f3ad28bd1c1cbb134951.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a138bd12-6f23-4a3e-95e8-398a5da94f5d.png)
 
         
         | Current state | Next state (in=1) | Next state (in=0) | Output |
@@ -628,7 +668,8 @@ endmodule
         ```
         
         Waveform:
-        ![](/uploads/06aa8f3ad28bd1c1cbb134953.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/9fa97086-2b8d-4217-9797-85bc29e02ce6.png)
 
         
     2. Mealy Machine
@@ -636,10 +677,12 @@ endmodule
         - current state和input共同決定next state。
     
         Mealy machine的電路架構:
-        ![](/uploads/06aa8f3ad28bd1c1cbb13494d.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/3ac9ec07-17f4-46da-9b85-fcce9f7ee6d2.png)
         
         範例:
-        ![](/uploads/06aa8f3ad28bd1c1cbb134952.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a0585bb0-7b21-4c58-bbf3-d05d3873ec19.png)
 
         | Current state | Next state (in=1) | Next state (in=0) | Output (in=1) | Output (in=0) |
         | ------------- | ----------------- | ----------------- | ------------- | ------------- |
@@ -693,4 +736,5 @@ endmodule
         ```
         
         Waveform:
-        ![](/uploads/06aa8f3ad28bd1c1cbb134954.png)
+
+        ![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/44a5976a-c7ea-47cf-ae7b-d586b2f6edee.png)
