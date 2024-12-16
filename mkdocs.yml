@@ -100,7 +100,6 @@ nav:
     - From Verilog to SystemVerilog for Hardware Designing: rtl/sv.md
     - SystemVerilog Assertion (SVA): rtl/sva.md
     - Chisel HDL: rtl/chisel.md
-    - _Verilog: rtl/_verilog.md
   - Tools Guide:
       - Basic Linux Command: tools/linux_cmd.md
       - Git Tutorial: tools/git_cmd.md
