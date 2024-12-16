@@ -542,7 +542,7 @@ Controller 幾乎可以說是整個 Single-Cycle CPU 中最重要的部分了，
 |        STORE        |      PC+4     |      0      |    False   |      rs1      |      imm      |     0    |            X            | Depends on STORE func3 |     X     |
 |        BRANCH       | Branch Target |      0      |    False   |       PC      |      imm      |     0    | Depends on BRANCH func3 |            0           |     X     |
 |         JAL         | Branch Target |      0      |    True    |       PC      |      imm      |     0    |            X            |            0           |    PC+4   |
-|         JALR        | Branch Target |      0      |    True    |       PC      |      imm      |     0    |            X            |            0           |    PC+4   |
+|         JALR        | Branch Target |      0      |    True    |       rs1     |      imm      |     0    |            X            |            0           |    PC+4   |
 |        AUIPC        |      PC+4     |      0      |    True    |       PC      |      imm      |     0    |            X            |            0           |  alu_out  |
 |         LUI         |      PC+4     |      0      |    True    |       0       |      imm      |     1    |            X            |            0           |  alu_out  |
 |        SYSTEM       |      PC+4     |      0      |    False   |       X       |       X       |     X    |            X            |            0           |     X     |
