@@ -12,7 +12,7 @@
 
 > The first interesting details are centered around the ques-tion why there are different types of RAM in the samemachine.
 > More specifically, why are there both staticRAM (SRAM5) and dynamic RAM (DRAM). The for-mer is much faster and provides the same functionality.
-> Why is not all RAM in a machine SRAM? The answeris, as one might expect, cost. SRAM is much more ex-pensive to produce and to use than DRAM.
+> Why is not all RAM in a machine SRAM? The answeris, as one might expect, cost. SRAM is much more expensive to produce and to use than DRAM.
 > Both thesecost factors are important, the second one increasing inimportance more and more. To understand these differ-ences we look at the implementation of a bit of storagefor both SRAM and DRAM.
 >
 > ----- What Every Programmer Should Know About Memory, Chapter 2.1
@@ -21,9 +21,29 @@
 
 #### Static RAM
 
+<figure markdown="span">
+    ![](img/lab-8/sram.png){width=50%}
+</figure>
+
 #### Dynamic RAM
 
+<figure markdown="span">
+    ![](img/lab-8/dram.png){width=50%}
+</figure>
+
+<figure markdown="span">
+    ![](img/lab-8/rc.png){width=50%}
+</figure>
+
 ### DRAM Access Technical Details
+
+<figure markdown="span">
+    ![](img/lab-8/sdram-read.png){width=50%}
+</figure>
+
+<figure markdown="span">
+    ![](img/lab-8/sdram-precharge-activate.png){width=50%}
+</figure>
 
 ## CPU Cache
 
