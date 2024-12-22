@@ -536,8 +536,8 @@ Controller 幾乎可以說是整個 Single-Cycle CPU 中最重要的部分了，
 |:-------------------:|:-------------:|:-----------:|:----------:|:-------------:|:-------------:|:--------:|:-----------------------:|:----------------------:|:---------:|
 |          OP         |      PC+4     |      0      |    True    |      rs1      |      rs2      |     0    |            X            |            0           |  alu_out  |
 |        OP_32        |      PC+4     |      0      |    True    |      rs1      |      rs2      |     0    |            X            |            0           |  alu_out  |
-|        OP_IMM       |      PC+4     |      0      |    True    |      rs1      |      rs2      |     0    |            X            |            0           |  alu_out  |
-|      OP_IMM_32      |      PC+4     |      0      |    True    |      rs1      |      rs2      |     0    |            X            |            0           |  alu_out  |
+|        OP_IMM       |      PC+4     |      0      |    True    |      rs1      |      imm      |     0    |            X            |            0           |  alu_out  |
+|      OP_IMM_32      |      PC+4     |      0      |    True    |      rs1      |      imm      |     0    |            X            |            0           |  alu_out  |
 |         LOAD        |      PC+4     |      0      |    True    |      rs1      |      imm      |     0    |            X            |            0           | Load data |
 |        STORE        |      PC+4     |      0      |    False   |      rs1      |      imm      |     0    |            X            | Depends on STORE func3 |     X     |
 |        BRANCH       | Branch Target |      0      |    False   |       PC      |      imm      |     0    | Depends on BRANCH func3 |            0           |     X     |
@@ -802,7 +802,7 @@ sequenceDiagram
     - 進入資料夾
       > `cd lab-5`
     - 對 Git Submodule 進行初始化
-      > `git submodule init --recursive`
+      > `git submodule init && git submodule update --recursive`
 3. Notes
     - 因為在**預設**情況之下，只要 Gitlab Repo 中包含 `.gitlab-ci.yml` 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開
 4. **請記得依據 [Assignment 5 Report Template](https://hedgedoc.course.aislab.ee.ncku.edu.tw/qQA5xz8oTd6e8zmskpIPsQ?view) 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上**
