@@ -4,9 +4,8 @@ theme:
   features:
     - navigation.top
     - navigation.tabs
-    - navigation.sections
-    - navigation.expand
     - navigation.path
+    - navigation.indexes
     - toc.integrate
     - toc.follow
     - search.suggest
@@ -88,7 +87,6 @@ nav:
         # - updates: announce/update.md
         # - a0x000: announce/a0x000.md
   - Lab material:
-      - Overview: labs/lab_overview.md
       - Lab 0 - How To Ask Questions The Smart Way: labs/lab0.md
       - Lab 1 - C Programmin and Compilation Flow: labs/lab1.md
       - Lab 2 - Simple RISC-V ISA Simulator with RV64I: labs/lab2.md
@@ -97,7 +95,11 @@ nav:
       - Lab 5 - Single-Cycle CPU Design and Differential Testing: labs/lab5.md
       - Lab 6 - Bus Protocol and Arbitration: labs/lab6.md
       - Lab 7 - Pipeline CPU and Simple Cache Design: labs/lab7.md
-      - Lab 8 - Deep Dive into Memory System: labs/lab8.md
+      - Lab 8 - Deep Dive into Memory System:
+        - labs/lab8/index.md
+        - Random Access Memory: labs/lab8/ram.md
+        - Cache: labs/lab8/cache.md
+        - Virtual Memory: labs/lab8/virt-mem.md
       - Lab 9 - SIMD Accelerator and GEMM Kernel Design: labs/lab9.md
   - RTL Programming:
     - Introduction to Verilog and RTL Programming: rtl/verilog.md
