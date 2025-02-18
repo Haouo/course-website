@@ -98,7 +98,8 @@ nav:
       - Lab 8 - Deep Dive into Memory System:
         - labs/lab8/index.md
         - Random Access Memory: labs/lab8/ram.md
-        - Cache: labs/lab8/cache.md
+        - Basic Cache: labs/lab8/basic-cache.md
+        - Advanced Cache: labs/lab8/advance-cache.md
         - Virtual Memory: labs/lab8/virt-mem.md
       - Lab 9 - SIMD Accelerator and GEMM Kernel Design: labs/lab9.md
   - RTL Programming:
