@@ -1,0 +1,1969 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../lab3/">
+      
+      
+        <link rel="next" href="../lab5/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+    
+    
+      
+        <title>Lab 4 - RTL Programming Review using SystemVerilog - Computer Organization Fall 2024 @NCKUEE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8608ea7d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Lab 4 - RTL Programming Review using SystemVerilog - Computer Organization Fall 2024 @NCKUEE" >
+      
+        <meta  property="og:description"  content="None" >
+      
+        <meta  property="og:image"  content="./assets/images/social/labs/lab4.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="None" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Lab 4 - RTL Programming Review using SystemVerilog - Computer Organization Fall 2024 @NCKUEE" >
+      
+        <meta  name="twitter:description"  content="None" >
+      
+        <meta  name="twitter:image"  content="./assets/images/social/labs/lab4.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-1-combinational-circuit-radix-4-booth-multiplier-with-wallace-tree" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Computer Organization Fall 2024 @NCKUEE" class="md-header__button md-logo" aria-label="Computer Organization Fall 2024 @NCKUEE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Computer Organization Fall 2024 @NCKUEE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Lab 4 - RTL Programming Review using SystemVerilog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  首頁
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../lab_overview/" class="md-tabs__link">
+          
+  
+  Lab material
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../rtl/verilog/" class="md-tabs__link">
+          
+  
+  RTL Programming
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tools/linux_cmd/" class="md-tabs__link">
+          
+  
+  Tools Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../references/" class="md-tabs__link">
+        
+  
+    
+  
+  補充資料
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Computer Organization Fall 2024 @NCKUEE" class="md-nav__button md-logo" aria-label="Computer Organization Fall 2024 @NCKUEE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Computer Organization Fall 2024 @NCKUEE
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首頁
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首頁
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Lab material
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Lab material
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab_overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 0 - How To Ask Questions The Smart Way
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 1 - C Programmin and Compilation Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 2 - Simple RISC-V ISA Simulator with RV64I
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 3 - Bare-metal Runtime Environment and RISC-V Assembly Programming
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Lab 4 - RTL Programming Review using SystemVerilog
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Lab 4 - RTL Programming Review using SystemVerilog
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-1-combinational-circuit-radix-4-booth-multiplier-with-wallace-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chapter 1. Combinational Circuit - Radix-4 Booth Multiplier with Wallace Tree
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Chapter 1. Combinational Circuit - Radix-4 Booth Multiplier with Wallace Tree">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#twos-complement-binary-to-decimal-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      Two's Complement Binary to Decimal Number
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signed-multiplication-with-baugh-wooley-algorithm-and-array-multiplier" class="md-nav__link">
+    <span class="md-ellipsis">
+      Signed Multiplication with Baugh-Wooley Algorithm and Array Multiplier
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radix-4-booth-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Radix-4 Booth Algorithm
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wallace-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wallace Tree
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assignment-part-1-fast-single-cycle-multiplier-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      Assignment Part 1 - Fast Single-Cycle Multiplier Design
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-2-universal-asynchronous-receivertransmitter-uart" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chapter 2. Universal Asynchronous Receiver/Transmitter (UART)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Chapter 2. Universal Asynchronous Receiver/Transmitter (UART)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uart-hardware-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      UART Hardware Architecture
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serial-communication-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      Serial Communication Protocol
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assignment-part-2-uart-module-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      Assignment Part 2 - UART Module Design
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-3-how-to-run-simulation-and-test-benches" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chapter 3. How to run simulation and test-benches
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-to-do-the-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start to do the assignment
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 5 - Single-Cycle CPU Design and Differential Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 6 - Bus Protocol and Arbitration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 7 - Pipeline CPU and Simple Cache Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 8 - Deep Dive into Memory System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 9 - SIMD Accelerator and GEMM Kernel Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    RTL Programming
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            RTL Programming
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/verilog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction to Verilog and RTL Programming
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/sv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From Verilog to SystemVerilog for Hardware Designing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/sva/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SystemVerilog Assertion (SVA)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/chisel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chisel HDL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tools Guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tools Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/linux_cmd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic Linux Command
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/git_cmd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Git Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/docker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/markdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Markdown Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/gitlab_ov/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Gitla & Mattermost
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/cli_tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Useful CLI Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../references/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    補充資料
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Lab 4 - RTL Programming Review using SystemVerilog</h1>
+
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<ul>
+<li>Contributors：TA 汎穎、TA 宜蓁、TA 卉蓁、TA 峻豪</li>
+<li>Deadline : <mark>2024/XX/XX</mark></li>
+<li>Last updated : 2024/XX/XX</li>
+</ul>
+</div>
+<hr />
+<h2 id="chapter-1-combinational-circuit-radix-4-booth-multiplier-with-wallace-tree">Chapter 1. Combinational Circuit - Radix-4 Booth Multiplier with Wallace Tree<a class="headerlink" href="#chapter-1-combinational-circuit-radix-4-booth-multiplier-with-wallace-tree" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>關於 Two's Complement 的原理，<strong>強烈</strong>推薦閱讀這些資料</p>
+<ol>
+<li><a href="https://hackmd.io/@sysprog/binary-representation#">解讀計算機編碼</a></li>
+<li><a href="https://hackmd.io/@YuRen-tw/modular-arithmetic">模算術</a></li>
+<li>CS:APP3e Chapter 2. Representing and Manipulating Information</li>
+</ol>
+</div>
+<h3 id="twos-complement-binary-to-decimal-number">Two's Complement Binary to Decimal Number<a class="headerlink" href="#twos-complement-binary-to-decimal-number" title="Permanent link">&para;</a></h3>
+<p>通常在數位電路上實作有號數整數運算的時候，我們會使用 Two's Complement 來表示一個有號數，但你有沒有想過一個 n-bits 的有號數如何被系統性地轉換成十進位（Decimal）？</p>
+<p>假設我們有一個 n-bits 的二進位數 <span class="arithmatex">\(X_{\text{two}} = a_{n-1}a_{n-2}...a_0\)</span>，並且 <span class="arithmatex">\(X_{\text{two}}\)</span> 以二補數表示，則我們可以將其透過下面的公式轉換成十進位。</p>
+<div class="arithmatex">\[
+\begin{equation}
+X_{\text{ten}} = -a_{n-1} \times 2^{n-1} + \sum_{i=0}^{n-2}a_{i} \times 2^i
+\end{equation}
+\]</div>
+<p>接下來，我們將基於這個公式來推導有號數乘法（Signed Multiplication）。</p>
+<h3 id="signed-multiplication-with-baugh-wooley-algorithm-and-array-multiplier">Signed Multiplication with Baugh-Wooley Algorithm and Array Multiplier<a class="headerlink" href="#signed-multiplication-with-baugh-wooley-algorithm-and-array-multiplier" title="Permanent link">&para;</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>在 Binary Operation 中，乘以 <span class="arithmatex">\(2^{n}\)</span> 代表左移 n bits（LSB補零）。至於右移操作，則必須要先區分是 Arithmetic Right-Shift 或是 Logical Right-Shift 來決定 MSB 要補 Sign-Bit 還是無條件補 0。
+如果是對一個 Signed Number 除以 <span class="arithmatex">\(2^n\)</span> 的話，則需要進行 Arithmetically Right-Shift，也就是必須要在 MSB 的部分補上 Sign-Bit。
+如果是對 Unsigned Number 除以 <span class="arithmatex">\(2^n\)</span> 的話，則要在 MSB 補零，也就是 Logically Right-Shfit。</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>提出 Baugh-Wooley Algorithm 的論文：<a href="https://ieeexplore.ieee.org/document/1672241">C. R. Baugh and B. A. Wooley, "A Two's Complement Parallel Array Multiplication Algorithm," in IEEE Transactions on Computers, vol. C-22, no. 12, pp. 1045-1047, Dec. 1973</a></p>
+</div>
+<p>假設我們有兩個 n-bits 的有號數（Signed NUmber）<span class="arithmatex">\(X[n-1 : 0]\)</span> 和 <span class="arithmatex">\(Y[n-1:0]\)</span>，如果我們想要將他們相乘，則可以表示為以下形式：</p>
+<div class="arithmatex">\[
+\begin{equation}
+X \times \{\textcolor{red}{-}(Y_{n-1} \times 2^{n-1}) + (Y_{n-2} \times 2^{n-2}) + (Y_{n-3} \times 2^{n-3}) + ... + (Y_1 \times 2^1) + (Y_0 \times 2^0)\}
+\end{equation}
+\]</div>
+<p>將 <span class="arithmatex">\(X\)</span> 乘入之後，再將 n 個<strong>部分積</strong>（<strong>Partial Product</strong>）加起來，就可以得到最終的結果。</p>
+<p><mark>注意到，在有號數乘法當中，我們本來應該要對 Partial Product 進行 Sign-Extension 之後才能加總，否則會出錯</mark>。
+但是，處理 Sign-Extension 的部分會增加電路複雜度。因此，我們可以利用 <strong>Baugh-Wooley Algorithm</strong> 來簡化運算過程，透過特殊的技巧使我們可以不用處理 Sign-Extension 的部分。
+假設我們有兩個數 <span class="arithmatex">\(X[n-1:0]\)</span> 和 <span class="arithmatex">\(Y[m-1:0]\)</span> 要相乘，則應表示為：</p>
+<div class="arithmatex">\[
+\begin{equation}
+X \times Y = (-x_{n-1} \times 2^{n-1} + \sum_{i=0}^{n-2} x_i \times 2^i) \times (-y_{m-1} \times 2^{m-1} + \sum_{i=0}^{m-2} y_i \times 2^i) = (x_{n-1}y_{m-1} \times 2^{n+m-2} + \sum_{i=0}^{n-2} \sum_{j=0}^{m-2} x_i y_j \times 2^{i+j}) - (2^{n-1} \times \sum_{i=0}^{m-2} x_{n-1}y_i \times 2^{i} + 2^{m-1} \times \sum_{i=0}^{n-2} y_{m-1}x_i \times 2^{i})
+\end{equation}
+\]</div>
+<p>我們可以把上面的算式對應到下面的直式運算，特別注意到最後兩個 row 是減法運算，而非加法運算。</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/cffad08d-6e51-4f45-baae-9d021e74c169.png" /></p>
+<p>有沒有什麼方式可以將算式變形？利用二補數的原理，比起減去一個數，<strong>我們可以加上這個數的二補數</strong>，對於一個數 <span class="arithmatex">\(Z = z_{n-1}z_{n-2}...z_0\)</span>，其二補數可以表示為：</p>
+<div class="arithmatex">\[
+-Z = -\overline{z_{i-1}} \times 2^{n} + \sum_{i=0}^{n-1} \bar{z_i} \times 2^i + 1
+\]</div>
+<p>於是對於</p>
+<div class="arithmatex">\[
+\begin{equation}
+\textcolor{red}{-}2^{n-1} \times (-0 \times 2^m + 0 \times  2^{m-1} + \sum_{i=0}^{m-2} x_{n-1}y_i \times 2^i)
+\end{equation}
+\]</div>
+<p>可以改寫成</p>
+<div class="arithmatex">\[
+\begin{equation}
+\textcolor{red}{+}2^{n-1} \times (-1 \times 2^m + 1 \times  2^{m-1} + \sum_{i=0}^{m-2} \overline{x_{n-1}y_i} \times 2^i + 1)
+\end{equation}
+\]</div>
+<p>於是，我們將 <span class="arithmatex">\(X \times Y\)</span> 改寫成</p>
+<div class="arithmatex">\[
+\begin{equation}
+X \times Y = x_{n-1}y_{m-1} \times 2^{n+m-2} + \sum_{i=0}^{n-2} \sum_{j=0}^{m-2} x_iy_j \times 2^{i+j} + 2^{n-1} \times (-2^m + 2^{m-1} + \sum_{i=0}^{m-2}\overline{x_{n-1}y_i} \times 2^i) +\\ 2^{m-1} \times (-2^n + 2^{n-1} + \sum_{i=0}^{n-2}\overline{y_{m-1}x_i} \times 2^i)
+\end{equation}
+\]</div>
+<p>針對 <span class="arithmatex">\(-2^m + 2^{m-1} + \sum_{i=0}^{m-2}\overline{x_{n-1}y_i} \times 2^i\)</span>，我們進一步變形</p>
+<blockquote>
+<p>Ps：大家可以把 <span class="arithmatex">\(x_{n-1}\)</span> 等於 0 和 1 分別代入即可確認兩者是等價的</p>
+</blockquote>
+<div class="arithmatex">\[
+\begin{equation}
+-2^m + 2^{m-1} + \sum_{i=0}^{m-2}\overline{x_{n-1}y_i} \times 2^i = -2^m + 2^{m-1} + \overline{x_{n-1}} \times 2^{m-1} + \overline{x_{n-1}} + \sum_{i=0}^{m-2} x_{n-1}\bar{y_{i}} \times 2^i
+\end{equation}
+\]</div>
+<p>做這步驟的是因為，我們把原本的 <span class="arithmatex">\(\overline{x_{n-1}y_i}\)</span> 變成了 <span class="arithmatex">\(x_{n-1}\bar{y}_{i}\)</span>，就可以把電路中本來需要的 NAND Gate 變成 NOT Gate。最終，我們再次將算式對應到下面的直式運算</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/2018dcf7-b206-43a9-a92b-eb5c924f8bcf.png" /></p>
+<p>上述是最原始的 Baugh-Wooley Algorithm，好處是只要把某些 term 做 NOT 運算之後，即可把所有的 Partial Products 都視為 Posotive，不用特別的減法電路來進行運算。但我們目前採用的通常都是 <mark>Modified Baugh-Wooley Algorithm</mark>，以 4-bits 乘法為例：</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/34e03dcb-1fa4-4cf4-8059-6b2fe2d31ebc.png" /></p>
+<p>我們將上圖的運算過程對應（Mapping）到電路，得到如下圖的電路，稱為<strong>陣列乘法器（Array Multiplier）</strong>：</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/ae3edcd1-9eed-42c6-9faa-7a82416a0452.png" /></p>
+<blockquote>
+<p>圖片來源：<a href="https://www.researchgate.net/profile/Kailiang-Chen/publication/42437163/figure/fig21/AS:669375262650375@1536602907079/4-The-block-diagram-of-a-4-bit-signed-multiplier.ppm">link</a></p>
+</blockquote>
+<p>此外，有幾個重點我們要注意</p>
+<ol>
+<li>每一列都是 Ripple-Carry Adder（RCA）的架構，同一列中第 n+1 個 bit 的加法需等待第 n 個 bit 的進位（carry）算完才能進行</li>
+<li>第一個部分積與第二個部分積相加求得和後，再與第三個部分積相加，每一列的加法都要等上一列加法<strong>部分完成後</strong>才能進行</li>
+<li>Critical Path 共需要經過 9 個 Adder（2 個 Half-Adder 再加上 7 個 Full-Adder），會造成乘法器有很長的 Logic Delay，尤其當 Operand 的 bit 數增加時，Critical path 與 Delay 也會隨之快速增長，這對效能會有很大的影響</li>
+<li>和課堂上教的乘法器有一個本質的不同是，<mark>這個 Array Multiplier 只需要一個 Clock Cycle 即可完成運算</mark>，而課堂上所述的是 Multi-Cycle Binary Multiplier。通常在 CPU 內部，乘法器會由 Single-Cycle 的設計加上適當的 Pipeline 來使其 Critical Path 不會太長，同時又可以在數個 cycle 內即可完成整數乘法運算</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>請特別注意圖片上某些 AND Gate 的 Output 其實有一個小圓點，所以是 NAND Gate</p>
+</div>
+<p>為了提升乘法器的效能，我們接下來要探討兩種優化乘法器電路的演算法，分別是 Booth Algorithm 和 Wallace Tree Adder。Booth Algorithm 的目的在於<strong>減少部分積的數量</strong>，而 Wallace Tree 的目的在於<strong>將多個加法平行化</strong>。</p>
+<h3 id="radix-4-booth-algorithm">Radix-4 Booth Algorithm<a class="headerlink" href="#radix-4-booth-algorithm" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>當年提出 Booth Algorithm 的論文：<a href="https://academic.oup.com/qjmam/article/4/2/236/1874893?login=true">Booth, Andrew Donald. “A SIGNED BINARY MULTIPLICATION TECHNIQUE.” Quarterly Journal of Mechanics and Applied Mathematics 4 (1951): 236-240.</a></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>大家在課堂上學到的  Booth Algorithm 是 Radix-2 Booth Algorithm，這裡的 Radix-4 只是 Radix-2 的推廣而已，可以讓 Partial Product 的數量更少，但代價就是 Encoding 電路更複雜，因為 Sliding Window 會更大，並且也會有更多種 Encoding 的結果。</p>
+</div>
+<p>將算式 (1) 進一步變形，我們可以得到以下形式：</p>
+<div class="arithmatex">\[
+\begin{equation}
+X \times \{(-2 \times Y_{n-1} + Y_{n-2} + \times Y_{n-3})\times 2^{n-2} + (-2 \times Y_{n-3} + Y_{n-4} + Y_{n-5})\times 2^{n-4} +\\ (-2 \times Y_{n-5} + Y_{n-6} + Y_{n-7})\times 2^{n-6} + ... + (-2 \times Y_3 + Y_2 + Y_1) \times 2^2 + (-2 \times Y_1 + Y_0 + \times \textcolor{red}{Y_{-1}})\times 2^0 \} 
+\end{equation}
+\]</div>
+<p>特別注意的是，實際上 <span class="arithmatex">\(Y_{-1}\)</span> 這項並不存在，因為 <span class="arithmatex">\(Y\)</span> 是從 <span class="arithmatex">\(Y_0\)</span> 開始的，會多出 <span class="arithmatex">\(Y_{-1}\)</span> 這項只是因為我們想要讓每對小括號中都有三個 term 而已。<strong>所以 <span class="arithmatex">\(Y_{-1}\)</span> 視為 0</strong>，這樣就不會改變原本算式的結果。</p>
+<p>上面的算式其實<strong>暗示</strong>了我們一個技巧，就是我們可以以 3-bits 為一組來檢設 <span class="arithmatex">\(Y[n-1:0]\)</span> 中的每個 bits，所以我們會看到：</p>
+<div class="arithmatex">\[
+\begin{equation}
+-2 \times Y_{i+1} + Y_i + Y_{i-1}
+\end{equation}
+\]</div>
+<p>上面的算式總共會有五種可能，分別是 <span class="arithmatex">\(-2\)</span>、<span class="arithmatex">\(-1\)</span>、<span class="arithmatex">\(0\)</span>、<span class="arithmatex">\(1\)</span> 和 <span class="arithmatex">\(2\)</span>，我們可以將這種形式對應到下面的 Booth 編碼，這種編碼稱為 <strong>Radix-4 Booth Encoding</strong>。</p>
+<p>基於 Booth Encoding 的思想，我們就可以建構出一個 Booth Encoder 電路，這個電路會有兩個輸入，分別是 <span class="arithmatex">\(X\)</span> 和 <span class="arithmatex">\(Y[i+1:i-1]\)</span>，根據 <span class="arithmatex">\(Y[n+1:n-1]\)</span> 的數值，配合 Radix-4 Booth Encoding 乘上 <span class="arithmatex">\(X\)</span> 之後得到一個 Partial Product。對於 n-bits 乘以 n-bits 的乘法器為例，我們只要建構出 <span class="arithmatex">\(\frac{n}{2}\)</span> 個 Booth Encoder，再配合上適當地 Left-Shift（因為還要乘以 <span class="arithmatex">\(2^n\)</span>）即可得到所有的 Partial Products。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><span class="arithmatex">\(Y_{i+1}\)</span></th>
+<th style="text-align: left;"><span class="arithmatex">\(Y_i\)</span></th>
+<th style="text-align: left;"><span class="arithmatex">\(Y_{i-1}\)</span></th>
+<th style="text-align: left;">編碼（<span class="arithmatex">\(X \times (-2 \times Y_{i+1} + Y_i~ + Y_{i-1})\)</span>）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;"><span class="arithmatex">\(0\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><span class="arithmatex">\(X\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;"><span class="arithmatex">\(X\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><span class="arithmatex">\(2X\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;"><span class="arithmatex">\(-2X\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><span class="arithmatex">\(-X\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;"><span class="arithmatex">\(-X\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><span class="arithmatex">\(0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>最後，我們只要將 <span class="arithmatex">\(\frac{n}{2}\)</span> 個 Partial Products <strong>加總</strong>，就可以得到 <span class="arithmatex">\(X[n-1:0] \times Y[n-1:0]\)</span> 的結果。</p>
+<p>如果以 n 等於 64 為例，使用 Array Multiplier 進行 64-bits 的整數乘法，會需要加總 64 個 Partial Product。但是，當我們使用 Radix-4 Booth Algorithm 先將乘數進行適當編碼之後，只要加總 <span class="arithmatex">\(64 \div 2 = 32\)</span> 個 Partial Products，數量整整少了一半！</p>
+<p>但是要把 32 個數字<strong>依序</strong>相加依然非常耗費時間，我們可以再藉由 Wallace Tree 的技巧將多數相加的過程<strong>平行化（Parallelize）</strong>，藉此加速運算。</p>
+<h3 id="wallace-tree">Wallace Tree<a class="headerlink" href="#wallace-tree" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>當年提出 Wallace Tree 的論文：<a href="https://ieeexplore.ieee.org/document/4038071">C. S. Wallace, "A Suggestion for a Fast Multiplier," in IEEE Transactions on Electronic Computers, vol. EC-13, no. 1, pp. 14-17</a></p>
+</div>
+<p>如果要介紹 Wallace Tree 的話，我們必須先知道什麼是 <strong>Carry-Save Adder</strong>（CSA）。當我們在做<strong>三個</strong>數字的相加的時候，CSA 就會特別有優勢，我們用下面的電路來解釋。</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/2b0ed07d-e147-445d-9aa5-f852e90e2d90.png" /></p>
+<p>這是我們只使用 RCA 來進行三個數字的相加時，所使用的電路架構，如果分析其 Critical Path 的話，我們可以計算出其為五個 FA Delay 加上一個 HA Delay。但是當我們改成使用一級 CSA 加上一級 RCA 的時候，其 Critical Path 就會變成五個 FA Delay。可以看到使用 CSA + RCA 的混合加法器架構對於<strong>三個以上</strong>的整數相加的時候，會更有速度上的優勢。雖然以三個數相加來看，好像只進步一點點，不過在多個數相加的時候，CSA + RCA 的優勢就會越來越明顯，而這正是我們接下來要介紹的 <strong>Wallace Tree</strong>。</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/78fe0707-0b21-4486-a1d4-e5a6b91fec9a.png" /></p>
+<p>Wallace Tree 的核心精神就是利用 Carry-Save Adder 的 <strong>3-to-2 Compression</strong> 特性，逐步將 summands 減少，一直到剩下兩個 summands 的時候，就可以使用 Ripple-Carry Adder，或甚至使用 Carry-Lookahead Adder 將兩個 summands 相加，得到最終乘法的結果。Wallace Tree 之所以可以加速多個數字的加法運算在於其將多個 summands 的<strong>加法平行化</strong>。</p>
+<p>大家在上面的 Adder Tree 架構中，看到的每個小長方形的 Adder 就是 Carry-Save Adder。單一一個 CSA 的架構是將多個 Full-Adder 平行排列，<strong>並且不將 FA 之間的 Carry-in、Carry-Out 連接起來</strong>，取而代之的是 FA 的 Sum 和 Carry-Out 都會變成獨立的輸出。</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/6cb9a3da-c42c-4aa8-8125-cb48611d47d2.png" /></p>
+<p>上圖是經典的 Ripple-Carry Adder 結構，每個 FA 之間的 Cin 和 Cout 會互相連接。但是下圖則使用了兩級的 CSA 和一級的 RCA 來進行求和運算，大家可以看到在上面兩級的 CSA 中，每個 FA 的 Cout 反而是接到下一級 CSA 中的 FA 的輸入，而非接到同一級的 FA 的 Cin。（Ps：同一個水平上的 FA 視為同一級，same stage）</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/d05930a5-699c-4cfb-afab-74fa4b8e656a.png" /></p>
+<h3 id="assignment-part-1-fast-single-cycle-multiplier-design">Assignment Part 1 - Fast Single-Cycle Multiplier Design<a class="headerlink" href="#assignment-part-1-fast-single-cycle-multiplier-design" title="Permanent link">&para;</a></h3>
+<p>在 Assignment Part 1 的部分，大家需要實作一個<strong>單週期、支援兩個 64-bits 有號數相乘的乘法器</strong>，並且使用 Radix-4 Booth Algorithm 加上 Wallace Tree。
+大家可以參考以下架構去實作：</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/d6ba0ef6-8ef7-4d6c-858b-11cb7d65eb35.png" /></p>
+<ol>
+<li>Booth
+    <div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">6</a></span>
+<span class="normal"><a href="#__codelineno-0-7">7</a></span>
+<span class="normal"><a href="#__codelineno-0-8">8</a></span>
+<span class="normal"><a href="#__codelineno-0-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="k">module</span><span class="w"> </span><span class="n">Booth</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w">                </span><span class="c1">//multiplicand</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">y_3</span><span class="p">,</span><span class="w">        </span><span class="c1">//multiplier</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">p</span><span class="w">        </span><span class="c1">//partial product</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="p">);</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="c1">//your code here</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="k">endmodule</span>
+</span></code></pre></div></td></tr></table></div>
+    做Radix-4 Booth Encoding, 產生Partial Product</li>
+<li>Partial_prod
+    <div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">6</a></span>
+<span class="normal"><a href="#__codelineno-1-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">module</span><span class="w"> </span><span class="n">Partial_prod</span><span class="p">(</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">p_out</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="p">);</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="c1">//your code here</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="k">endmodule</span>
+</span></code></pre></div></td></tr></table></div>
+    將32個Booth封裝成一個module。
+    hint：要注意各Partial product的位數, 也就是（<em>式2</em>） 中各項的2^次方^</li>
+<li>Switch
+    <div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">3</a></span>
+<span class="normal"><a href="#__codelineno-2-4">4</a></span>
+<span class="normal"><a href="#__codelineno-2-5">5</a></span>
+<span class="normal"><a href="#__codelineno-2-6">6</a></span>
+<span class="normal"><a href="#__codelineno-2-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">module</span><span class="w"> </span><span class="n">Switch</span><span class="p">(</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">p_in</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">],</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">p_out</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="c1">//p0~ p127</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="c1">//your code here</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="k">endmodule</span>
+</span></code></pre></div></td></tr></table></div>
+    純接線, 將32個128bits的Partial product轉成128個32bits的輸出</li>
+<li>
+<p>Wallace32
+    <div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span>
+<span class="normal"><a href="#__codelineno-3-6">6</a></span>
+<span class="normal"><a href="#__codelineno-3-7">7</a></span>
+<span class="normal"><a href="#__codelineno-3-8">8</a></span>
+<span class="normal"><a href="#__codelineno-3-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="k">module</span><span class="w"> </span><span class="n">Wallace32</span><span class="p">(</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">in</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">28</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">cin</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="n">cout</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">28</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">cout_group</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="p">);</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="c1">//your code here</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="k">endmodule</span>
+</span></code></pre></div></td></tr></table></div>
+    Wallace tree, 將同一乘積位的32bits、上一個乘積位傳入的cin相加, 以下是參考架構</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/c7e44883-a642-4d4d-b63f-f33f2f435d7a.png" />
+5. Wtree
+<div class="language-verilog highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">module</span><span class="w"> </span><span class="n">Wtree</span><span class="p">(</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">],</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">c</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">);</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="c1">//your code here</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">endmodule</span>
+</span></code></pre></div>
+封裝128個不同乘積位的Wallace Tree
+6. Adder<br>
+   將Wtree的c、s相加（直接用加號即可, 不用自己撰寫128'的加法器） 
+7. Top
+<div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span>
+<span class="normal"><a href="#__codelineno-5-3">3</a></span>
+<span class="normal"><a href="#__codelineno-5-4">4</a></span>
+<span class="normal"><a href="#__codelineno-5-5">5</a></span>
+<span class="normal"><a href="#__codelineno-5-6">6</a></span>
+<span class="normal"><a href="#__codelineno-5-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="k">module</span><span class="w"> </span><span class="n">Top</span><span class="p">(</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">63</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">out</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="p">);</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="w">    </span><span class="c1">//your code here</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="k">endmodule</span>
+</span></code></pre></div></td></tr></table></div>
+連接每個module<br>
+<mark>top module請務必遵守以下規範(注意大小寫)：</mark><br>
+- 檔名：Top.sv
+- module 名稱： Top
+- I/O ports名稱及位寬皆不能更動</p>
+</li>
+</ol>
+<h2 id="chapter-2-universal-asynchronous-receivertransmitter-uart">Chapter 2. Universal Asynchronous Receiver/Transmitter (UART)<a class="headerlink" href="#chapter-2-universal-asynchronous-receivertransmitter-uart" title="Permanent link">&para;</a></h2>
+<h3 id="uart-hardware-architecture">UART Hardware Architecture<a class="headerlink" href="#uart-hardware-architecture" title="Permanent link">&para;</a></h3>
+<p>UART 是一種傳輸介面，他的特色就是只要透過一跟導線，即把 Transmitter 的 <strong>TX</strong> 和 Receiver 的 <strong>RX</strong> 連接，即可完成資料的傳輸，成本極低，並且不需要 Clock 的同步訊號。
+並且，在傳輸方式上，還可以分為<strong>單工（Simplex）</strong>、<strong>半雙工（Half-Duplex）</strong> 和<strong>全雙工（Full-Duplex）</strong>。</p>
+<p>由於 Transmitter 和 Receiver 之間沒有 Clock 訊號來進行同步，因此，收發雙方之間必須約定好以一個固定的頻率（<strong>Buad Rate</strong>）來進行傳輸。
+如果雙方的 Buad Rate 不同，則 Receiver 在採樣（Sampling）上就會出現問題，而無法接收到正確的資料。</p>
+<figure>
+    <img align="center" alt="" src="https://vanhunteradams.com/Protocols/UART/uart_hardware.png" />
+</figure>
+<p>如上圖所示，兩個 UART 模組的 TX-RX 交錯相接，可以實現半雙工的傳輸方式，即在單一時間內，Device 1 可以向 Device 2 傳送資料，或是 Device 2 向 Device 1 傳送資料。
+但是在這次 Lab 的實作中，我們只實作單一的 Transmitter 和單一的 Receiver，所以在 Transmitter Module 上只會有一個 TX Output Port 和 Receiver 連接，而在 Receiver Module 上只會有一個 RX Input Port 和 Transmitter 連接，其他的 Input/Output 都是提供給 test-bench 使用。</p>
+<p>上面我們只介紹的 UART 的硬體傳輸<strong>介面</strong>，但是傳輸資料不但需要收發器硬體本身，也需要規範所謂的<strong>傳輸協議</strong>。</p>
+<h3 id="serial-communication-protocol">Serial Communication Protocol<a class="headerlink" href="#serial-communication-protocol" title="Permanent link">&para;</a></h3>
+<figure>
+    <img alt="" src="https://www.amebaiot.com/wp-content/uploads/2017/05/u1.png" />
+</figure>
+<p>UART 在 Idel 狀態的時候，Transmitter 會把 TX 訊號保持在 1（Logical High），當 Transmitter 決定開始傳輸資料的時候，就會把 TX 往下拉變成 0（Logic-Low），稱為 <strong>Start Bit</strong>。Start Bit 後面會緊接著一個 Data Packet，由 8-bits 組成（也就是一個 byte），Data Packet 由 LSB 開始傳送，一直到把 MSB 傳送完畢之後，最後再接著 Stop Bit。</p>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>請特別注意，Start Bit 為 Logic-Low，而 Stop Bit 為 Logic High。</p>
+</div>
+<!-- ### ASCII Encoding
+
+具體來說，有了 UART 的硬體和傳輸協議之後，那我們到底要傳輸什麼呢？如果我們不去定義資料的編碼格式（Encoding），那麼我們接收的資料只不過就是一堆 0 和 1 而已，並沒有任何意義。因此，我們必須要先講清楚我們到底**如何解讀資料**。
+
+因為我們剛好使用 8-bits 作為一個 Data Packet，因此我們可以使用 **ASCII** 作為資料的編碼格式。在 ASCII 中分為**控制字元**和**可顯示字元**，在 Lab 2 當中，我們不會使用到控制字元，因此我們只需要關注可顯示字元即可。
+
+![](https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/236d1bb1-0f25-46da-9d79-0dbba5bf5f1d.png)
+
+除此之外，ASCII 只使用 7-bits 來傳輸，因此在 UART 傳輸的 8-bits Data Packet 當中，MSB 可以忽略，當作 Don't Care。-->
+
+<h3 id="assignment-part-2-uart-module-design">Assignment Part 2 - UART Module Design<a class="headerlink" href="#assignment-part-2-uart-module-design" title="Permanent link">&para;</a></h3>
+<p>這個部分的實作會由三個部分組成，分別是 <code>transmitter.sv</code>、<code>receiver.sv</code> 還有 tset-bench。需要完成的是前兩個 SystemVerilog Code，而 test-bench 會將兩份 Transmitter 和 Receiver 拿來接線使用，給予 &amp; 檢查回傳 message。</p>
+<blockquote>
+<p>抱歉程式可能寫的不是非常漂亮，歡迎各位多多指教!當然，這只是一個參考模板，用其他架構去寫出UART也可以的!
+另外code中會盡量把每個brench都填滿，但在這堂課的驗證中不填滿應該也不會出問題(?</p>
+</blockquote>
+<ol>
+<li>
+<p><code>transmitter.sv</code>
+    <figure markdown="span">
+        <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/8db43560-4856-4b34-95b4-4f41cbe7289c.png" width="500" />
+    </figure>
+    在程式碼中給了兩個always block。其中一個是控制tx(輸出訊號)，另一個是控制state&amp;bit_counter(FSM的state跳轉)與shift_reg(儲存了tx要輸出的內容)。<br>
+    <font color="#A8AAAC">start_tx是testbench給的，tx_done則是給testbench的小小外部訊號</font></p>
+<div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-6-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-6-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-6-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-6-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-6-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-6-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-6-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-6-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-6-10">10</a></span>
+<span class="normal"><a href="#__codelineno-6-11">11</a></span>
+<span class="normal"><a href="#__codelineno-6-12">12</a></span>
+<span class="normal"><a href="#__codelineno-6-13">13</a></span>
+<span class="normal"><a href="#__codelineno-6-14">14</a></span>
+<span class="normal"><a href="#__codelineno-6-15">15</a></span>
+<span class="normal"><a href="#__codelineno-6-16">16</a></span>
+<span class="normal"><a href="#__codelineno-6-17">17</a></span>
+<span class="normal"><a href="#__codelineno-6-18">18</a></span>
+<span class="normal"><a href="#__codelineno-6-19">19</a></span>
+<span class="normal"><a href="#__codelineno-6-20">20</a></span>
+<span class="normal"><a href="#__codelineno-6-21">21</a></span>
+<span class="normal"><a href="#__codelineno-6-22">22</a></span>
+<span class="normal"><a href="#__codelineno-6-23">23</a></span>
+<span class="normal"><a href="#__codelineno-6-24">24</a></span>
+<span class="normal"><a href="#__codelineno-6-25">25</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">posedge</span><span class="w"> </span><span class="n">reset</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">reset</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="w">        </span><span class="n">tx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7"></a><span class="w">            </span><span class="nl">IDLE:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9"></a><span class="w">                </span><span class="n">tx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11"></a><span class="w">            </span><span class="nl">START:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13"></a><span class="w">                </span><span class="n">tx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15"></a><span class="w">            </span><span class="nl">DATA:</span><span class="w"> </span><span class="k">begin</span><span class="w"> </span><span class="c1">//bit_counter 0~5</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17"></a><span class="w">                </span><span class="n">tx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19"></a><span class="w">            </span><span class="nl">STOP:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21"></a><span class="w">                </span><span class="n">tx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23"></a><span class="w">        </span><span class="k">endcase</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24"></a><span class="w">    </span><span class="k">end</span>
+</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25"></a><span class="k">end</span>
+</span></code></pre></div></td></tr></table></div>
+<p><div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span>
+<span class="normal"><a href="#__codelineno-7-11">11</a></span>
+<span class="normal"><a href="#__codelineno-7-12">12</a></span>
+<span class="normal"><a href="#__codelineno-7-13">13</a></span>
+<span class="normal"><a href="#__codelineno-7-14">14</a></span>
+<span class="normal"><a href="#__codelineno-7-15">15</a></span>
+<span class="normal"><a href="#__codelineno-7-16">16</a></span>
+<span class="normal"><a href="#__codelineno-7-17">17</a></span>
+<span class="normal"><a href="#__codelineno-7-18">18</a></span>
+<span class="normal"><a href="#__codelineno-7-19">19</a></span>
+<span class="normal"><a href="#__codelineno-7-20">20</a></span>
+<span class="normal"><a href="#__codelineno-7-21">21</a></span>
+<span class="normal"><a href="#__codelineno-7-22">22</a></span>
+<span class="normal"><a href="#__codelineno-7-23">23</a></span>
+<span class="normal"><a href="#__codelineno-7-24">24</a></span>
+<span class="normal"><a href="#__codelineno-7-25">25</a></span>
+<span class="normal"><a href="#__codelineno-7-26">26</a></span>
+<span class="normal"><a href="#__codelineno-7-27">27</a></span>
+<span class="normal"><a href="#__codelineno-7-28">28</a></span>
+<span class="normal"><a href="#__codelineno-7-29">29</a></span>
+<span class="normal"><a href="#__codelineno-7-30">30</a></span>
+<span class="normal"><a href="#__codelineno-7-31">31</a></span>
+<span class="normal"><a href="#__codelineno-7-32">32</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">posedge</span><span class="w"> </span><span class="n">reset</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">reset</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">            </span><span class="nl">IDLE:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">start_tx</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w">                    </span><span class="p">...</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">                </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="w">                    </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="w">                    </span><span class="n">shift_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">6</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12"></a><span class="w">                </span><span class="k">end</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13"></a><span class="w">                </span><span class="n">bit_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mb">&#39;b000</span><span class="p">;</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15"></a><span class="w">            </span><span class="nl">START:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18"></a><span class="w">            </span><span class="nl">DATA:</span><span class="w"> </span><span class="k">begin</span><span class="w"> </span><span class="c1">//bit_counter 0~5</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20"></a><span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">bit_counter</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">3</span><span class="mb">&#39;b101</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21"></a><span class="w">                    </span><span class="p">...</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22"></a><span class="w">                </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23"></a><span class="w">                    </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24"></a><span class="w">                    </span><span class="n">bit_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bit_counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25"></a><span class="w">                </span><span class="k">end</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27"></a><span class="w">            </span><span class="nl">STOP:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30"></a><span class="w">        </span><span class="k">endcase</span>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31"></a><span class="w">    </span><span class="k">end</span>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32"></a><span class="k">end</span>
+</span></code></pre></div></td></tr></table></div>
+2. <code>receiver.sv</code>
+<figure markdown="span">
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/138bee48-ad24-412f-9cec-b32de69b19e1.png" width="500" />
+</figure></p>
+<p>在程式碼中給了兩個always block。其中一個是控制rx_done(輸出message)與shift_reg(接收並儲存從transmitter來的0/1訊號)，另一個是控制state&amp;bit_counter(FSM的state跳轉)。<br>
+<font color="#A8AAAC">rx_done是給testbench的小小外部訊號</font></p>
+<div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-8-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-8-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-8-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-8-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-8-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-8-10">10</a></span>
+<span class="normal"><a href="#__codelineno-8-11">11</a></span>
+<span class="normal"><a href="#__codelineno-8-12">12</a></span>
+<span class="normal"><a href="#__codelineno-8-13">13</a></span>
+<span class="normal"><a href="#__codelineno-8-14">14</a></span>
+<span class="normal"><a href="#__codelineno-8-15">15</a></span>
+<span class="normal"><a href="#__codelineno-8-16">16</a></span>
+<span class="normal"><a href="#__codelineno-8-17">17</a></span>
+<span class="normal"><a href="#__codelineno-8-18">18</a></span>
+<span class="normal"><a href="#__codelineno-8-19">19</a></span>
+<span class="normal"><a href="#__codelineno-8-20">20</a></span>
+<span class="normal"><a href="#__codelineno-8-21">21</a></span>
+<span class="normal"><a href="#__codelineno-8-22">22</a></span>
+<span class="normal"><a href="#__codelineno-8-23">23</a></span>
+<span class="normal"><a href="#__codelineno-8-24">24</a></span>
+<span class="normal"><a href="#__codelineno-8-25">25</a></span>
+<span class="normal"><a href="#__codelineno-8-26">26</a></span>
+<span class="normal"><a href="#__codelineno-8-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">posedge</span><span class="w"> </span><span class="n">reset</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reset</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="w">        </span><span class="n">rx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="w">            </span><span class="nl">IDLE:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9"></a><span class="w">                </span><span class="n">rx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11"></a><span class="w">            </span><span class="nl">DATA:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13"></a><span class="w">                </span><span class="n">rx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15"></a><span class="w">            </span><span class="nl">STOP:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rx</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span><span class="c1">//stop bit</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17"></a><span class="w">                    </span><span class="p">...</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18"></a><span class="w">                    </span><span class="n">rx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19"></a><span class="w">                </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20"></a><span class="w">                    </span><span class="n">data_out</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">6</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21"></a><span class="w">                    </span><span class="n">rx_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22"></a><span class="w">                    </span><span class="n">shift_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">6</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23"></a><span class="w">                </span><span class="k">end</span>
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25"></a><span class="w">        </span><span class="k">endcase</span>
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26"></a><span class="w">    </span><span class="k">end</span>
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27"></a><span class="k">end</span>
+</span></code></pre></div></td></tr></table></div>
+<div class="language-verilog highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-9-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-9-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-9-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-9-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-9-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-9-10">10</a></span>
+<span class="normal"><a href="#__codelineno-9-11">11</a></span>
+<span class="normal"><a href="#__codelineno-9-12">12</a></span>
+<span class="normal"><a href="#__codelineno-9-13">13</a></span>
+<span class="normal"><a href="#__codelineno-9-14">14</a></span>
+<span class="normal"><a href="#__codelineno-9-15">15</a></span>
+<span class="normal"><a href="#__codelineno-9-16">16</a></span>
+<span class="normal"><a href="#__codelineno-9-17">17</a></span>
+<span class="normal"><a href="#__codelineno-9-18">18</a></span>
+<span class="normal"><a href="#__codelineno-9-19">19</a></span>
+<span class="normal"><a href="#__codelineno-9-20">20</a></span>
+<span class="normal"><a href="#__codelineno-9-21">21</a></span>
+<span class="normal"><a href="#__codelineno-9-22">22</a></span>
+<span class="normal"><a href="#__codelineno-9-23">23</a></span>
+<span class="normal"><a href="#__codelineno-9-24">24</a></span>
+<span class="normal"><a href="#__codelineno-9-25">25</a></span>
+<span class="normal"><a href="#__codelineno-9-26">26</a></span>
+<span class="normal"><a href="#__codelineno-9-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">posedge</span><span class="w"> </span><span class="n">reset</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reset</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="w">            </span><span class="nl">IDLE:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">rx</span><span class="o">==</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="w">                    </span><span class="p">...</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="w">                </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10"></a><span class="w">                    </span><span class="p">...</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11"></a><span class="w">                </span><span class="k">end</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12"></a><span class="w">                </span><span class="n">bit_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mb">&#39;b000</span><span class="p">;</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14"></a><span class="w">            </span><span class="nl">DATA:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15"></a><span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">bit_counter</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">3</span><span class="mb">&#39;b101</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16"></a><span class="w">                    </span><span class="p">...</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17"></a><span class="w">                </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18"></a><span class="w">                    </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19"></a><span class="w">                    </span><span class="n">bit_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bit_counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20"></a><span class="w">                </span><span class="k">end</span>
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22"></a><span class="w">            </span><span class="nl">STOP:</span><span class="w"> </span><span class="k">begin</span>
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24"></a><span class="w">            </span><span class="k">end</span>
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25"></a><span class="w">        </span><span class="k">endcase</span>
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26"></a><span class="w">    </span><span class="k">end</span>
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27"></a><span class="k">end</span>
+</span></code></pre></div></td></tr></table></div>
+<p>最難的部分應該剩下shift_reg的寫法。可以想像一下transmitter發出訊號和receiver接收訊號的順序，會像是...沒錯!FIFO(先進先出)的queue。可以滾動調整shift_reg中的資料，每次固定取最低位的資料出來到tx/rx就行了。</p>
+</li>
+</ol>
+<h2 id="chapter-3-how-to-run-simulation-and-test-benches">Chapter 3. How to run simulation and test-benches<a class="headerlink" href="#chapter-3-how-to-run-simulation-and-test-benches" title="Permanent link">&para;</a></h2>
+<p>在這次作業中，助教一樣提供了 Makefile 讓大家使用。這次的作業主要分成兩題，兩題各自會有自己的 test-bench。</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>.
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>├──<span class="w"> </span>Makefile
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>├──<span class="w"> </span>Top.sv
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>├──<span class="w"> </span>common.mk
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>├──<span class="w"> </span>mul
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>│<span class="w">   </span>├──<span class="w"> </span>Top.sv
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>│<span class="w">   </span>├──<span class="w"> </span>other<span class="w"> </span>.sv<span class="w"> </span>files
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>│<span class="w">   </span>├──<span class="w"> </span>mul.mk
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>│<span class="w">   </span>└──<span class="w"> </span>sim_main.cpp
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>└──<span class="w"> </span>uart
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span>├──<span class="w"> </span>Top.sv
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span>├──<span class="w"> </span>other<span class="w"> </span>.sv<span class="w"> </span>files
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">    </span>├──<span class="w"> </span>sim_main.cpp
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">    </span>└──<span class="w"> </span>uart.mk
+</span></code></pre></div>
+<p>這次助教提供的 Sample code 的檔案結構如上所示，如同 Lab 1，同學如果要編譯你已經完成的 Code，只要在 <code>lab-2</code> 資料夾底下，輸入 <code>make</code>（同時編譯 Multiplier 和 UART）、<code>make mul</code>（只編譯 Multiplier）或是 <code>make uart</code>（只編譯 UART），不需要進入到子資料夾當中。</p>
+<p>而如果要執行 simulation 的話，一樣停留在 <code>lab-2</code> 資料夾底下，輸入 <code>./mul/obj_dir/VTop</code> 即可執行 Multiplier 的 test-bench。而輸入 <code>./uart/obj_dir/VTop</code> 即可執行 UART 的 test-bench。</p>
+<h2 id="start-to-do-the-assignment">Start to do the assignment<a class="headerlink" href="#start-to-do-the-assignment" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Clone the sample code<ul>
+<li>先確定自己已經打開課程開發環境（Container），並且在環境中的 <code>workspace</code> 底下</li>
+<li>下載助教提供的 Sample Code <br> <code>git clone https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/lab-2.git</code></li>
+<li>進入資料夾 <br> <code>cd lab-2</code></li>
+</ul>
+</li>
+<li>Create a private repo<ul>
+<li>如同 Lab 1 所述，在 Gitlab 上面創建個人 Repo，並且命名為 <code>Lab 2</code>，請不要勾選 <em>Initialize the repository with READNE</em></li>
+<li>確認 branch 的名稱為 main 而非 master <br> <code>git branch -M main</code></li>
+<li>新增自己的 Private Gitlab Repo 為 Remote Source <br> <code>git remote add private &lt;HTTPS URL of your private repo&gt;</code></li>
+</ul>
+</li>
+<li>Push codes to your private repo<ul>
+<li><code>git push -u private main</code></li>
+</ul>
+</li>
+<li>Notes<ul>
+<li>因為在<strong>預設</strong>情況之下，只要 Gitlab Repo 中包含 <code>.gitlab-ci.yml</code> 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開</li>
+</ul>
+</li>
+</ol>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; Create by <a href=""  target="_blank" rel="noopener">Jieum.C</a> in 2024 ♥ 
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.instagram.com/eemomolleyball?igsh=MnI5cnM0YnljcnEy" target="_blank" rel="noopener" title="www.instagram.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141m0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7m146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8m76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8M398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.path", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "search.relevance", "content.tabs", "content.code.annotation", "content.code.copy", "content.footnotes", "content.images"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      
+        <script src="../../js/custom.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+      
+        <script src="../../js/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

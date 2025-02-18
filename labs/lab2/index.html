@@ -1,0 +1,2129 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../lab1/">
+      
+      
+        <link rel="next" href="../lab3/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+    
+    
+      
+        <title>Lab 2 - Simple RISC-V ISA Simulator with RV64I - Computer Organization Fall 2024 @NCKUEE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8608ea7d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Lab 2 - Simple RISC-V ISA Simulator with RV64I - Computer Organization Fall 2024 @NCKUEE" >
+      
+        <meta  property="og:description"  content="None" >
+      
+        <meta  property="og:image"  content="./assets/images/social/labs/lab2.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="None" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Lab 2 - Simple RISC-V ISA Simulator with RV64I - Computer Organization Fall 2024 @NCKUEE" >
+      
+        <meta  name="twitter:description"  content="None" >
+      
+        <meta  name="twitter:image"  content="./assets/images/social/labs/lab2.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#what-is-computer" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Computer Organization Fall 2024 @NCKUEE" class="md-header__button md-logo" aria-label="Computer Organization Fall 2024 @NCKUEE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Computer Organization Fall 2024 @NCKUEE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Lab 2 - Simple RISC-V ISA Simulator with RV64I
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  首頁
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../lab_overview/" class="md-tabs__link">
+          
+  
+  Lab material
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../rtl/verilog/" class="md-tabs__link">
+          
+  
+  RTL Programming
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tools/linux_cmd/" class="md-tabs__link">
+          
+  
+  Tools Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../references/" class="md-tabs__link">
+        
+  
+    
+  
+  補充資料
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Computer Organization Fall 2024 @NCKUEE" class="md-nav__button md-logo" aria-label="Computer Organization Fall 2024 @NCKUEE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Computer Organization Fall 2024 @NCKUEE
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首頁
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首頁
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Lab material
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Lab material
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab_overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 0 - How To Ask Questions The Smart Way
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 1 - C Programmin and Compilation Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Lab 2 - Simple RISC-V ISA Simulator with RV64I
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Lab 2 - Simple RISC-V ISA Simulator with RV64I
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-computer" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is Computer？
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What is Computer？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-perspective-of-finite-state-machine-fsm" class="md-nav__link">
+    <span class="md-ellipsis">
+      From the Perspective of Finite-State-Machine (FSM)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction-to-risc-v-instruction-set-architecture-isa" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction to RISC-V Instruction-Set Architecture (ISA)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-isa-simulator-iss" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is ISA Simulator (ISS) ？
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What is ISA Simulator (ISS) ？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-purpose-register-gpr" class="md-nav__link">
+    <span class="md-ellipsis">
+      General Purpose Register (GPR)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-distinguish-instructions-from-binary-instruction-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Distinguish Instructions From Binary (Instruction Decoding)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Distinguish Instructions From Binary (Instruction Decoding)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-rv32i-to-rv64i" class="md-nav__link">
+    <span class="md-ellipsis">
+      From RV32I to RV64I
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-of-a-simple-iss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture of A Simple ISS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-do-we-need-system-instructions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Do We Need SYSTEM Instructions?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iss-with-debugging-interactive-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      ISS with Debugging Interactive Interface
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-compile-and-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Compile and Run
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-to-do-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start to Do Assignment
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 3 - Bare-metal Runtime Environment and RISC-V Assembly Programming
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 4 - RTL Programming Review using SystemVerilog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 5 - Single-Cycle CPU Design and Differential Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 6 - Bus Protocol and Arbitration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 7 - Pipeline CPU and Simple Cache Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 8 - Deep Dive into Memory System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 9 - SIMD Accelerator and GEMM Kernel Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    RTL Programming
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            RTL Programming
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/verilog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction to Verilog and RTL Programming
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/sv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From Verilog to SystemVerilog for Hardware Designing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/sva/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SystemVerilog Assertion (SVA)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/chisel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chisel HDL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tools Guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tools Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/linux_cmd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic Linux Command
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/git_cmd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Git Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/docker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/markdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Markdown Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/gitlab_ov/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Gitla & Mattermost
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/cli_tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Useful CLI Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../references/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    補充資料
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Lab 2 - Simple RISC-V ISA Simulator with RV64I</h1>
+
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<ul>
+<li>Contributors：TA 峻豪</li>
+<li>Last Update：2024/10/09</li>
+<li>Deadline: <mark>2024/11/03 23:59:59</mark></li>
+</ul>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>如果你想要讀到關於 RISC-V 最原始的資訊和定義的話，請閱讀 RISC-V ISA 規格書（Specifications）</p>
+<ol>
+<li><a href="https://drive.google.com/file/d/1uviu1nH-tScFfgrovvFCrj7Omv8tFtkp/view?usp=drive_link">RISC-V ISA Specifications Volume 1, Unprivileged Specification version 20240411</a></li>
+<li><a href="https://drive.google.com/file/d/17GeetSnT5wW3xNuAHI95-SI1gPGd5sJ_/view?usp=drive_link">RISC-V ISA Specifications Volume 2, Privileged Specification version 20240411</a></li>
+</ol>
+<p>但<strong>這門課並不會涉及到 Privileged Architecture（特權架構）的內容</strong></p>
+</div>
+<details class="info">
+<summary>Simple Index</summary>
+<ul>
+<li>Chapter 1 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-computer">What is computer</a><ul>
+<li>1.1 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#from-the-perspective-of-finite-state-machine-fsm">From the Perspective of Finite-State-Machine (FSM)</a></li>
+</ul>
+</li>
+<li>Chapter 2 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#introduction-to-risc-v-instruction-set-architecture-isa">Introduction to RISC-V Instruction-Set Architecture (ISA)</a></li>
+<li>Chapter 3 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#what-is-isa-simulatoriss">What is ISA Simulator (ISS)？</a><ul>
+<li>3.1 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#general-purpose-register-gpr">General Purpose Register (GPR)</a></li>
+<li>3.2 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#how-to-distinguish-instructions-from-binary-instruction-decoding">How to Distinguish Instructions From Binary (Instruction Decoding)</a><ul>
+<li>3.2.1 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#from-rv32i-to-rv64i">From RV32I to RV64I</a></li>
+</ul>
+</li>
+<li>3.3 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#architecture-of-a-simple-iss">Architecture of A Simple ISS</a></li>
+<li>3.4 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#why-do-we-need-system-instructions">Why Do We Need SYSTEM Instructions?</a></li>
+<li>3.5 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#iss-with-debugging-interactive-interface">ISS with Debugging Interactive Interface</a></li>
+</ul>
+</li>
+<li>Chapter 4 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#how-to-compile-and-run">How to Compile and Run</a></li>
+<li>Chapter 5 <a href="https://pages.course.aislab.ee.ncku.edu.tw/ta/course-website/labs/lab2/#start-to-do-assignment">Start to Do Assignment</a></li>
+</ul>
+</details>
+<h2 id="what-is-computer">What is Computer？<a class="headerlink" href="#what-is-computer" title="Permanent link">&para;</a></h2>
+<p>讓我們來看看電腦最基本的抽象結構（Abstraction Layers）：</p>
+<figure>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/ebbb6441-034a-436d-bdcb-767b511648a1.png" width="500" />
+</figure>
+<p>大家應該有注意到我們上課使用的課本 <em>Computer Organization and Design RISC-V Edition: The Hardware Software Interface, 2/e</em>（也就是我們常說的算盤書），書名上的副標題是『<mark>The Hardware Software Interface</mark>』，想必這句話作為書本的副標題，一定有著舉足輕重的地位。那麼，這句話到底代表著什麼？</p>
+<p>我們在目前的階段先忽略作業系統（Operating System）的部分，基本上 Program 也就是我們所說的 <strong>Software</strong>，而 Processor，又或是說 Central Processing Unit（CPU）就是我們所說的 <strong>Hardware</strong>。
+而介於 Software 和 Hardware 之間，特別的部分，就是 Instruction-Set Architecture（ISA）。</p>
+<p>我們所撰寫的程式（e.g. C 語言），是相對高階並且抽象的語言，接近人類所能理解的<strong>自然語言</strong>，這些東西如果直接丟給 CPU 去看的話，CPU 是看不懂你寫的 C 程式的，也因此上一個 Lab 我們介紹了 Compiler 的 Compilation Flow 和 GCC 的基本概念，只不過 Compiler 並不是計算機組織這堂課要討論的重點。
+而在這個 Lab，我們將進入這堂課的重點之一，也就是 ISA 的部分。</p>
+<p>ISA（Instruction-Set Architecture），基本上定義了一系列 CPU 應該要支援的指令以及對應的具體行為，確保軟體和硬體之間有一個可以相互配合的介面（Interface）。
+所有在計算機系統中的軟體，最終都必須要被轉換成該系統中 CPU 所實作的 ISA 的指令，才能夠順利地運作在系統之中。</p>
+<p>基本上，在計算機科學中，<strong>抽象（Abstraction）</strong>是一個非常重要的概念和技巧，ISA 其實就是一種抽象層的設計和應用。有了 ISA 的制定，如 RISC-V，程式設計師（e.g., 系統軟體）可以不用理解底層硬體的細節，只需要掌握 ISA 內所定義的指令，便可以撰寫程式。
+而設計 CPU 架構的硬體架構師也不必過於關注在 ISA 之上，更高層次的 Software Stack 是如何被制定，只需要專注在 ISA-Level 的實作即可。</p>
+<p>有了 Abstraction Layer 的概念，我們可以使計算機系統中每個重要的部分<strong>解耦合（Decoupling）</strong>，讓我們可以專注在個別的部分，例如 CPU 設計，又或者是作業系統等等系統軟體的設計本身，而不是全部都混雜在一起。
+但是藉由 ISA 這種 Abstraction Layer 的連結，程式設計師和硬體架構師之間依然有<strong>合適的溝通橋樑</strong>。</p>
+<h3 id="from-the-perspective-of-finite-state-machine-fsm">From the Perspective of Finite-State-Machine (FSM)<a class="headerlink" href="#from-the-perspective-of-finite-state-machine-fsm" title="Permanent link">&para;</a></h3>
+<p>我們也可以從有限狀態機的觀點來看整個計算機系統的運作。基本上，Program 可以被視為式一個巨大的狀態機 <span class="arithmatex">\(S = &lt;\mathbf{V}, \text{PC}&gt;\)</span>，其中 <span class="arithmatex">\(\mathbf{V} = \{v_1, v_2, v_3, ..., v_n\}\)</span>，為整個程式中所擁有的所有變數（Variable）。
+至於你在 Source Code 中的每個 statements，可以被稱為是 <strong>Activation Event</strong>，它會導致 Program 的狀態改變，有可能是 <span class="arithmatex">\(\mathbf{V}\)</span> 改變，可能是 <span class="arithmatex">\(\text{PC}\)</span> 改變，或是兩者都改變。
+至於這些 C 語言程式原始碼中的 Statement 是根據什麼樣的規則來改變 <span class="arithmatex">\(S\)</span>，這就是由 C 語言標準（C Standard Revision, e.g., ISO C90）來制定。</p>
+<figure>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a3eb3a74-1333-48db-a207-092b957543ef.png" width="900" />
+</figure>
+<p>除了我們可以將 Software（Program）視為是一個 FSM，Processor（CPU）本質上也是一個巨大的 FSM。Processor 的狀態 <span class="arithmatex">\(S\)</span> 可以被定義為一個集合 <span class="arithmatex">\(S = \{\text{Values in memory elements}\}\)</span>。</p>
+<figure>
+    <img alt="" src="https://media.geeksforgeeks.org/wp-content/uploads/1111-1.png" width="500" />
+</figure>
+<p>而 ISA 中定義的每條指令，其實就是 CPU 的狀態 <span class="arithmatex">\(S\)</span> 的 Activation Event，也就是<strong>指令會導致 CPU 的狀態發生改變</strong>。
+對於我們接下來要實作的 ISA Simulator 來說，我們可以將其的狀態定義為 <span class="arithmatex">\(S = \{\text{GPRs},\, \text{PC},\, \text{Memory}\}\)</span>。
+對於 ISA Smulator 的狀態，視為是由 32 個 General Purpose Registers，再加上 Program Counter 和 Main Memory 所組成，而我們實作的 RV64I 指令則會去改變 ISA Simulator 的狀態 <span class="arithmatex">\(S\)</span>。</p>
+<h2 id="introduction-to-risc-v-instruction-set-architecture-isa">Introduction to RISC-V Instruction-Set Architecture (ISA)<a class="headerlink" href="#introduction-to-risc-v-instruction-set-architecture-isa" title="Permanent link">&para;</a></h2>
+<p>RISC-V 被歸類為 RISC（Reduced Instruction Set Computer）指令集架構，與之相對的是 CISC（Complex Instruction Set Computer）。
+CISC 的代表人物便是在桌上型電腦、伺服器上常見的 x86 架構，而 RISC 架構除了 RISC-V 以外，最常見的便是 ARM，ARM 在手機、嵌入式應用市場中有重要的地位。</p>
+<p>必須要強調的是，RISC 和 CISC 並沒有明確的定義，不過相較於 CISC 架構，RISC 架構的指令集<strong>通常</strong>有以下的特色：</p>
+<ol>
+<li>指令的長度<strong>固定</strong>且編碼格式較單純</li>
+<li>每條指令所需要完成的任務較為單一（也可以想像成指令的功能比較簡單）<br><blockquote>
+<p>在 CISC 架構如 x86 中，單一一條 CISC 指令通常都會被轉換成多條 µOp（micro-operation）指令，而其中 µOp 其實就比較接近 RISC 指令</p>
+</blockquote>
+</li>
+<li><strong>指令通常不會直接操作 Main Memory</strong>，而是藉由 Memory Accessing Instruction 如 Load/Store 指令來存取記憶體</li>
+</ol>
+<p>RISC-V 相較於 ARM 有幾個比較鮮明的特色：</p>
+<ol>
+<li>如果要要使用 ARM 進行商業行為需要取得授權（就是要付錢），但 RISC-V 是開源（Open-Source）的，就是免費的意思</li>
+<li>RISC-V 是模組化的設計，最小可以只包含 Base Integer Instruction Set</li>
+<li>RISC-V 的指令相較於 ARM 依然更為簡單<br><blockquote>
+<p>許多 ARM 的 CPU 設計依然會把 ARM 的指令轉換成多個 µOp 才去執行</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="what-is-isa-simulator-iss">What is ISA Simulator (ISS) ？<a class="headerlink" href="#what-is-isa-simulator-iss" title="Permanent link">&para;</a></h2>
+<p>因為我們所使用的電腦幾乎都是使用 x86 架構指令集，所以不認得 RISC-V 指令，因此當我們使用 RISC-V GNU Toolchain 去把 C 程式編譯成使用 RISC-V 指令的執行檔的時候，如果我們直接執行，會出現錯誤，因為 program 本身和 Host Machine 所使用的 ISA 不同。</p>
+<p>要隨手買來一個使用 RISC-V CPU 的機器，至少在現在看來確實不太容易，但是寫程式這件事情讓一切變得可能。
+所以，我們可以設計一個程式，這個程式的任務很單純，就是<strong>解讀 RISC-V 指令並且執行指令對應的功能</strong>，概念上就有點類似於我們設計一個程式去模擬 RISC-V Machine，這樣我們就可以藉由這個<strong>假的</strong> RISC-V Machine 來執行 RISC-V Program。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>本文中所說的 RISC-V Program 泛指被編譯成使用 RSIC-V 指令的程式。</p>
+</div>
+<p>除此之外，這個我們設計的 RISC-V ISS 甚至可以在後面我們以 RTL-Level 語言設計 CPU 的時候，在 CPU 驗證的階段派上用場！讓我們可以做 <strong>Co-Simulation</strong>。</p>
+<p>為了要實作一個最基本的 ISS，我們需要模擬 Program Counter，模擬 32 個 General Purpose Register，還有 Main Memory。
+因為 Register 是運算中暫存資料的最基本單位，Program Counter 負責紀錄目前執行到<strong>哪一條</strong>指令，而 Memory 則負責儲存我們欲執行的 RISC-V Program（包含 Instructions 和 Data）。
+為了要執行一個 RISC-V Program，這三個東西缺一不可，如果缺少 Register，則指令的運算結果沒有地方可以放。
+如果缺少 Program Counter，則無法知道目前到底正在執行哪一條指令。
+而如果缺少 Memory 的話，我們想要執行的 RISC-V Program 所包含的指令和資料都沒有地方可以放，更不用討論要如何執行了。</p>
+<h3 id="general-purpose-register-gpr">General Purpose Register (GPR)<a class="headerlink" href="#general-purpose-register-gpr" title="Permanent link">&para;</a></h3>
+<figure>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/4f59eb46-4bd4-4522-b5b9-19292f7f5677.png" />
+</figure>
+<p>根據 RISC-V 規格書的定義，在 RV64I 中擁有 32 個 64-bits 的<strong>整數通用暫存器</strong>，可以拿來存放資料，但是有一項規定是 <strong><code>$x0</code> 這個暫存器的數值應該永遠保持是 0</strong>。</p>
+<p>但是，基於種種原因，我們通常會去規範所謂的 <strong>Application Binary Interface（ABI）</strong>，像是 RISC-V 就有自己的 RISC-V ABI（在後面的 Lab 會介紹）。ABI 會包含許多規範，其中一個就是 <strong>ABI Mnemonic</strong>，也就是說雖然規格書上沒有規定 x0 ~ x31 這三十二個暫存器應該被用作什麼用途，但是 ABI 其實會去規範這些暫存器<strong>通常</strong>會被作為何種用途使用，並且同時給它們一個方便記憶的名子，讓我們在寫 Assembly Programming 的時候可以更方便。</p>
+<p>不過在 Lab 2 我們只專注於 Processor State 的模擬，所以其實不用去關注 ABI 的細節。<strong>在 ISS 的實作上，我們只要確實提供 32 個暫存器讓程式可以操作即可</strong>。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>讓 <code>$x0</code> 保持永遠都是 0（代表不可以被寫入任何資料）其實可以帶來很多好處，讓我們舉幾個例子：</p>
+<ol>
+<li>實作 Move 指令<ul>
+<li>Move 指令可以把 <code>$rs1</code> 暫存器中的值複製到 <code>$rs2</code> 中</li>
+<li>利用 ADD 指令配合 <code>$x0</code> 即可實作出 Move 的功能</li>
+<li><code>mv t1, t0</code> 等價於 <code>add t1, x0, t0</code></li>
+<li>當然，使用 ADDI 也可以：<code>addi t1, t0, 0</code></li>
+</ul>
+</li>
+<li>實作 NOP 指令（No-Operation ）<ul>
+<li>NOP 指令就是<strong>不做任何事情的指令</strong></li>
+<li>可以利用 ADDI 實作 NOP：<code>addi x0, x0, 0</code></li>
+</ul>
+</li>
+<li>實作與零比較的 BRANCH 指令（Zero-Comparasion Branching）<ul>
+<li><code>beqz</code>：<code>beq rs1, x0, offset</code></li>
+<li><code>bnez</code>：<code>bne rs1, x0, offset</code></li>
+<li><code>bltz</code>：<code>blt rs1, x0, offset</code></li>
+<li><code>bgez</code>：<code>bge rs1, x0, offset</code></li>
+</ul>
+</li>
+</ol>
+<p>基本上就是因為 0 這個數字很特別，我們很常用到，所以讓 <code>$x0</code> 保持永遠是 0 可以帶來很多好處，減少很多不必要的指令。</p>
+</div>
+<h3 id="how-to-distinguish-instructions-from-binary-instruction-decoding">How to Distinguish Instructions From Binary (Instruction Decoding)<a class="headerlink" href="#how-to-distinguish-instructions-from-binary-instruction-decoding" title="Permanent link">&para;</a></h3>
+<p>基本上指令被儲存在記憶體中的形式不過就是一對 0 和 1 而已，因此，我們必須要透過一些特定的方法來辨認這些 0 和 1 究竟代表著什麼意義。</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/7d7ea0d5-fc99-4143-b747-c83e3cfaf8cf.png" /></p>
+<p>根據 RISC-V 規格書的描述，RISC-V Base Instruction Set 總共有四種 <strong>Base Instruction Format</strong>（R-Type、I-Type、S-Type、U-Type），還有兩種<strong>根據 Immediate Format 變形</strong>而延伸的 Format（B-Type、J-Type）。</p>
+<ol>
+<li>B-Type 由 S-Type 變形而來
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a6f5781c-6b0a-4591-9213-1d55d74056c3.png" /></li>
+<li>J-Type 由 U-Type 變形而來
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/2926e916-4d42-4a0e-b581-f189f6edf245.png" /></li>
+</ol>
+<p>指令分類最核心的部分是 OPCODE，根據 OPCODE 我們就可以先把指令<strong>初步地</strong>分群。
+當我們把指令分成各個 sub-group 之後，就可以再根據其他的資訊如 Function Code（e.g., func3、func7）來進一步區分指令到底是哪一個。下圖是 RISC-V 規格書中的 OPCODE Table：</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/41d8ec10-13c2-433e-a7c5-20c8e24c55d6.png" /></p>
+<p>我們進一步探討在 <strong><mark>RV32I</mark> Base Integer Instruction</strong> 中到底有哪些指令需要實作，並且以 OPCODE 來分類。</p>
+<ol>
+<li><strong>OP Type</strong>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/86342e61-6431-4788-90a3-48bc03f35173.png" /></li>
+<li><strong>OP-IMM Type</strong>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/7dd8da8e-f23c-4e98-b88c-07d1a6f1882e.png" />
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/1801191e-b122-4c4c-b225-9ceddb1e0bae.png" /></li>
+<li><strong>JAL</strong>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/5fac5b80-bec6-477b-9b99-6b722d9aca34.png" /></li>
+<li><strong>JALR</strong>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/62749148-10b8-4b44-8e16-4b55bde7b964.png" /></li>
+<li><strong>BRANCH</strong>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/b0739d10-177f-4e6a-9860-d6a3884266e5.png" /></li>
+<li><strong>LOAD/STORE</strong>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/943f582e-59e6-46d9-95a4-3801532eb93c.png" /></li>
+<li><strong>LUI/AUIPC</strong>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/33ce4327-2213-40af-876a-838c0dbbd9e0.png" /></li>
+<li><strong>SYSTEM</strong>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/bc8dc66e-5134-489e-a1f6-c8ad76ffa1fb.png" />
+，</li>
+</ol>
+<p>最後我們把<strong><mark>截至目前為止</mark></strong>應該要實作的指令列出來，總共應該有 38 條指令。</p>
+<figure>
+  <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/6c769daf-e31a-456c-8484-4e4f98d2c1e0.png" />
+  <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a81f37f7-28ef-4420-9370-2cbd81bb1113.png" />
+  <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/7e9b406b-c7b5-4f1d-a63e-7786bdb35429.png" />
+</figure>
+<h4 id="from-rv32i-to-rv64i">From RV32I to RV64I<a class="headerlink" href="#from-rv32i-to-rv64i" title="Permanent link">&para;</a></h4>
+<p>但是，由於我們這次要實作的是 <mark><strong>RV64I</strong></mark>，所以還會有幾個額外的指令要區分。如果我們要實作的指令是 RV32I 的話，那麼上述的這些指令，就大部分都是操作在 32-bits 的 Operands 上。但是，如果今天是 RV64I 的話，上述的指令就會變成操作在 64-bits 的 Operands 之上。除此之外，為了讓 RV64I 依然可以執行 32-bits 的運算，因此也會特別有幾條指令是操作在 32-bits 的 Operands。</p>
+<blockquote>
+<p>Most integer computational instructions operate on XLEN-bit（XLEN 指的就是 RV32 的 32 或是 RV64 的 64） values. Additional instruction variants are provided to manipulate 32-bit values in RV64I, indicated by a 'W' suffix to the opcode. These "*W" instructions ignore the upper 32 bits of their inputs and always produce 32-bit signed values, sign-extending them to 64 bits, i.e. bits XLEN-1 through 31 are equal.
+----- RISC-V Specification Volume 1, Chapter 4.2</p>
+</blockquote>
+<figure>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/8aab9da2-3bab-4571-b945-74b1c4cb098d.png" />
+</figure>
+<p>大家可以從上圖看出，從 RV32I 轉換到 RV64I，必須多實作<strong>十五條指令</strong>。其中指令後綴（suffix）多了 <em>W</em> 的代表是操作在 64-bits register 的低 32-bits，忽略高 32-bits，並且將運算後的結果做 sign-extension 到 64-bits 之後再存回 <code>$rd</code> 暫存器。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>這裡說「多實作十五條指令」其實有點不太精確，事實上，真正<strong>多出來</strong>的指令應該只有十二條，因為 SLLI/SRAI/SRLI 這三條指令是 RV32I 中本來就有的，只是到 RV64I 中它們的格式會有一點點變化。</p>
+</div>
+<figure>
+  <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/36d4aac7-cfc6-4df2-aef6-5e2628ef0826.png" />
+  <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/141f49eb-817b-40bc-85ab-f528768cabad.png" />
+</figure>
+<p>針對 SLLI/SRLI/SRAI 這三個指令，shamt（Shift-Amount）會從本來的 5-bits 變成 6-bits。取而代之的是 SLLIW/SRLIW/SRAIW 這三個指令的 shamt 才會是 5-bits。</p>
+<figure>
+  <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a5b98c48-267a-41e3-b22a-9374a5b148d1.png" />
+</figure>
+<p>而至於 OPCODE 為 OP Type 這類的指令，則多出了 ADDW、SLLW/SRLW、SUBW/SRAW 這些指令。</p>
+<blockquote>
+<p>LUI (load upper immediate) uses the same opcode as RV32I. LUI places the 32-bit U-immediate into register rd, filling in the lowest 12 bits with zeros. The 32-bit result is sign-extended to 64 bits.</p>
+<p>AUIPC (add upper immediate to pc) uses the same opcode as RV32I. AUIPC is used to build pc-relative addresses and uses the U-type format. AUIPC forms a 32-bit offset from the U-immediate, filling in the lowest 12 bits with zeros, sign-extends the result to 64 bits, adds it to the address of the AUIPC instruction, then places the result in register rd.</p>
+<p>----- RISC-V Specification Volume 1, Chapter 4.2.1</p>
+</blockquote>
+<p>根據規格書的描述，LUI 這條指令一樣是將 <code>imm[31:12]</code> 後面補 12-bits 的 0 之後，再做 sign-extension 到 64-bits，然後再存回去 <code>$rd</code> 暫存器。
+而 AUIPC 則是將 <code>imm[31:12]</code> 的後面一樣補 12-bits 的 0 之後，先做 sign-extension 到 64-bits，再和當前的 PC 相加，最後將 64-bits 的運算結果存回 <code>$rd</code> 暫存器。</p>
+<p>最後則是 LOAD/STORE 指令，因為 General Purpose Register 已經被擴充到 64-bits 的寬度，所以理所當然多了 LD/LWU 和 SD 這三個指令，而其中的 D 代表的是 <strong>Double Word（64-bits）</strong>。</p>
+<h3 id="architecture-of-a-simple-iss">Architecture of A Simple ISS<a class="headerlink" href="#architecture-of-a-simple-iss" title="Permanent link">&para;</a></h3>
+<p>在實作上，我們可以簡單地用 C 語言的 struct 來建立一個的資料結構，裡面包含了所有我們需要模擬出來的 Processor States。</p>
+<div class="language-cpp highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bool.h&gt;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="cp">#define MEM_SIZE 0x10000 (64-KiB)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">current_pc</span><span class="p">,</span><span class="w"> </span><span class="n">new_pc</span><span class="p">;</span><span class="w"> </span><span class="c1">// Program Counter</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">regs</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span><span class="w">           </span><span class="c1">// General Purpose Registers</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="kt">uint8_t</span><span class="w">  </span><span class="n">mem</span><span class="p">[</span><span class="n">MEM_SIZE</span><span class="p">];</span><span class="w">      </span><span class="c1">// Main Memory</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">    </span><span class="kt">bool</span><span class="w">  </span><span class="n">halt</span><span class="p">;</span><span class="w"> </span><span class="c1">// Halt signal</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="p">}</span><span class="w"> </span><span class="n">cpu_state_t</span><span class="p">;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="n">cpu_state_t</span><span class="o">*</span><span class="w"> </span><span class="n">processor_ptr</span><span class="p">;</span><span class="w"> </span><span class="c1">// define the pointer of the processor state (main part of ISS)</span>
+</span></code></pre></div></td></tr></table></div>
+<p>要表示 Processor 的狀態，我們需要 PC、32 個暫存器還有 Main Memory。PC 會指向目前正在執行的指令<strong>在記憶體中的地址</strong>，而暫存器則是 Processor 最基本用來暫存運算結果的單位。至於一個程式的指令和資料本身，則都會被儲存在 Main Memory 中，Processor 會透過 LOAD/STORE 指令來存取 Main Memory，包含讀取指令、還有存取 data。</p>
+<p>接下來，我們利用特殊的技巧（<strong>Union + Bit-Field</strong>）來定義指令的格式：</p>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>注意，雖然我們實作的是 RV64I，但是每條指令<strong>本身</strong>都是 32-bits（4-bytes）。</p>
+</div>
+<div class="language-cpp highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span>
+<span class="normal"><a href="#__codelineno-1-17">17</a></span>
+<span class="normal"><a href="#__codelineno-1-18">18</a></span>
+<span class="normal"><a href="#__codelineno-1-19">19</a></span>
+<span class="normal"><a href="#__codelineno-1-20">20</a></span>
+<span class="normal"><a href="#__codelineno-1-21">21</a></span>
+<span class="normal"><a href="#__codelineno-1-22">22</a></span>
+<span class="normal"><a href="#__codelineno-1-23">23</a></span>
+<span class="normal"><a href="#__codelineno-1-24">24</a></span>
+<span class="normal"><a href="#__codelineno-1-25">25</a></span>
+<span class="normal"><a href="#__codelineno-1-26">26</a></span>
+<span class="normal"><a href="#__codelineno-1-27">27</a></span>
+<span class="normal"><a href="#__codelineno-1-28">28</a></span>
+<span class="normal"><a href="#__codelineno-1-29">29</a></span>
+<span class="normal"><a href="#__codelineno-1-30">30</a></span>
+<span class="normal"><a href="#__codelineno-1-31">31</a></span>
+<span class="normal"><a href="#__codelineno-1-32">32</a></span>
+<span class="normal"><a href="#__codelineno-1-33">33</a></span>
+<span class="normal"><a href="#__codelineno-1-34">34</a></span>
+<span class="normal"><a href="#__codelineno-1-35">35</a></span>
+<span class="normal"><a href="#__codelineno-1-36">36</a></span>
+<span class="normal"><a href="#__codelineno-1-37">37</a></span>
+<span class="normal"><a href="#__codelineno-1-38">38</a></span>
+<span class="normal"><a href="#__codelineno-1-39">39</a></span>
+<span class="normal"><a href="#__codelineno-1-40">40</a></span>
+<span class="normal"><a href="#__codelineno-1-41">41</a></span>
+<span class="normal"><a href="#__codelineno-1-42">42</a></span>
+<span class="normal"><a href="#__codelineno-1-43">43</a></span>
+<span class="normal"><a href="#__codelineno-1-44">44</a></span>
+<span class="normal"><a href="#__codelineno-1-45">45</a></span>
+<span class="normal"><a href="#__codelineno-1-46">46</a></span>
+<span class="normal"><a href="#__codelineno-1-47">47</a></span>
+<span class="normal"><a href="#__codelineno-1-48">48</a></span>
+<span class="normal"><a href="#__codelineno-1-49">49</a></span>
+<span class="normal"><a href="#__codelineno-1-50">50</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="k">typedef</span><span class="w"> </span><span class="k">union</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rd</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">func3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rs1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rs2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">func7</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">R_TYPE</span><span class="p">;</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rd</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">func3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rs1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="w">        </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">imm_11_0</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">12</span><span class="p">;</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">I_TYPE</span><span class="p">;</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="w">        </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">imm_4_0</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">func3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rs1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rs2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">        </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">imm_11_5</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">S_TYPE</span><span class="p">;</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rd</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29"></a><span class="w">        </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">imm_31_12</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">U_TYPE</span><span class="p">;</span>
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33"></a><span class="w">        </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">imm_11</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34"></a><span class="w">        </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">imm_4_1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">func3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rs1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rs2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38"></a><span class="w">        </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">imm_10_5</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span>
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39"></a><span class="w">        </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">imm_12</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">B_TYPE</span><span class="p">;</span>
+</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-42"><a id="__codelineno-1-42" name="__codelineno-1-42"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-1-43"><a id="__codelineno-1-43" name="__codelineno-1-43"></a><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rd</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-1-44"><a id="__codelineno-1-44" name="__codelineno-1-44"></a><span class="w">        </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">imm_19_12</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+</span><span id="__span-1-45"><a id="__codelineno-1-45" name="__codelineno-1-45"></a><span class="w">        </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">imm_11</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-1-46"><a id="__codelineno-1-46" name="__codelineno-1-46"></a><span class="w">        </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">imm_10_1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</span><span id="__span-1-47"><a id="__codelineno-1-47" name="__codelineno-1-47"></a><span class="w">        </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">imm_20</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">J_TYPE</span><span class="p">;</span>
+</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">raw</span><span class="p">;</span>
+</span><span id="__span-1-50"><a id="__codelineno-1-50" name="__codelineno-1-50"></a><span class="p">}</span><span class="w"> </span><span class="n">riscv_inst_t</span><span class="p">;</span>
+</span></code></pre></div></td></tr></table></div>
+<p>然後再利用 C 語言中的 <code>enum</code> 來定義 OPCODE 和 function code，方便我們用來辨認不同的指令。</p>
+<div class="language-cpp highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span>
+<span class="normal"><a href="#__codelineno-2-12">12</a></span>
+<span class="normal"><a href="#__codelineno-2-13">13</a></span>
+<span class="normal"><a href="#__codelineno-2-14">14</a></span>
+<span class="normal"><a href="#__codelineno-2-15">15</a></span>
+<span class="normal"><a href="#__codelineno-2-16">16</a></span>
+<span class="normal"><a href="#__codelineno-2-17">17</a></span>
+<span class="normal"><a href="#__codelineno-2-18">18</a></span>
+<span class="normal"><a href="#__codelineno-2-19">19</a></span>
+<span class="normal"><a href="#__codelineno-2-20">20</a></span>
+<span class="normal"><a href="#__codelineno-2-21">21</a></span>
+<span class="normal"><a href="#__codelineno-2-22">22</a></span>
+<span class="normal"><a href="#__codelineno-2-23">23</a></span>
+<span class="normal"><a href="#__codelineno-2-24">24</a></span>
+<span class="normal"><a href="#__codelineno-2-25">25</a></span>
+<span class="normal"><a href="#__codelineno-2-26">26</a></span>
+<span class="normal"><a href="#__codelineno-2-27">27</a></span>
+<span class="normal"><a href="#__codelineno-2-28">28</a></span>
+<span class="normal"><a href="#__codelineno-2-29">29</a></span>
+<span class="normal"><a href="#__codelineno-2-30">30</a></span>
+<span class="normal"><a href="#__codelineno-2-31">31</a></span>
+<span class="normal"><a href="#__codelineno-2-32">32</a></span>
+<span class="normal"><a href="#__codelineno-2-33">33</a></span>
+<span class="normal"><a href="#__codelineno-2-34">34</a></span>
+<span class="normal"><a href="#__codelineno-2-35">35</a></span>
+<span class="normal"><a href="#__codelineno-2-36">36</a></span>
+<span class="normal"><a href="#__codelineno-2-37">37</a></span>
+<span class="normal"><a href="#__codelineno-2-38">38</a></span>
+<span class="normal"><a href="#__codelineno-2-39">39</a></span>
+<span class="normal"><a href="#__codelineno-2-40">40</a></span>
+<span class="normal"><a href="#__codelineno-2-41">41</a></span>
+<span class="normal"><a href="#__codelineno-2-42">42</a></span>
+<span class="normal"><a href="#__codelineno-2-43">43</a></span>
+<span class="normal"><a href="#__codelineno-2-44">44</a></span>
+<span class="normal"><a href="#__codelineno-2-45">45</a></span>
+<span class="normal"><a href="#__codelineno-2-46">46</a></span>
+<span class="normal"><a href="#__codelineno-2-47">47</a></span>
+<span class="normal"><a href="#__codelineno-2-48">48</a></span>
+<span class="normal"><a href="#__codelineno-2-49">49</a></span>
+<span class="normal"><a href="#__codelineno-2-50">50</a></span>
+<span class="normal"><a href="#__codelineno-2-51">51</a></span>
+<span class="normal"><a href="#__codelineno-2-52">52</a></span>
+<span class="normal"><a href="#__codelineno-2-53">53</a></span>
+<span class="normal"><a href="#__codelineno-2-54">54</a></span>
+<span class="normal"><a href="#__codelineno-2-55">55</a></span>
+<span class="normal"><a href="#__codelineno-2-56">56</a></span>
+<span class="normal"><a href="#__codelineno-2-57">57</a></span>
+<span class="normal"><a href="#__codelineno-2-58">58</a></span>
+<span class="normal"><a href="#__codelineno-2-59">59</a></span>
+<span class="normal"><a href="#__codelineno-2-60">60</a></span>
+<span class="normal"><a href="#__codelineno-2-61">61</a></span>
+<span class="normal"><a href="#__codelineno-2-62">62</a></span>
+<span class="normal"><a href="#__codelineno-2-63">63</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="cm">/*</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="cm"> * The name without any suffix (e.g., _FUNC3) represents the OPCODE type</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="cm"> */</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="cm">/* 12 types in total */</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">    </span><span class="n">OP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b0110011</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">    </span><span class="n">OP_32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b0111011</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">    </span><span class="n">OP_IMM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b0010011</span><span class="p">,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="w">    </span><span class="n">OP_IMM_32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b0011011</span><span class="p">,</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="w">    </span><span class="n">LOAD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b0000011</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="w">    </span><span class="n">STORE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b0100011</span><span class="p">,</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="w">    </span><span class="n">BRANCH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b1100011</span><span class="p">,</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">    </span><span class="n">JAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b1101111</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">    </span><span class="n">JALR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b1100111</span><span class="p">,</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">    </span><span class="n">AUIPC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b0010111</span><span class="p">,</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">    </span><span class="n">LUI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b0110111</span><span class="p">,</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="w">    </span><span class="n">SYSTEM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b1110011</span><span class="p">,</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="p">}</span><span class="w"> </span><span class="n">OPCODE</span><span class="p">;</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19"></a>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21"></a><span class="w">    </span><span class="n">ADD_SUB_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b000</span><span class="p">,</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22"></a><span class="w">    </span><span class="n">SLL_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b001</span><span class="p">,</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23"></a><span class="w">    </span><span class="n">SLT_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b010</span><span class="p">,</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24"></a><span class="w">    </span><span class="n">SLTU_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b011</span><span class="p">,</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25"></a><span class="w">    </span><span class="n">XOR_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b100</span><span class="p">,</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26"></a><span class="w">    </span><span class="n">SRL_SRA_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b101</span><span class="p">,</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27"></a><span class="w">    </span><span class="n">OR_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b110</span><span class="p">,</span>
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28"></a><span class="w">    </span><span class="n">AND_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b111</span><span class="p">,</span>
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29"></a><span class="p">}</span><span class="w"> </span><span class="n">ARITHMETIC_FUNC3</span><span class="p">;</span>
+</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30"></a>
+</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32"></a><span class="w">    </span><span class="n">BEQ_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b000</span><span class="p">,</span>
+</span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33"></a><span class="w">    </span><span class="n">BNE_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b001</span><span class="p">,</span>
+</span><span id="__span-2-34"><a id="__codelineno-2-34" name="__codelineno-2-34"></a><span class="w">    </span><span class="n">BLT_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b100</span><span class="p">,</span>
+</span><span id="__span-2-35"><a id="__codelineno-2-35" name="__codelineno-2-35"></a><span class="w">    </span><span class="n">BGE_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b101</span><span class="p">,</span>
+</span><span id="__span-2-36"><a id="__codelineno-2-36" name="__codelineno-2-36"></a><span class="w">    </span><span class="n">BLTU_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b110</span><span class="p">,</span>
+</span><span id="__span-2-37"><a id="__codelineno-2-37" name="__codelineno-2-37"></a><span class="w">    </span><span class="n">BGEU_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b111</span><span class="p">,</span>
+</span><span id="__span-2-38"><a id="__codelineno-2-38" name="__codelineno-2-38"></a><span class="p">}</span><span class="w"> </span><span class="n">BRANCH_FUNC3</span><span class="p">;</span>
+</span><span id="__span-2-39"><a id="__codelineno-2-39" name="__codelineno-2-39"></a>
+</span><span id="__span-2-40"><a id="__codelineno-2-40" name="__codelineno-2-40"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-41"><a id="__codelineno-2-41" name="__codelineno-2-41"></a><span class="w">    </span><span class="n">SB_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b000</span><span class="p">,</span>
+</span><span id="__span-2-42"><a id="__codelineno-2-42" name="__codelineno-2-42"></a><span class="w">    </span><span class="n">SH_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b001</span><span class="p">,</span>
+</span><span id="__span-2-43"><a id="__codelineno-2-43" name="__codelineno-2-43"></a><span class="w">    </span><span class="n">SW_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b010</span><span class="p">,</span>
+</span><span id="__span-2-44"><a id="__codelineno-2-44" name="__codelineno-2-44"></a><span class="w">    </span><span class="n">SD_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b011</span><span class="p">,</span>
+</span><span id="__span-2-45"><a id="__codelineno-2-45" name="__codelineno-2-45"></a><span class="p">}</span><span class="w"> </span><span class="n">STORE_FUNC3</span><span class="p">;</span>
+</span><span id="__span-2-46"><a id="__codelineno-2-46" name="__codelineno-2-46"></a>
+</span><span id="__span-2-47"><a id="__codelineno-2-47" name="__codelineno-2-47"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-48"><a id="__codelineno-2-48" name="__codelineno-2-48"></a><span class="w">    </span><span class="n">LB_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b000</span><span class="p">,</span>
+</span><span id="__span-2-49"><a id="__codelineno-2-49" name="__codelineno-2-49"></a><span class="w">    </span><span class="n">LH_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b001</span><span class="p">,</span>
+</span><span id="__span-2-50"><a id="__codelineno-2-50" name="__codelineno-2-50"></a><span class="w">    </span><span class="n">LW_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b010</span><span class="p">,</span>
+</span><span id="__span-2-51"><a id="__codelineno-2-51" name="__codelineno-2-51"></a><span class="w">    </span><span class="n">LD_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b011</span><span class="p">,</span>
+</span><span id="__span-2-52"><a id="__codelineno-2-52" name="__codelineno-2-52"></a><span class="w">    </span><span class="n">LBU_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b100</span><span class="p">,</span>
+</span><span id="__span-2-53"><a id="__codelineno-2-53" name="__codelineno-2-53"></a><span class="w">    </span><span class="n">LHU_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b101</span><span class="p">,</span>
+</span><span id="__span-2-54"><a id="__codelineno-2-54" name="__codelineno-2-54"></a><span class="w">    </span><span class="n">LWU_FUNC3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b110</span><span class="p">,</span>
+</span><span id="__span-2-55"><a id="__codelineno-2-55" name="__codelineno-2-55"></a><span class="p">}</span><span class="w"> </span><span class="n">LOAD_FUNC3</span><span class="p">;</span>
+</span><span id="__span-2-56"><a id="__codelineno-2-56" name="__codelineno-2-56"></a>
+</span><span id="__span-2-57"><a id="__codelineno-2-57" name="__codelineno-2-57"></a><span class="cm">/*</span>
+</span><span id="__span-2-58"><a id="__codelineno-2-58" name="__codelineno-2-58"></a><span class="cm"> * Note that the SYSTEM type instructions use the I-Type format</span>
+</span><span id="__span-2-59"><a id="__codelineno-2-59" name="__codelineno-2-59"></a><span class="cm"> */</span>
+</span><span id="__span-2-60"><a id="__codelineno-2-60" name="__codelineno-2-60"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-61"><a id="__codelineno-2-61" name="__codelineno-2-61"></a><span class="w">    </span><span class="n">ECALL_FUNC12</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b000000000000</span><span class="p">,</span>
+</span><span id="__span-2-62"><a id="__codelineno-2-62" name="__codelineno-2-62"></a><span class="w">    </span><span class="n">EBREAK_FUNC12</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">0b000000000001</span><span class="p">,</span>
+</span><span id="__span-2-63"><a id="__codelineno-2-63" name="__codelineno-2-63"></a><span class="p">}</span><span class="w"> </span><span class="n">SYSTEM_FUNC12</span><span class="p">;</span>
+</span></code></pre></div></td></tr></table></div>
+<div class="admonition question">
+<p class="admonition-title">Question</p>
+<p>你有注意到<strong>至少目前</strong>看到的所有 OPCODE 種類的 least significant 2-bits 都是 <code>0b11</code> 嗎，你知道原因是什麼嗎？（Hint：RISC-V C-Extension）</p>
+</div>
+<p>有了對於 Processor States 定義的資料結構之後，我們就可以開始思考要如何模擬 Processor 的運作。
+ISA Simulator 的任務很簡單，就是<strong>週而復始地讀取並執行指令</strong>。
+我們可以定義一個函式，作為 ISS 執行指令的最小單位，也就是<strong><mark>每次呼叫這個函式只會執行一條指令</mark></strong>。</p>
+<div class="language-cpp highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span>
+<span class="normal"><a href="#__codelineno-3-24">24</a></span>
+<span class="normal"><a href="#__codelineno-3-25">25</a></span>
+<span class="normal"><a href="#__codelineno-3-26">26</a></span>
+<span class="normal"><a href="#__codelineno-3-27">27</a></span>
+<span class="normal"><a href="#__codelineno-3-28">28</a></span>
+<span class="normal"><a href="#__codelineno-3-29">29</a></span>
+<span class="normal"><a href="#__codelineno-3-30">30</a></span>
+<span class="normal"><a href="#__codelineno-3-31">31</a></span>
+<span class="normal"><a href="#__codelineno-3-32">32</a></span>
+<span class="normal"><a href="#__codelineno-3-33">33</a></span>
+<span class="normal"><a href="#__codelineno-3-34">34</a></span>
+<span class="normal"><a href="#__codelineno-3-35">35</a></span>
+<span class="normal"><a href="#__codelineno-3-36">36</a></span>
+<span class="normal"><a href="#__codelineno-3-37">37</a></span>
+<span class="normal"><a href="#__codelineno-3-38">38</a></span>
+<span class="normal"><a href="#__codelineno-3-39">39</a></span>
+<span class="normal"><a href="#__codelineno-3-40">40</a></span>
+<span class="normal"><a href="#__codelineno-3-41">41</a></span>
+<span class="normal"><a href="#__codelineno-3-42">42</a></span>
+<span class="normal"><a href="#__codelineno-3-43">43</a></span>
+<span class="normal"><a href="#__codelineno-3-44">44</a></span>
+<span class="normal"><a href="#__codelineno-3-45">45</a></span>
+<span class="normal"><a href="#__codelineno-3-46">46</a></span>
+<span class="normal"><a href="#__codelineno-3-47">47</a></span>
+<span class="normal"><a href="#__codelineno-3-48">48</a></span>
+<span class="normal"><a href="#__codelineno-3-49">49</a></span>
+<span class="normal"><a href="#__codelineno-3-50">50</a></span>
+<span class="normal"><a href="#__codelineno-3-51">51</a></span>
+<span class="normal"><a href="#__codelineno-3-52">52</a></span>
+<span class="normal"><a href="#__codelineno-3-53">53</a></span>
+<span class="normal"><a href="#__codelineno-3-54">54</a></span>
+<span class="normal"><a href="#__codelineno-3-55">55</a></span>
+<span class="normal"><a href="#__codelineno-3-56">56</a></span>
+<span class="normal"><a href="#__codelineno-3-57">57</a></span>
+<span class="normal"><a href="#__codelineno-3-58">58</a></span>
+<span class="normal"><a href="#__codelineno-3-59">59</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">execute_one_inst</span><span class="p">(</span><span class="n">cpu_state_t</span><span class="o">*</span><span class="w"> </span><span class="n">proc_ptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">rsicv_inst_t</span><span class="w"> </span><span class="o">*</span><span class="n">inst_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">riscv_inst_t</span><span class="o">*</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">processor_ptr</span><span class="o">-&gt;</span><span class="n">mem</span><span class="p">[</span><span class="n">processor_ptr</span><span class="o">-&gt;</span><span class="n">pc</span><span class="p">]);</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w">    </span><span class="n">OPCODE</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">inst_ptr</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mb">0b1111111</span><span class="p">;</span><span class="w"> </span><span class="c1">// bitwise-AND</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">opcode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">OP</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">            </span><span class="n">handle_OP</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">OP_32</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="w">            </span><span class="n">handle_OP_32</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">OP_IMM</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14"></a><span class="w">            </span><span class="n">handle_OP_IMM</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">OP_IMM_32</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18"></a><span class="w">            </span><span class="n">handle_OP_IMM_32</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">LOAD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22"></a><span class="w">            </span><span class="n">handle_LOAD</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">STORE</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26"></a><span class="w">            </span><span class="n">handle_STORE</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">BRANCH</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30"></a><span class="w">            </span><span class="n">handle_BRANCH</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-31"><a id="__codelineno-3-31" name="__codelineno-3-31"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-32"><a id="__codelineno-3-32" name="__codelineno-3-32"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-33"><a id="__codelineno-3-33" name="__codelineno-3-33"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">JAL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-34"><a id="__codelineno-3-34" name="__codelineno-3-34"></a><span class="w">            </span><span class="n">handle_JAL</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-35"><a id="__codelineno-3-35" name="__codelineno-3-35"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-36"><a id="__codelineno-3-36" name="__codelineno-3-36"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-37"><a id="__codelineno-3-37" name="__codelineno-3-37"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">JALR</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-38"><a id="__codelineno-3-38" name="__codelineno-3-38"></a><span class="w">            </span><span class="n">handle_JALR</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-39"><a id="__codelineno-3-39" name="__codelineno-3-39"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-40"><a id="__codelineno-3-40" name="__codelineno-3-40"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-41"><a id="__codelineno-3-41" name="__codelineno-3-41"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">LUI</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-42"><a id="__codelineno-3-42" name="__codelineno-3-42"></a><span class="w">            </span><span class="n">handle_LUI</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-43"><a id="__codelineno-3-43" name="__codelineno-3-43"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-44"><a id="__codelineno-3-44" name="__codelineno-3-44"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-45"><a id="__codelineno-3-45" name="__codelineno-3-45"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">AUIPC</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-46"><a id="__codelineno-3-46" name="__codelineno-3-46"></a><span class="w">            </span><span class="n">handle_AUIPC</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-47"><a id="__codelineno-3-47" name="__codelineno-3-47"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-48"><a id="__codelineno-3-48" name="__codelineno-3-48"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-49"><a id="__codelineno-3-49" name="__codelineno-3-49"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">SYSTEM</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-50"><a id="__codelineno-3-50" name="__codelineno-3-50"></a><span class="w">            </span><span class="n">handle_SYSTEM</span><span class="p">(</span><span class="n">proc_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="p">);</span>
+</span><span id="__span-3-51"><a id="__codelineno-3-51" name="__codelineno-3-51"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-3-52"><a id="__codelineno-3-52" name="__codelineno-3-52"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-53"><a id="__codelineno-3-53" name="__codelineno-3-53"></a><span class="w">        </span><span class="k">default</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-54"><a id="__codelineno-3-54" name="__codelineno-3-54"></a><span class="w">            </span><span class="n">Panic</span><span class="p">(</span><span class="s">&quot;Unsupported instruction: %x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">inst_ptr</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">);</span>
+</span><span id="__span-3-55"><a id="__codelineno-3-55" name="__codelineno-3-55"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-56"><a id="__codelineno-3-56" name="__codelineno-3-56"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-57"><a id="__codelineno-3-57" name="__codelineno-3-57"></a><span class="w">    </span><span class="cm">/* update program counter */</span>
+</span><span id="__span-3-58"><a id="__codelineno-3-58" name="__codelineno-3-58"></a><span class="w">    </span><span class="n">proc_ptr</span><span class="o">-&gt;</span><span class="n">current_pc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">proc_state</span><span class="o">-&gt;</span><span class="n">new_pc</span><span class="p">;</span>
+</span><span id="__span-3-59"><a id="__codelineno-3-59" name="__codelineno-3-59"></a><span class="p">}</span>
+</span></code></pre></div></td></tr></table></div>
+<p>至於怎麼實作這些 Handler Function，這就是本次作業的一大重點了，大家就參考助教提供的 Sample Code 吧！
+助教在範例中只實作了 <code>addi</code> 和部分 <code>ecall</code> 指令的功能，並且用這兩條指令 Demo 了和經典的程式 <code>printf("Hello, World!\n")</code> 相同的效果，剩下的指令就需要靠大家自行完成。</p>
+<p>當我們實作好對<strong>執行一條指令</strong>這個行為的函式封裝之後，我們就可以基於 <code>execute_one_inst()</code> 來控制整個 ISS。譬如，我可以再這之上建構一個函式 <code>void execute_insts(unsigned inst_count)</code>：</p>
+<div class="language-cpp highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">execute_insts</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">inst_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">inst_count</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">processor_ptr</span><span class="o">-&gt;</span><span class="n">halt</span><span class="p">);</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w">        </span><span class="n">execute_one_inst</span><span class="p">();</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="p">}</span>
+</span></code></pre></div></td></tr></table></div>
+<div class="admonition question">
+<p class="admonition-title">Question</p>
+<p>大家如果觀察助教提供的 Sample Code 當中可以發現，助教對於 interactive interface 的 <code>c</code> 指令的實作方式就是呼叫 <code>execute_insts(-1)</code>，你是否可以解釋為什麼要傳入 -<span class="arithmatex">\(1\)</span> 呢？</p>
+</div>
+<h3 id="why-do-we-need-system-instructions">Why Do We Need SYSTEM Instructions?<a class="headerlink" href="#why-do-we-need-system-instructions" title="Permanent link">&para;</a></h3>
+<p>大家一定要有下面這張圖的觀念：</p>
+<figure>
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/c0e133d1-756c-4243-bc8f-4ee472bf039c.png" width="500" />
+</figure>
+<p>我們所使用的測試程式，是經由 RISC-V GNU Toolchain 編譯器編譯，最終變成使用 RISC-V 指令的可執行檔案，而我們在 Lab 2 所設計的 RISC-V ISA Simulator，則是一支<strong>不折不扣的 x86 程式</strong>。
+也就是說，我們的 ISS 是直接跑在我們自己的電腦之上（這邊先忽略作業系統），但是測試程式的 RISC-V Program 則不是。因為 RISC-V Program 使用的是 RISC-V 指令，我們的 x86 電腦不認得這些指令，所以必須經由我們設計的 ISS 做轉換，才有辦法<strong>看起來</strong>可以直接在我們的電腦上執行。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>其實我們所設計的 ISA Simulator，就有點類似編譯器領域當中所謂的直譯器（Interpreter），它可以動態地解析 RISC-V 指令並且執行指令所被定義的行爲。</p>
+</div>
+<p>我們首先有一件非常重要的事情需要探討，那麼就是當我們的 RISC-V Program 需要有 I/O 的功能的時候（e.g., <code>printf</code> and <code>scanf</code>），我們該怎麼d實作？
+會需要探討這個問題是因為，以我們最常用的輸出輸入裝置，鍵盤（輸入）和螢幕（輸出）來說，這些裝置是接在我們的電腦上，但是 RISC-V Program 並不是<strong>直接</strong>運行在我們的電腦上，而是中間還隔了一個 ISS。
+如果我們的 RISC-V Program 需要輸出輸入的功能的話，必須向自己所處的執行環境（Eexcution Environment）發起服務請求（<strong>Service Request</strong>），以目前的情境來看，對 RISC-V Program 來說 Execution Encironment 就是我們的 ISS。
+根據 RISC-V 規格書上的描述，SYSTEM 這類的指令的功能是：</p>
+<blockquote>
+<p>SYSTEM instructions are used to access system functionality that might require privileged access and
+are encoded using the I-type instruction format. The ECALL instruction is used to make a service request to the execution environment.<br>
+----- RISC-V Specification Volume 1</p>
+</blockquote>
+<p>也因此我們可以藉由實作 ECALL 指令，讓 RISC-V Program 有能力向 ISS 發出請求，委託其幫忙處理關於 I/O 的任務。</p>
+<p>所以我們必須去定義 <strong>Execition Environment Interface（EEI）</strong>，當 ECALL 指令被執行的時候，我們該如何辨別目前 RISC-V Program 到底發出了什麼類型的請求？</p>
+<p>最常見的做法是，我們可以規定當執行到 ECALL 指令的時候，必須觀察暫存器 <code>$a0</code> 中的值，來決定 RISC-V Program 發出的 service request type。</p>
+<ul>
+<li><mark>當執行到 ECALL 的時候，首先觀察 <code>$a0</code> 暫存器中的數值</mark><ol>
+<li><code>$a0 == 0</code><br>
+    代表程式已經執行結束，應該將 Processor State 中的 <code>halt</code> 設為 true</li>
+<li><code>$a0 == 1</code><br>
+    代表程式向執行環境發出 <code>putchar</code> 的請求，其中需要被印出的 character 的值會被放在暫存器 <code>$a1</code> 當中</li>
+</ol>
+</li>
+</ul>
+<h3 id="iss-with-debugging-interactive-interface">ISS with Debugging Interactive Interface<a class="headerlink" href="#iss-with-debugging-interactive-interface" title="Permanent link">&para;</a></h3>
+<p>延續在 Lab 1 當中我們利用 <em>readline</em> library 實作的 interactive interface，我們在實作 ISS 的時候，可以效仿類似 GDB 的 C language debugger，提供一系列我們定義好的指令，讓 ISS 的使用者可以藉由這些指令直接操作 ISS，方便使用者 debug。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>請特別注意，這裡所說的方便 Debug 並不是只方便我們 Debug ISS 本身，而是方便我們之後用 ISS 跑我們自己寫的 RISC-V Program 的時候，可以方便 Debug RISC-V Program 本身</p>
+</div>
+<p>具體來說，我們應該要讓我們的 ISS 支援以下總共<strong>九條</strong>指令：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Command</th>
+<th style="text-align: left;">Format</th>
+<th style="text-align: left;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">help</td>
+<td style="text-align: left;">help [command]</td>
+<td style="text-align: left;">help <br> help quit</td>
+</tr>
+<tr>
+<td style="text-align: center;">quit</td>
+<td style="text-align: left;">quit</td>
+<td style="text-align: left;">quit</td>
+</tr>
+<tr>
+<td style="text-align: center;">c</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">c</td>
+</tr>
+<tr>
+<td style="text-align: center;">si</td>
+<td style="text-align: left;">si [N]</td>
+<td style="text-align: left;">si <br> si 5</td>
+</tr>
+<tr>
+<td style="text-align: center;">break</td>
+<td style="text-align: left;">b [Inst. Address]</td>
+<td style="text-align: left;">break <br> break 0x10</td>
+</tr>
+<tr>
+<td style="text-align: center;">watch</td>
+<td style="text-align: left;">watch <expression></td>
+<td style="text-align: left;">watch <br> watch ($a0 == 10)</td>
+</tr>
+<tr>
+<td style="text-align: center;">disable</td>
+<td style="text-align: left;">disable &lt;b or w&gt; &lt;number&gt;</td>
+<td style="text-align: left;">disable b 1 <br> disable w 0</td>
+</tr>
+<tr>
+<td style="text-align: center;">reg</td>
+<td style="text-align: left;">reg &lt;pc or gpr&gt;</td>
+<td style="text-align: left;">reg pc <br> reg gpr</td>
+</tr>
+<tr>
+<td style="text-align: center;">mem</td>
+<td style="text-align: left;">mem &lt;N&gt; &lt;Base Address in Hex&gt;</td>
+<td style="text-align: left;">mem 4 0x10</td>
+</tr>
+</tbody>
+</table>
+<p>每條指令的功能敘述如下：</p>
+<ol>
+<li><strong>help</strong><br><blockquote>
+<p>印出支援的指令和對應的訊息</p>
+</blockquote>
+</li>
+<li><strong>quit</strong><blockquote>
+<p>離開 Simulator</p>
+</blockquote>
+</li>
+<li><strong>c</strong><blockquote>
+<p>持續執行指令直到遇到 breakpoint、watchpoint 或是程式退出</p>
+</blockquote>
+</li>
+<li><strong>si</strong><blockquote>
+<p>執行 <span class="arithmatex">\(N\)</span> 條指令，其中 <span class="arithmatex">\(N\)</span> 是大於零的正整數（如果沒有傳入 <span class="arithmatex">\(N\)</span> 則預設 <span class="arithmatex">\(N\)</span> 等於 <span class="arithmatex">\(1\)</span>）</p>
+</blockquote>
+</li>
+<li><strong>break</strong><blockquote>
+<p>列出目前所有 breakpoint（編號從零開始），或是設置新的 breakpoint</p>
+</blockquote>
+</li>
+<li><strong>watch</strong><blockquote>
+<p>列出目前所有 watchpoint（編號從零開始），或是設置新的 watchpoint（只要支援對 Register 設定 watchpoint 即可）</p>
+</blockquote>
+</li>
+<li><strong>disable</strong><blockquote>
+<p><strong>以編號</strong>來刪除現有的 breakpoint 或是 watchpoint</p>
+</blockquote>
+</li>
+<li><strong>reg</strong><blockquote>
+<p>查看 PC 或是 GPR 的值（Ps：GPR 應該要把 32 個暫存器全部都 show 出來）</p>
+</blockquote>
+</li>
+<li><strong>mem</strong><blockquote>
+<p>查看 Main Memory 的內容，以 Hex 的格式印出，可以指定要輸出 <span class="arithmatex">\(N\)</span> 個 word（32-bits）</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="how-to-compile-and-run">How to Compile and Run<a class="headerlink" href="#how-to-compile-and-run" title="Permanent link">&para;</a></h2>
+<p>如同 Lab 1，在 Lab 2 中助教一樣已經提供 Makefile 讓大家可以直接使用，只要在 <code>lab-2</code> 路徑底下輸入 <code>make</code> 即可編譯 ISS 本身還有在 <code>lab-2/src/test-prog</code> 底下的測試程式。</p>
+<p>如果你想要使用 ISS 執行測試用的 RISC-V Program 的話，以 <code>lab-2/src/test-prog/hello.c</code> 為例，你可先 <code>make</code> 之後，進入 <code>build</code> 資料夾，然後輸入 <code>./main.elf hello.elf</code>，進入 ISS 之後再輸入 <code>c</code> 讓 ISS 持續執行直到 RISC-V Program 結束為止。
+正常來說，你應該會看到如下的輸出：</p>
+<figure>
+  <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/5a5b4e6a-dbfc-47fc-9649-8914e4800a2b.png" width="750" />
+</figure>
+<blockquote>
+<p>更多測資，待助教完成後會<strong>再</strong>更新 Chapter 4 的內容。</p>
+</blockquote>
+<h2 id="start-to-do-assignment">Start to Do Assignment<a class="headerlink" href="#start-to-do-assignment" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Clone the sample code<ul>
+<li>先確定自己已經打開課程開發環境（Container），並且在環境中的 <code>workspace</code> 底下</li>
+<li>下載助教提供的 Sample Code<blockquote>
+<p><code>git clone https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/lab-2.git</code></p>
+</blockquote>
+</li>
+<li>進入資料夾<blockquote>
+<p><code>cd lab-2</code></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>Create a private repo<ul>
+<li>如同 Lab 1 所述，在 Gitlab 上面創建個人 Repo，並且命名為 <code>Lab 2</code>，請不要勾選 <em>Initialize the repository with README</em></li>
+<li>確認 branch 的名稱為 main 而非 master<blockquote>
+<p><code>git branch -M main</code></p>
+</blockquote>
+</li>
+<li>新增自己的 Private Gitlab Repo 為 Remote Source<blockquote>
+<p><code>git remote add private &lt;HTTPS URL of your private repo&gt;</code></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>將程式碼 Push 你的 Private Repository<ul>
+<li>請記得是推到 <code>private</code> 而非 <code>origin</code><blockquote>
+<p><code>git push -u private main</code></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>Notes<ul>
+<li>因為在<strong>預設</strong>情況之下，只要 Gitlab Repo 中包含 <code>.gitlab-ci.yml</code> 檔案就會觸發 CI/CD Pipeline，如果你在前期尚未完成作業的時候不想觸發 Pipeline，可以先在 Gitlab 你的 Private Repo 中的設定將 CI/CD 功能關閉，待完成作業之後再打開</li>
+</ul>
+</li>
+<li><strong>請記得依據 <a href="https://hedgedoc.course.aislab.ee.ncku.edu.tw/UBTl2mSKSRSW11GQXuOKTA?view">Assignment Report Template</a> 撰寫本次作業的報告，並且繳交報告連結到成大 Moodle 作業繳交區上</strong></li>
+</ol>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; Create by <a href=""  target="_blank" rel="noopener">Jieum.C</a> in 2024 ♥ 
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.instagram.com/eemomolleyball?igsh=MnI5cnM0YnljcnEy" target="_blank" rel="noopener" title="www.instagram.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141m0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7m146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8m76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8M398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.path", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "search.relevance", "content.tabs", "content.code.annotation", "content.code.copy", "content.footnotes", "content.images"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      
+        <script src="../../js/custom.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+      
+        <script src="../../js/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1477 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../git_cmd/">
+      
+      
+        <link rel="next" href="../markdown/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+    
+    
+      
+        <title>Docker Tutorial - Computer Organization Fall 2024 @NCKUEE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8608ea7d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Docker Tutorial - Computer Organization Fall 2024 @NCKUEE" >
+      
+        <meta  property="og:description"  content="None" >
+      
+        <meta  property="og:image"  content="./assets/images/social/tools/docker.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="None" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Docker Tutorial - Computer Organization Fall 2024 @NCKUEE" >
+      
+        <meta  name="twitter:description"  content="None" >
+      
+        <meta  name="twitter:image"  content="./assets/images/social/tools/docker.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#preamble" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Computer Organization Fall 2024 @NCKUEE" class="md-header__button md-logo" aria-label="Computer Organization Fall 2024 @NCKUEE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Computer Organization Fall 2024 @NCKUEE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Docker Tutorial
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  首頁
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../labs/lab_overview/" class="md-tabs__link">
+          
+  
+  Lab material
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../rtl/verilog/" class="md-tabs__link">
+          
+  
+  RTL Programming
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../linux_cmd/" class="md-tabs__link">
+          
+  
+  Tools Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../references/" class="md-tabs__link">
+        
+  
+    
+  
+  補充資料
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Computer Organization Fall 2024 @NCKUEE" class="md-nav__button md-logo" aria-label="Computer Organization Fall 2024 @NCKUEE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Computer Organization Fall 2024 @NCKUEE
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首頁
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首頁
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Lab material
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Lab material
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab_overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 0 - How To Ask Questions The Smart Way
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 1 - C Programmin and Compilation Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 2 - Simple RISC-V ISA Simulator with RV64I
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 3 - Bare-metal Runtime Environment and RISC-V Assembly Programming
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 4 - RTL Programming Review using SystemVerilog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 5 - Single-Cycle CPU Design and Differential Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 6 - Bus Protocol and Arbitration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 7 - Pipeline CPU and Simple Cache Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 8 - Deep Dive into Memory System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 9 - SIMD Accelerator and GEMM Kernel Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    RTL Programming
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            RTL Programming
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/verilog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction to Verilog and RTL Programming
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/sv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From Verilog to SystemVerilog for Hardware Designing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/sva/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SystemVerilog Assertion (SVA)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rtl/chisel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chisel HDL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Tools Guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tools Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linux_cmd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic Linux Command
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git_cmd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Git Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Docker Tutorial
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Docker Tutorial
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#preamble" class="md-nav__link">
+    <span class="md-ellipsis">
+      Preamble
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction-to-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction to Docker
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introduction to Docker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is Docker?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-image-vs-docker-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      Docker Image vs. Docker Container
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-install-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to install Docker
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to install Docker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windows-subsystem-for-linux-wsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Windows Subsystem For Linux (WSL)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Windows Subsystem For Linux (WSL)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-install-wsl2-on-your-windows-pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to install WSL2 on your Windows PC
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-docker-desktop-on-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Docker Desktop on Windows
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Install Docker Desktop on Windows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation Method
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-x11-forwarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test X11 Forwarding
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-orbstack-on-macos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install OrbStack on MacOS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use-the-course-docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to use the course Docker Image
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to use the course Docker Image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-volume-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      Docker Volume &amp; Workspace
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../markdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Markdown Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gitlab_ov/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Gitla & Mattermost
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli_tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Useful CLI Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../references/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    補充資料
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Docker Tutorial</h1>
+
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<ul>
+<li>Contributors: TA 峻豪</li>
+<li>Last updated: 2024/09/21</li>
+</ul>
+</div>
+<hr />
+<h2 id="preamble">Preamble<a class="headerlink" href="#preamble" title="Permanent link">&para;</a></h2>
+<p>今年因為我們計劃要開源這整套教材，所以在大家所使用的開發環境上勢必得做一些調整；往年有關於電路模擬（Simulation）的部分，我們通常都是讓大家使用實驗室提供的伺服器，並且使用伺服器上安裝的 Cadence XCELIUM (<code>xrun</code> command) 或是 Synopsys VCS 來進行模擬，而這兩套工具基本上都是需要 License 的，而且非常昂貴。也因此今年我們採用不一樣的模式，我們不再提供修課同學實驗室伺服器的帳號，取而代之的是我們利用 Docker 提供同學已經設計好的開發環境，在這裡指的就是 Docker Image。同學只需要在自己的電腦上安裝 Docker，即可使用我們提供的 Docker Image 進行開發，並且 Image 中已經包含所有同學寫 Lab 會需要用到的所有 Toolchain，不需要同學在環境上多花心力去折騰。</p>
+<h2 id="introduction-to-docker">Introduction to Docker<a class="headerlink" href="#introduction-to-docker" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-docker">What is Docker?<a class="headerlink" href="#what-is-docker" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>參考：<a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/">Docker 是什麼？Docker 基本觀念介紹與容器和虛擬機的比較</a></p>
+</blockquote>
+<p>Docker 是容器化技術（Containerization）的一種實作，而容器化又是一種輕量級的虛擬化技術，常常和容器化拿來對比的就是虛擬機（Virtual Machine, VM）技術。我們可以參考下面這張圖</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/a31684fa-7fa2-4422-ae57-2c9203eacf20.png" /></p>
+<p>基本上 Docker 的出現讓環境的部屬變得容易很多，試想大家今天在自己的電腦上開發應用程式的時候，你會有自己的開發環境和執行環境；但是，今天如果你要把你寫的 App 開放給別人，讓別人在他們電腦上執行的時候，可能就會出現問題，因為你和別人的電腦的開發環境和執行環境不一定是完全相同的，譬如你們所使用的 Python 版本或是 Java JDK 的版本不同，這時候 Docker 就可以派上用場。利用 Docker，你可以將你的應用程式，連同執行環境打包成一個 Docker Image，別人就可以利用你提供的 Docker Image 來建立一個 Container，就可以在這個 Container 中去執行你開發的應用程式，並且避開環境問題。</p>
+<p>簡單來說，配置環境和開發應用程式的人只需要撰寫 <em>Dockerfile</em>，就可以把這個 Dockerfile 給別人，讓別人來 build image；或甚至可以直接提供已經 build 好的 Docker Image 給別人使用。</p>
+<p>雖然 Docker 的使用場景比較常見於和應用程式配套的環境配置，但其實我們也可以透過 Docker 來實現類似虛擬機器的功能，也就是利用 Docker 配置一個屬於我們自己的 Linux 開發環境並且安裝我們所需的工具鏈，在裡面開發程式，就像是直接在我們電腦上安裝 Linux 作業系統的感覺一樣。以計算機組織這堂課來說，助教正是利用 Docker 配置了一個同學寫作業所需的 Linux 開發環境，使用的作業系統是 Ubuntu。</p>
+<h3 id="docker-image-vs-docker-container">Docker Image vs. Docker Container<a class="headerlink" href="#docker-image-vs-docker-container" title="Permanent link">&para;</a></h3>
+<p>助教覺得 Docker Image 和 Docker Container 的關係有點類似物件導向程式設計中，Class 之於 Object (Instance) 的關係。我們所建構的 Docker Image 只是一個類似藍圖的東西，我們真正要使用的東西是 Docker Container，而建立 Container 則必須要有一個藍圖可以依循，這就是 Docker Image 的功用。所以請同學物必要搞清楚 Image 和 Container 是兩個不同的東西，我們實際上在使用的是 Container，Image 只是我們建立 Container 所需的參照而已。</p>
+<p>或者，我們也可以用<strong>食譜</strong>和<strong>菜餚</strong>來比喻 Docker Image 和 Docker Container。Docker Image 就像是一道菜的食譜一樣，Docker Engine 會根據 Docker Image 建立對應的 Docker Container，而 Docker Container 就像是用這個食譜做出來的菜餚一樣。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>有些容器化技術的實作不一定要先建立 Image 才能建立 Container，例如 Apptainer 是另一個非常有名的容器化技術的實作，它就是直接建立 Container 而不用先建立 Image。</p>
+</div>
+<h2 id="how-to-install-docker">How to install Docker<a class="headerlink" href="#how-to-install-docker" title="Permanent link">&para;</a></h2>
+<p>首先，我們必須先在電腦上安裝 Docker Engine；為了簡化安裝過程，我們可以直接在電腦上安裝 <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a>，如果是使用 Mac 的話，助教推薦安裝 <a href="https://orbstack.dev/">OrbStack</a>。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<h3 id="windows-subsystem-for-linux-wsl">Windows Subsystem For Linux (WSL)<a class="headerlink" href="#windows-subsystem-for-linux-wsl" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>參考：<a href="https://learn.microsoft.com/zh-tw/windows/wsl/install">如何使用 WSL 在 Windows 上安裝 Linux</a></p>
+</blockquote>
+<p>如果想要在 Windows 上使用 Linux 操作系統的話，以往常常需要使用諸如 VirtualBox 之類的虛擬機軟體來安裝和配置虛擬機，但現在 Windows 上有一個內建功能叫做 WSL（目前已經到 WSL2），可以讓我們不用安裝虛擬機就可以很方便地配置 Linux 開發環境。如果你是使用 Windows 作業系統的話，助教推薦你可以安裝 WSL 這個功能，不論是作為日常開發環境或是拿來取代 MobaXterm 都非常好用。配套的終端機軟體助教推薦使用 <em>Windows Terminal</em>，而 Linux Distribution 助教推薦安裝 Ubuntu 22.04 或是 Ubuntu 24.04。至於字體的部分，助教推薦 JetBrainsMono Nerd Font。</p>
+<h4 id="how-to-install-wsl2-on-your-windows-pc">How to install WSL2 on your Windows PC<a class="headerlink" href="#how-to-install-wsl2-on-your-windows-pc" title="Permanent link">&para;</a></h4>
+<ol>
+<li>請先使用<strong>系統管理員</strong>身份開啟 PowerShell</li>
+<li>啟用 WSL 所需系統功能<br />
+  <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>$<span class="w"> </span>dism.exe<span class="w"> </span>/online<span class="w"> </span>/enable-feature<span class="w"> </span>/featurename:Microsoft-Windows-Subsystem-Linux<span class="w"> </span>/all<span class="w"> </span>/norestart
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>$<span class="w"> </span>dism.exe<span class="w"> </span>/online<span class="w"> </span>/enable-feature<span class="w"> </span>/featurename:VirtualMachinePlatform<span class="w"> </span>/all<span class="w"> </span>/norestart
+</span></code></pre></div></td></tr></table></div></li>
+<li>安裝並且更新 WSL，然後安裝 Linux Distribution <code>Ubuntu-24.04</code>
+    <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>$<span class="w"> </span>wsl<span class="w"> </span>--install<span class="w"> </span>--web-download
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>$<span class="w"> </span>wsl<span class="w"> </span>--update<span class="w"> </span>--web-download
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a>$<span class="w"> </span>wsl<span class="w"> </span>--set-default-version<span class="w"> </span><span class="m">2</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a>$<span class="w"> </span>wsl<span class="w"> </span>--install<span class="w"> </span>Ubuntu-24.04<span class="w"> </span>--web-download
+</span></code></pre></div></td></tr></table></div></li>
+<li>完成 <code>Ubuntu-24.04</code> 的安裝之後，應該就會接著提示輸入你想要的 Username 和 Password，請輸入你自己想要的使用者名稱和密碼之後，就完成設定，即可開始使用 Windows Subsystem for Linux (WSL)</li>
+</ol>
+</div>
+<h3 id="install-docker-desktop-on-windows">Install Docker Desktop on Windows<a class="headerlink" href="#install-docker-desktop-on-windows" title="Permanent link">&para;</a></h3>
+<p>我們主要要完成兩件事情，第一是 WSL2 的安裝，再來是測試 X11 Forwarding 是否可以正常運作，因為這關乎到我們是否可以正常使用視窗程式（GUI Apps）。</p>
+<h4 id="installation-method">Installation Method<a class="headerlink" href="#installation-method" title="Permanent link">&para;</a></h4>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>請同學務必先安裝 WSL 之後再安裝 Docker Desktop，否則 Docker 會無法正常運作。</p>
+</div>
+<blockquote>
+<p>參考：<a href="https://learn.microsoft.com/zh-tw/windows/wsl/tutorials/wsl-containers">在 WSL 2 上開始使用 Docker 遠端容器</a></p>
+</blockquote>
+<p>在 Windows 上安裝 Docker 最快的方式是直接下載 Docker Desktop 並安裝。</p>
+<p>安裝完 Docker Desktop 之後，你可以開啟剛剛安裝的 WSL 的 Ubuntu，然後輸入 <code>sudo docker run hello-world:latest</code> 看看是否可以成功執行 Docker。如果出現以下畫面，恭喜你 WSL 和 Docker 都順利安裝完成！</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/7482a2a8-01b4-4d91-85aa-bdfde95216c5.png" /></p>
+<h4 id="test-x11-forwarding">Test X11 Forwarding<a class="headerlink" href="#test-x11-forwarding" title="Permanent link">&para;</a></h4>
+<p>因為在後面的 Lab 我們會用到 GTKWave 這個 Waveform Viewer 來觀察電路的波形，而這個程式是一個 GUI App，所以我們必須確認我們的 WSL 可以正常執行 X11 Forwarding 的功能。</p>
+<ol>
+<li>首先，先安裝必要的 packages（<mark>此步驟是在 Host 端操作，也就是 WSL，並非進入 Container 內操作</mark>）
+    <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>$<span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="c1"># important!!!</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a>$<span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>x11-utils<span class="w"> </span>x11-xserver-utils<span class="w"> </span>x11-apps
+</span></code></pre></div></td></tr></table></div></li>
+<li>接著輸入以下指令
+    <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>$<span class="w"> </span>xhost<span class="w"> </span>+local:docker
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a>$<span class="w"> </span>xclock
+</span></code></pre></div></td></tr></table></div></li>
+<li>如果你有看到一個小視窗出現，代表 X11 功能正常運作！
+    <img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/28367fa9-1f23-485b-9d49-3f99f2a2e170.png" /></li>
+<li>請執行 <code>run.sh</code> 進入 container 之後，一樣執行 <code>xclock</code> 看看是否也有正常出現小時鐘視窗</li>
+</ol>
+<h3 id="install-orbstack-on-macos">Install OrbStack on MacOS<a class="headerlink" href="#install-orbstack-on-macos" title="Permanent link">&para;</a></h3>
+<p>請直接到 OrbStack 的官網下載然後安裝即可使用。使用 Mac 的人一樣可以開啟系統內建的 Terminal，然後輸入 <code>sudo docker run hello-world:latest</code> 看看是否可以成功執行。</p>
+<p>MacOS 要使用 X11 Forwarding 的功能的話，請下載並安裝 <a href="https://www.xquartz.org/">XQuartz</a>。欲使用 X11 Forwarding 時，請保持 XQuartz App 為開啟狀態，否則會導致視窗開啟失敗。</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>這邊有問題的話可以詢問大助教，因為大助也是使用 Mac。</p>
+</div>
+<h2 id="how-to-use-the-course-docker-image">How to use the course Docker Image<a class="headerlink" href="#how-to-use-the-course-docker-image" title="Permanent link">&para;</a></h2>
+<p>我們採用直接下載 Docker Image 的方式，而非使用 Dockerfile 來建構 Docker Image，原因是因為我們會用到 RISC-V GNU Toolchain，在建構 Image 的過程中會去下載該 Toolchain 的 repository，如果大家所在的環境的網路速度不理想的話，建構 image 的過程可能會耗費數小時以上，甚至會 build fail。為了下載助教提供的 image，我們需要使用 <code>docker pull</code> 指令。</p>
+<p>詳細來說，因為我們還會使用到助教額外撰寫的 Shell Script，所以整個過程總共需要兩個步驟，分別是下載助教指令的 Reposiroty 和下載助教提供的 Docker Image。下載完之後，就可以執行腳本（<code>run.sh</code>）來啟動並且進入 container 中，以使用我們為課程設計的程式開發環境。接下來我們說明詳細的操作步驟：</p>
+<ol>
+<li>請先下載這個 Repository：<a href="https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/docker-env">docker-env</a>
+    <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://gitlab.course.aislab.ee.ncku.edu.tw/113-1/docker-env
+</span></code></pre></div></li>
+<li>進入 docker-env 資料夾，接著登入我們的 Container Registry 之後，再 Pull 助教提供的 Docker Image
+    <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span>login<span class="w"> </span>registry.course.aislab.ee.ncku.edu.tw<span class="w"> </span><span class="c1"># 請輸入你登入 Gitlab 所使用的帳號、密碼</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>registry.course.aislab.ee.ncku.edu.tw/113-1/docker-env/co2024-docker
+</span></code></pre></div></li>
+<li>執行 <code>run.sh</code> 後即可進入 Container 內部，便可以開始使用課程所需的開發環境
+    <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>./run.sh
+</span></code></pre></div></li>
+</ol>
+<p>進入 Container 之後，你可以輸入 <code>id</code> 命令來查看自己的 Username、UID 和 GID，你應該會看到自己的 Username 是 <code>co2024</code>，而 UID 和 GID 會和你的 Local 端的 UID 和 GID 相同。除此之外，當你要使用 sudo 命令的時候，會提示需要輸入密碼，而密碼也是 <code>1234</code>。但大部分的情況下，大家應該不會需要在容器中使用到超級使用者權限。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>會刻意把 Container 中的 UID 和 GID 設定成和 Local 端相同是有特殊的考量的。因為我們會把本地端的資料夾 <code>workspace</code> 卦載到 Container 中，藉此儲存我們的程式碼，若 Container 中的 UID 和 GID 和本地端不同的話，會有檔案權限的問題。</p>
+</div>
+<h3 id="docker-volume-workspace">Docker Volume &amp; Workspace<a class="headerlink" href="#docker-volume-workspace" title="Permanent link">&para;</a></h3>
+<p>最後，我們需要討論 Docker 對於管理檔案的特性。當你使用某個 Docker Image 去開啟一個 Container 的時候，Docker 會在這個 Container 的最上層加上一層可寫層（Writable Layer）。你對這個 Container 最的所有更改都會被紀錄在可寫層當中，被 Docker 暫存起來。但是，今天一旦這個 Container 被刪除的話，你做的所有更改就會被刪除，當你下次再用相同 Image 開啟 Container 的時候，一切就會恢復原狀，彷彿你從未做過任何操作一樣。但這樣對我們來說就會有一個很大的問題，因為我們將這個 Docker Container 作為我們開發程式的環境，也就代表我們有儲存程式碼的需求，需要持久性（Persistent）的儲存，最好不要因為 Container 被刪除就跟著不見。因此，我們會需要使用到一個東西，叫做 <strong>Docker Volume</strong>。</p>
+<p><img alt="" src="https://hedgedoc.course.aislab.ee.ncku.edu.tw/uploads/954e66b8-161c-476a-aad8-f31755a62248.png" /></p>
+<p>Docker Volume 又分成兩種模式，分別是 Bind Mount 和 Volume。Bind Mount 就像是卦載硬碟的概念，或是當你使用虛擬機如 VirtualBox 的時候，把電腦本地端的某個 Path 卦載到虛擬機上，讓虛擬機內部也可以看到本地端的資料夾，藉此在本地端和虛擬機之間儲存和傳輸檔案。Volume 的話這邊就不贅述，大家有興趣的話可以去看 Docker 官方的文件。</p>
+<p>在這堂課中，我們會使用 Bind Mount 的方式，首先在 <code>docker-env</code> 資料夾底下建立一個新的資料夾 <code>workspace</code>，然後把他卦載到 container 上，這樣當我們進入 container 之後，就可以把我們的程式碼放在 <code>workspace</code> 底下，即使我們離開 container 後，程式碼也不會不見，達到持久性的儲存。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>這邊就可以 callback 到前面說的，為什麼我們要刻意把容器中 <code>co2024</code> 這個使用者的 UID 和 GID 設定成和本地端相同。</p>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; Create by <a href=""  target="_blank" rel="noopener">Jieum.C</a> in 2024 ♥ 
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.instagram.com/eemomolleyball?igsh=MnI5cnM0YnljcnEy" target="_blank" rel="noopener" title="www.instagram.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141m0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7m146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8m76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8M398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.path", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "search.relevance", "content.tabs", "content.code.annotation", "content.code.copy", "content.footnotes", "content.images"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      
+        <script src="../../js/custom.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+      
+        <script src="../../js/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
